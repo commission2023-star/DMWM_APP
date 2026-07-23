@@ -1,0 +1,10 @@
+node_modules/
+.env
+uploads/*
+!uploads/.gitkeep
+public/css/*
+public/js-libs/*
+public/fonts/*
+!public/css/.gitkeep
+!public/js-libs/.gitkeep
+!public/fonts/.gitkeep

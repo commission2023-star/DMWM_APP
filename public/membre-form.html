@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membre — DMWM UASZ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; margin-bottom:20px; }
+.section-title { color:#1B5E8A; font-weight:700; font-size:0.95rem; border-bottom:2px solid #EBF3FB; padding-bottom:8px; margin-bottom:20px; }
+.form-label { font-weight:600; color:#444; font-size:0.88rem; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:10px; padding:10px 14px; font-size:0.9rem; }
+.form-control:focus, .form-select:focus { border-color:#1B5E8A; box-shadow:0 0 0 3px rgba(27,94,138,0.15); }
+.required::after { content:" *"; color:#dc3545; }
+.btn-save { background:linear-gradient(135deg,#1B5E8A,#2E75B6); border:none; border-radius:10px; color:white; padding:12px 35px; font-weight:600; font-size:1rem; }
+.btn-save:hover { opacity:0.9; color:white; }
+.preview-img { width:100px; height:100px; border-radius:10px; object-fit:cover; border:2px solid #e0e0e0; display:none; }
+.section-mouvement { display:none; }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h5 id="titreFormulaire"><i class="fas fa-user-plus me-2"></i>Nouveau membre</h5>
+    </div>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div id="alerte" class="alert d-none mb-3"></div>
+
+  <div class="card-custom">
+    <div class="section-title"><i class="fas fa-id-card me-2"></i>Informations personnelles</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label required">Prénom</label><input type="text" class="form-control" id="prenom"></div>
+      <div class="col-md-6"><label class="form-label required">Nom</label><input type="text" class="form-control" id="nom"></div>
+      <div class="col-md-4"><label class="form-label required">Genre</label>
+        <select class="form-select" id="sexe"><option value="">-- Choisir --</option><option value="H">Homme</option><option value="F">Femme</option></select>
+      </div>
+      <div class="col-md-4"><label class="form-label">Date de naissance</label><input type="date" class="form-control" id="date_naissance"></div>
+      <div class="col-md-4"><label class="form-label">Lieu de naissance</label><input type="text" class="form-control" id="lieu_naissance"></div>
+      <div class="col-md-6"><label class="form-label required">Numéro de téléphone</label><input type="text" class="form-control" id="telephone"></div>
+      <div class="col-md-6"><label class="form-label">Adresse mail</label><input type="email" class="form-control" id="email"></div>
+      <div class="col-md-12"><label class="form-label">Adresse / Résidence à l'UASZ</label><input type="text" class="form-control" id="adresse"></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="section-title"><i class="fas fa-user-shield me-2"></i>Tuteur / Contact d'urgence</div>
+    <div class="row g-3">
+      <div class="col-md-8"><label class="form-label">Prénom & Nom du tuteur</label><input type="text" class="form-control" id="tuteur_nom"></div>
+      <div class="col-md-4"><label class="form-label">Téléphone du tuteur</label><input type="text" class="form-control" id="tuteur_telephone"></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="section-title"><i class="fas fa-graduation-cap me-2"></i>Informations universitaires</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Filière</label><input type="text" class="form-control" id="filiere"></div>
+      <div class="col-md-6"><label class="form-label">Niveau</label><input type="text" class="form-control" id="niveau"></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Origine géographique</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Région d'origine</label><input type="text" class="form-control" id="region_origine"></div>
+      <div class="col-md-6"><label class="form-label">Département</label><input type="text" class="form-control" id="departement"></div>
+      <div class="col-md-6"><label class="form-label">Arrondissement</label><input type="text" class="form-control" id="arrondissement"></div>
+      <div class="col-md-6"><label class="form-label">Commune</label><input type="text" class="form-control" id="commune"></div>
+    </div>
+  </div>
+
+  <div class="card-custom section-mouvement" id="sectionMouvement">
+    <div class="section-title"><i class="fas fa-mosque me-2"></i>Origine dans le mouvement</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Comité / Axe d'origine</label><input type="text" class="form-control" id="comite_origine"></div>
+      <div class="col-md-6"><label class="form-label">Localité / Conseil d'origine</label><input type="text" class="form-control" id="conseil_origine"></div>
+      <div class="col-md-6"><label class="form-label">Section de base</label><input type="text" class="form-control" id="section_base"></div>
+      <div class="col-md-6"><label class="form-label">Poste en section de base</label>
+        <select class="form-select" id="poste_section_base">
+          <option value="Aucun">Aucun</option><option value="PF">PF</option><option value="CA">CA</option>
+          <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
+        </select>
+      </div>
+      <div class="col-md-8"><label class="form-label">Prénom & Nom du PF / Président de section</label><input type="text" class="form-control" id="pf_nom"></div>
+      <div class="col-md-4"><label class="form-label">Téléphone PF / Président</label><input type="text" class="form-control" id="pf_telephone"></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="section-title"><i class="fas fa-user-tag me-2"></i>Statut au Conseil UASZ</div>
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label required">Catégorie</label>
+        <select class="form-select" id="categorie" onchange="gererCategorie()">
+          <option value="">-- Choisir --</option>
+          <option value="Nouveau Bachelier">Nouveau Bachelier</option>
+          <option value="Nouveau Adherent">Nouveau Adhérent</option>
+          <option value="Ancien">Ancien / Membre Confirmé</option>
+        </select>
+      </div>
+      <div class="col-md-4"><label class="form-label">Commission</label>
+        <select class="form-select" id="commission">
+          <option value="Membre simple">Membre simple</option><option value="PF">PF</option><option value="CA">CA</option>
+          <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
+        </select>
+      </div>
+      <div class="col-md-4"><label class="form-label">Statut</label>
+        <select class="form-select" id="statut"><option value="Nouveau">Nouveau</option><option value="Confirme">Confirmé</option><option value="Inactif">Inactif</option></select>
+      </div>
+      <div class="col-md-6"><label class="form-label">Date d'adhésion</label><input type="date" class="form-control" id="date_adhesion"></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="section-title"><i class="fas fa-file-image me-2"></i>Photo et documents</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Photo de profil</label>
+        <input type="file" class="form-control" id="photo_profil" accept="image/*" onchange="previewImage(this,'previewPhoto')">
+        <img id="previewPhoto" class="preview-img mt-2">
+      </div>
+      <div class="col-md-6"><label class="form-label">Carte d'identité / Carte étudiante</label>
+        <input type="file" class="form-control" id="document_identite" accept="image/*,.pdf">
+        <small class="text-muted">Formats acceptés : JPG, PNG, PDF (max 5MB)</small>
+      </div>
+      <div class="col-12"><label class="form-label">Notes de suivi</label><textarea class="form-control" id="notes" rows="3"></textarea></div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-3 justify-content-end mb-4">
+    <a href="/membres.html" class="btn btn-outline-secondary btn-lg rounded-3"><i class="fas fa-times me-2"></i>Annuler</a>
+    <button class="btn-save btn btn-lg rounded-3" onclick="sauvegarder()"><i class="fas fa-save me-2"></i>Enregistrer</button>
+  </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  const urlParams = new URLSearchParams(window.location.search);
+  const membreId = urlParams.get('id');
+  let modeEdition = !!membreId;
+
+  if (modeEdition) {
+    document.getElementById('titreFormulaire').innerHTML = '<i class="fas fa-edit me-2"></i>Modifier le membre';
+    chargerMembre();
+  }
+
+  function gererCategorie() {
+    const cat = document.getElementById('categorie').value;
+    document.getElementById('sectionMouvement').style.display = (cat === 'Nouveau Bachelier' || cat === 'Ancien') ? 'block' : 'none';
+  }
+
+  function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  async function chargerMembre() {
+    try {
+      const res = await fetch(`/api/membres/${membreId}`, { headers: { Authorization: `Bearer ${token}` } });
+      const m = await res.json();
+      const champs = ['prenom','nom','sexe','date_naissance','lieu_naissance','telephone','email','adresse','tuteur_nom','tuteur_telephone','filiere','niveau','region_origine','departement','arrondissement','commune','comite_origine','conseil_origine','section_base','poste_section_base','pf_nom','pf_telephone','categorie','commission','statut','date_adhesion','notes'];
+      champs.forEach(c => { const el = document.getElementById(c); if (el && m[c]) el.value = m[c]; });
+      gererCategorie();
+      if (m.photo_profil) { const preview = document.getElementById('previewPhoto'); preview.src = m.photo_profil; preview.style.display = 'block'; }
+    } catch(e) { afficherAlerte('Erreur lors du chargement du membre.', 'danger'); }
+  }
+
+  async function sauvegarder() {
+    const prenom = document.getElementById('prenom').value.trim();
+    const nom = document.getElementById('nom').value.trim();
+    const sexe = document.getElementById('sexe').value;
+    const telephone = document.getElementById('telephone').value.trim();
+    const categorie = document.getElementById('categorie').value;
+
+    if (!prenom || !nom || !sexe || !telephone || !categorie) {
+      afficherAlerte('Veuillez remplir tous les champs obligatoires (*).', 'danger');
+      return;
+    }
+
+    const formData = new FormData();
+    const champs = ['prenom','nom','sexe','date_naissance','lieu_naissance','telephone','email','adresse','tuteur_nom','tuteur_telephone','filiere','niveau','region_origine','departement','arrondissement','commune','comite_origine','conseil_origine','section_base','poste_section_base','pf_nom','pf_telephone','categorie','commission','statut','date_adhesion','notes'];
+    champs.forEach(c => { const el = document.getElementById(c); if (el && el.value) formData.append(c, el.value); });
+
+    const photo = document.getElementById('photo_profil').files[0];
+    const doc = document.getElementById('document_identite').files[0];
+    if (photo) formData.append('photo_profil', photo);
+    if (doc) formData.append('document_identite', doc);
+
+    try {
+      const url = modeEdition ? `/api/membres/${membreId}` : '/api/membres';
+      const method = modeEdition ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers: { Authorization: `Bearer ${token}` }, body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        afficherAlerte(data.message, 'success');
+        setTimeout(() => window.location.href = '/membres.html', 1500);
+      } else { afficherAlerte(data.message, 'danger'); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none');
+    if (type === 'success') setTimeout(() => a.classList.add('d-none'), 3000);
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>

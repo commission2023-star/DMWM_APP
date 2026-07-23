@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des comptes — DMWM UASZ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; }
+.table th { background:#1B5E8A; color:white; font-weight:600; border:none; }
+.table td { vertical-align:middle; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:10px; padding:10px 14px; }
+.form-control:focus, .form-select:focus { border-color:#1B5E8A; box-shadow:0 0 0 3px rgba(27,94,138,0.15); }
+.modal-header { background:linear-gradient(135deg,#1B5E8A,#2E75B6); color:white; }
+.modal-header .btn-close { filter:brightness(0) invert(1); }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-user-cog me-2"></i>Gestion des comptes</h5>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()"><i class="fas fa-plus me-1"></i>Nouveau compte</button>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div id="alerte" class="alert d-none mb-3"></div>
+
+  <div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h6 class="fw-bold text-primary mb-0"><i class="fas fa-users me-2"></i>Liste des comptes utilisateurs</h6>
+      <input type="text" class="form-control w-auto" id="recherche" placeholder="🔍 Rechercher..." onkeyup="filtrerComptes()" style="width:220px!important">
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover rounded overflow-hidden">
+        <thead><tr><th>#</th><th>Nom</th><th>Identifiant</th><th>Rôle</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody id="tableComptes"><tr><td colspan="6" class="text-center text-muted py-4">Chargement...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalCreer" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Nouveau compte</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4">
+        <div id="alerteModal" class="alert d-none mb-3"></div>
+        <div class="mb-3"><label class="form-label fw-bold">Nom complet</label><input type="text" class="form-control" id="newNom"></div>
+        <div class="mb-3"><label class="form-label fw-bold">Identifiant</label><input type="text" class="form-control" id="newIdentifiant"></div>
+        <div class="mb-3"><label class="form-label fw-bold">Mot de passe</label><input type="password" class="form-control" id="newMdp"></div>
+        <div class="mb-3"><label class="form-label fw-bold">Rôle</label>
+          <select class="form-select" id="newRole">
+            <option value="">-- Choisir un rôle --</option>
+            <option value="Admin CA">Admin CA</option><option value="Agent H">Agent pointage (Hommes)</option>
+            <option value="Agent F">Agent pointage (Femmes)</option><option value="PF">Points Focaux (PF)</option>
+            <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="creerCompte()"><i class="fas fa-save me-2"></i>Créer le compte</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalModifier" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-edit me-2"></i>Modifier le compte</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4">
+        <input type="hidden" id="editId">
+        <div class="mb-3"><label class="form-label fw-bold">Nom complet</label><input type="text" class="form-control" id="editNom"></div>
+        <div class="mb-3"><label class="form-label fw-bold">Rôle</label>
+          <select class="form-select" id="editRole">
+            <option value="Admin CA">Admin CA</option><option value="Agent H">Agent pointage (Hommes)</option>
+            <option value="Agent F">Agent pointage (Femmes)</option><option value="PF">Points Focaux (PF)</option>
+            <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="modifierCompte()"><i class="fas fa-save me-2"></i>Enregistrer</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  const utilisateur = window.currentUser;
+
+  if (!token || utilisateur.role !== 'Super Admin') window.location.href = '/dashboard.html';
+
+  let comptes = [];
+  const couleursRole = { 'Super Admin':'danger','Admin CA':'primary','Agent H':'success','Agent F':'success','PF':'warning','CIPS':'info','CTC':'secondary','CL':'dark' };
+
+  async function chargerComptes() {
+    try {
+      const res = await fetch('/api/utilisateurs', { headers: { Authorization: `Bearer ${token}` } });
+      comptes = await res.json();
+      afficherComptes(comptes);
+    } catch(e) { afficherAlerte('Erreur lors du chargement des comptes.', 'danger'); }
+  }
+
+  function afficherComptes(liste) {
+    const tbody = document.getElementById('tableComptes');
+    if (liste.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Aucun compte trouvé</td></tr>'; return; }
+    tbody.innerHTML = liste.map((c, i) => `
+      <tr>
+        <td>${i+1}</td><td><strong>${c.nom}</strong></td><td><code>${c.identifiant}</code></td>
+        <td><span class="badge bg-${couleursRole[c.role]||'secondary'}">${c.role}</span></td>
+        <td><span class="badge ${c.actif?'bg-success':'bg-danger'}">${c.actif?'Actif':'Désactivé'}</span></td>
+        <td>${c.role !== 'Super Admin' ? `
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="ouvrirModalModifier(${c.id}, '${c.nom}', '${c.role}')"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-outline-${c.actif?'danger':'success'}" onclick="toggleCompte(${c.id})"><i class="fas fa-${c.actif?'ban':'check'}"></i></button>
+        ` : '<span class="text-muted small">Protégé</span>'}</td>
+      </tr>`).join('');
+  }
+
+  function filtrerComptes() {
+    const q = document.getElementById('recherche').value.toLowerCase();
+    afficherComptes(comptes.filter(c => c.nom.toLowerCase().includes(q) || c.identifiant.toLowerCase().includes(q) || c.role.toLowerCase().includes(q)));
+  }
+
+  function ouvrirModalCreer() {
+    document.getElementById('newNom').value = ''; document.getElementById('newIdentifiant').value = '';
+    document.getElementById('newMdp').value = ''; document.getElementById('newRole').value = '';
+    document.getElementById('alerteModal').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('modalCreer')).show();
+  }
+
+  async function creerCompte() {
+    const nom = document.getElementById('newNom').value.trim();
+    const identifiant = document.getElementById('newIdentifiant').value.trim();
+    const mot_de_passe = document.getElementById('newMdp').value;
+    const role = document.getElementById('newRole').value;
+
+    if (!nom || !identifiant || !mot_de_passe || !role) { afficherAlerteModal('Tous les champs sont obligatoires.', 'danger'); return; }
+
+    try {
+      const res = await fetch('/api/utilisateurs', { method:'POST', headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify({ nom, identifiant, mot_de_passe, role }) });
+      const data = await res.json();
+      if (res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalCreer')).hide(); afficherAlerte('Compte créé avec succès !', 'success'); chargerComptes(); }
+      else { afficherAlerteModal(data.message, 'danger'); }
+    } catch(e) { afficherAlerteModal('Erreur serveur.', 'danger'); }
+  }
+
+  function ouvrirModalModifier(id, nom, role) {
+    document.getElementById('editId').value = id; document.getElementById('editNom').value = nom; document.getElementById('editRole').value = role;
+    new bootstrap.Modal(document.getElementById('modalModifier')).show();
+  }
+
+  async function modifierCompte() {
+    const id = document.getElementById('editId').value;
+    const nom = document.getElementById('editNom').value.trim();
+    const role = document.getElementById('editRole').value;
+    try {
+      const res = await fetch(`/api/utilisateurs/${id}`, { method:'PUT', headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify({ nom, role }) });
+      if (res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalModifier')).hide(); afficherAlerte('Compte modifié avec succès !', 'success'); chargerComptes(); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  async function toggleCompte(id) {
+    if (!confirm('Confirmer cette action ?')) return;
+    try {
+      const res = await fetch(`/api/utilisateurs/${id}/toggle`, { method:'PATCH', headers:{ Authorization:`Bearer ${token}` } });
+      if (res.ok) { afficherAlerte('Statut mis à jour !', 'success'); chargerComptes(); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none'); setTimeout(() => a.classList.add('d-none'), 4000);
+  }
+  function afficherAlerteModal(msg, type) {
+    const a = document.getElementById('alerteModal');
+    a.className = `alert alert-${type}`; a.innerHTML = msg; a.classList.remove('d-none');
+  }
+
+  chargerComptes();
+</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programmes — DMWM UASZ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; margin-bottom:20px; }
+.table th { background:#1B5E8A; color:white; font-weight:600; border:none; font-size:0.83rem; }
+.table td { vertical-align:middle; font-size:0.85rem; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:8px 12px; font-size:0.88rem; }
+.modal-header { background:linear-gradient(135deg,#1B5E8A,#2E75B6); color:white; }
+.modal-header .btn-close { filter:brightness(0) invert(1); }
+.prog-card { background:white; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); padding:18px; margin-bottom:12px; border-left:4px solid #1B5E8A; }
+.prog-card.goudy { border-left-color:#6f42c1; } .prog-card.xadara { border-left-color:#0dcaf0; }
+.prog-card.enseignement { border-left-color:#28a745; } .prog-card.autre { border-left-color:#fd7e14; }
+.prog-card.tenu { opacity:0.6; } .prog-card.annule { opacity:0.4; border-left-color:#dc3545; }
+.stat-mini { background:white; border-radius:12px; padding:15px 20px; box-shadow:0 2px 10px rgba(0,0,0,0.06); display:flex; align-items:center; gap:12px; }
+.stat-mini-icon { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:white; }
+.stat-mini-num { font-size:1.4rem; font-weight:700; color:#1B5E8A; line-height:1; }
+.stat-mini-label { font-size:0.78rem; color:#888; }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-calendar-alt me-2"></i>Programmes</h5>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()" id="btnNouveauProg"><i class="fas fa-plus me-1"></i>Nouveau programme</button>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)"><i class="fas fa-calendar"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Total</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#28a745,#20c997)"><i class="fas fa-clock"></i></div><div><div class="stat-mini-num" id="sPlanifies">—</div><div class="stat-mini-label">Planifiés</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#6f42c1,#a855f7)"><i class="fas fa-check"></i></div><div><div class="stat-mini-num" id="sTenus">—</div><div class="stat-mini-label">Tenus</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#dc3545,#ff6b6b)"><i class="fas fa-times"></i></div><div><div class="stat-mini-num" id="sAnnules">—</div><div class="stat-mini-label">Annulés</div></div></div></div>
+  </div>
+
+  <div class="card-custom">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <select class="form-select" id="filtreType" onchange="chargerProgrammes()">
+          <option value="">Tous types</option><option value="Goudy Aldiouma">Goudy Aldiouma</option>
+          <option value="Xadara">Xadaratoul Joum'ah</option><option value="Enseignement">Enseignement</option><option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" id="filtreStatut" onchange="chargerProgrammes()">
+          <option value="">Tous statuts</option><option value="Planifie">Planifié</option><option value="Tenu">Tenu</option><option value="Annule">Annulé</option>
+        </select>
+      </div>
+      <div class="col-md-3"><input type="month" class="form-control" id="filtreMois" onchange="chargerProgrammes()"></div>
+      <div class="col-md-3"><button class="btn btn-outline-secondary w-100" onclick="reinitialiserFiltres()"><i class="fas fa-redo me-1"></i>Réinitialiser</button></div>
+    </div>
+  </div>
+
+  <div id="alerte" class="alert d-none mb-3"></div>
+
+  <div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="fw-bold text-primary mb-0"><i class="fas fa-list me-2"></i>Liste des programmes <span class="badge bg-secondary ms-2" id="compteur">0</span></h6>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-primary" onclick="toggleVue('liste')" id="btnVueListe"><i class="fas fa-list"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggleVue('cartes')" id="btnVueCartes"><i class="fas fa-th-large"></i></button>
+      </div>
+    </div>
+
+    <div id="vueTableau">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead><tr><th>#</th><th>Type</th><th>Nom</th><th>Date</th><th>Horaire</th><th>Lieu</th><th>Oustaze / Moniteur</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="tableProgrammes"><tr><td colspan="9" class="text-center text-muted py-4">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="vueCartes" style="display:none;"><div id="contenuCartes"></div></div>
+  </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalProgramme" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header rounded-top-4"><h5 class="modal-title" id="titreModal"><i class="fas fa-calendar-plus me-2"></i>Nouveau programme</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4">
+        <input type="hidden" id="progId">
+        <div id="alerteModal" class="alert d-none mb-3"></div>
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label fw-bold">Type <span class="text-danger">*</span></label>
+            <select class="form-select" id="pType" onchange="gererTypeAutre()">
+              <option value="">-- Choisir --</option><option value="Goudy Aldiouma">Goudy Aldiouma</option>
+              <option value="Xadara">Xadaratoul Joum'ah (Xadara)</option><option value="Enseignement">Enseignement</option><option value="Autre">Autre programme</option>
+            </select>
+          </div>
+          <div class="col-md-6" id="champNom" style="display:none;"><label class="form-label fw-bold">Nom du programme <span class="text-danger">*</span></label><input type="text" class="form-control" id="pNom"></div>
+          <div class="col-md-4"><label class="form-label fw-bold">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="pDate"></div>
+          <div class="col-md-4"><label class="form-label fw-bold">Heure début</label><input type="time" class="form-control" id="pHeureDebut"></div>
+          <div class="col-md-4"><label class="form-label fw-bold">Heure fin</label><input type="time" class="form-control" id="pHeureFin"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">Lieu</label><input type="text" class="form-control" id="pLieu"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">Oustaze / Moniteur</label><input type="text" class="form-control" id="pOustaze"></div>
+          <div class="col-12"><label class="form-label fw-bold">Thème / Contenu traité</label><textarea class="form-control" id="pTheme" rows="3"></textarea></div>
+          <div class="col-md-6"><label class="form-label fw-bold">Statut</label>
+            <select class="form-select" id="pStatut"><option value="Planifie">Planifié</option><option value="Tenu">Tenu</option><option value="Annule">Annulé</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderProgramme()"><i class="fas fa-save me-2"></i>Enregistrer</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  const user = window.currentUser;
+  let vueActuelle = 'liste';
+
+  if (!['Super Admin', 'Admin CA'].includes(user.role)) document.getElementById('btnNouveauProg').style.display = 'none';
+
+  const couleursType = { 'Goudy Aldiouma':{bg:'bg-primary',classe:'goudy'}, 'Xadara':{bg:'bg-info',classe:'xadara'}, 'Enseignement':{bg:'bg-success',classe:'enseignement'}, 'Autre':{bg:'bg-warning',classe:'autre'} };
+  const couleursStatut = { 'Planifie':'warning', 'Tenu':'success', 'Annule':'danger' };
+  const labelsStatut = { 'Planifie':'Planifié', 'Tenu':'Tenu', 'Annule':'Annulé' };
+
+  function formatDate(d) { if (!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' }); }
+  function formatHeure(h) { if (!h) return '—'; return h.substring(0,5); }
+
+  async function chargerProgrammes() {
+    try {
+      const params = new URLSearchParams();
+      const type = document.getElementById('filtreType').value;
+      const statut = document.getElementById('filtreStatut').value;
+      const mois = document.getElementById('filtreMois').value;
+      if (type) params.append('type', type);
+      if (statut) params.append('statut', statut);
+      if (mois) params.append('mois', mois);
+
+      const res = await fetch(`/api/programmes?${params}`, { headers: { Authorization: `Bearer ${token}` } });
+      const programmes = await res.json();
+
+      document.getElementById('sTotal').textContent = programmes.length;
+      document.getElementById('sPlanifies').textContent = programmes.filter(p => p.statut === 'Planifie').length;
+      document.getElementById('sTenus').textContent = programmes.filter(p => p.statut === 'Tenu').length;
+      document.getElementById('sAnnules').textContent = programmes.filter(p => p.statut === 'Annule').length;
+      document.getElementById('compteur').textContent = programmes.length;
+
+      if (vueActuelle === 'liste') afficherTableau(programmes); else afficherCartes(programmes);
+    } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
+  }
+
+  function afficherTableau(programmes) {
+    const tbody = document.getElementById('tableProgrammes');
+    if (programmes.length === 0) { tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Aucun programme trouvé</td></tr>'; return; }
+    const peutModifier = ['Super Admin', 'Admin CA'].includes(user.role);
+    tbody.innerHTML = programmes.map((p, i) => {
+      const c = couleursType[p.type] || { bg:'bg-secondary', classe:'' };
+      return `<tr>
+        <td class="text-muted">${i+1}</td><td><span class="badge ${c.bg}">${p.type}</span></td>
+        <td>${p.nom || '<span class="text-muted">—</span>'}</td><td style="font-size:0.82rem;">${formatDate(p.date)}</td>
+        <td>${formatHeure(p.heure_debut)} – ${formatHeure(p.heure_fin)}</td><td>${p.lieu || '—'}</td><td>${p.oustaze || '—'}</td>
+        <td><span class="badge bg-${couleursStatut[p.statut]}">${labelsStatut[p.statut]}</span>${p.recurrent ? '<span class="badge bg-light text-dark ms-1" style="font-size:0.65rem;">🔄 Auto</span>' : ''}</td>
+        <td>${peutModifier ? `
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="ouvrirModalModifier(${p.id})"><i class="fas fa-edit"></i></button>
+          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})"><i class="fas fa-trash"></i></button>` : ''}
+        ` : `<button class="btn btn-sm btn-outline-info" onclick="ouvrirModalModifier(${p.id})"><i class="fas fa-eye"></i></button>`}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function afficherCartes(programmes) {
+    const container = document.getElementById('contenuCartes');
+    if (programmes.length === 0) { container.innerHTML = '<p class="text-center text-muted py-4">Aucun programme trouvé</p>'; return; }
+    const peutModifier = ['Super Admin', 'Admin CA'].includes(user.role);
+    container.innerHTML = programmes.map(p => {
+      const c = couleursType[p.type] || { bg:'bg-secondary', classe:'' };
+      return `<div class="prog-card ${c.classe} ${p.statut==='Tenu'?'tenu':''} ${p.statut==='Annule'?'annule':''}">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div><span class="badge ${c.bg} me-2">${p.type}</span>${p.recurrent ? '<span class="badge bg-light text-dark" style="font-size:0.65rem;">🔄 Auto</span>' : ''}<span class="badge bg-${couleursStatut[p.statut]} ms-1">${labelsStatut[p.statut]}</span></div>
+          <div class="text-muted" style="font-size:0.82rem;"><i class="fas fa-calendar me-1"></i>${formatDate(p.date)}</div>
+        </div>
+        ${p.nom ? `<div class="fw-bold mt-2">${p.nom}</div>` : ''}
+        <div class="row mt-2 g-2" style="font-size:0.83rem; color:#555;">
+          <div class="col-md-4"><i class="fas fa-clock me-1 text-primary"></i>${formatHeure(p.heure_debut)} – ${formatHeure(p.heure_fin)}</div>
+          ${p.lieu ? `<div class="col-md-4"><i class="fas fa-map-marker-alt me-1 text-danger"></i>${p.lieu}</div>` : ''}
+          ${p.oustaze ? `<div class="col-md-4"><i class="fas fa-user me-1 text-success"></i>${p.oustaze}</div>` : ''}
+        </div>
+        ${p.theme ? `<div class="mt-2" style="font-size:0.82rem;color:#666;font-style:italic;"><i class="fas fa-book me-1"></i>${p.theme}</div>` : ''}
+        ${peutModifier ? `<div class="mt-2 d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" onclick="ouvrirModalModifier(${p.id})"><i class="fas fa-edit me-1"></i>Modifier</button>
+          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})"><i class="fas fa-trash me-1"></i>Supprimer</button>` : ''}
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function toggleVue(vue) {
+    vueActuelle = vue;
+    document.getElementById('vueTableau').style.display = vue === 'liste' ? 'block' : 'none';
+    document.getElementById('vueCartes').style.display = vue === 'cartes' ? 'block' : 'none';
+    document.getElementById('btnVueListe').className = `btn btn-sm btn-${vue==='liste'?'':'outline-'}primary`;
+    document.getElementById('btnVueCartes').className = `btn btn-sm btn-${vue==='cartes'?'':'outline-'}secondary`;
+    chargerProgrammes();
+  }
+
+  function gererTypeAutre() { const type = document.getElementById('pType').value; document.getElementById('champNom').style.display = type === 'Autre' ? 'block' : 'none'; }
+
+  function reinitialiserFiltres() {
+    document.getElementById('filtreType').value = ''; document.getElementById('filtreStatut').value = ''; document.getElementById('filtreMois').value = '';
+    chargerProgrammes();
+  }
+
+  function viderModal() {
+    document.getElementById('progId').value = ''; document.getElementById('pType').value = ''; document.getElementById('pNom').value = '';
+    document.getElementById('pDate').value = ''; document.getElementById('pHeureDebut').value = ''; document.getElementById('pHeureFin').value = '';
+    document.getElementById('pLieu').value = ''; document.getElementById('pOustaze').value = ''; document.getElementById('pTheme').value = '';
+    document.getElementById('pStatut').value = 'Planifie'; document.getElementById('champNom').style.display = 'none';
+    document.getElementById('alerteModal').classList.add('d-none');
+  }
+
+  function ouvrirModalCreer() {
+    viderModal();
+    document.getElementById('titreModal').innerHTML = '<i class="fas fa-calendar-plus me-2"></i>Nouveau programme';
+    new bootstrap.Modal(document.getElementById('modalProgramme')).show();
+  }
+
+  async function ouvrirModalModifier(id) {
+    try {
+      const res = await fetch(`/api/programmes/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const p = await res.json();
+      viderModal();
+      document.getElementById('progId').value = p.id; document.getElementById('pType').value = p.type; document.getElementById('pNom').value = p.nom || '';
+      document.getElementById('pDate').value = p.date; document.getElementById('pHeureDebut').value = p.heure_debut || '';
+      document.getElementById('pHeureFin').value = p.heure_fin || ''; document.getElementById('pLieu').value = p.lieu || '';
+      document.getElementById('pOustaze').value = p.oustaze || ''; document.getElementById('pTheme').value = p.theme || '';
+      document.getElementById('pStatut').value = p.statut;
+      gererTypeAutre();
+      document.getElementById('titreModal').innerHTML = '<i class="fas fa-edit me-2"></i>Modifier le programme';
+      new bootstrap.Modal(document.getElementById('modalProgramme')).show();
+    } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
+  }
+
+  async function sauvegarderProgramme() {
+    const id = document.getElementById('progId').value;
+    const type = document.getElementById('pType').value;
+    const date = document.getElementById('pDate').value;
+
+    if (!type || !date) { afficherAlerteModal('Le type et la date sont obligatoires.', 'danger'); return; }
+    if (type === 'Autre' && !document.getElementById('pNom').value.trim()) { afficherAlerteModal('Le nom est obligatoire pour un programme de type Autre.', 'danger'); return; }
+
+    const data = {
+      type, nom: document.getElementById('pNom').value, date,
+      heure_debut: document.getElementById('pHeureDebut').value, heure_fin: document.getElementById('pHeureFin').value,
+      lieu: document.getElementById('pLieu').value, oustaze: document.getElementById('pOustaze').value,
+      theme: document.getElementById('pTheme').value, statut: document.getElementById('pStatut').value
+    };
+
+    try {
+      const url = id ? `/api/programmes/${id}` : '/api/programmes';
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify(data) });
+      const result = await res.json();
+      if (res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalProgramme')).hide(); afficherAlerte(result.message, 'success'); chargerProgrammes(); }
+      else { afficherAlerteModal(result.message, 'danger'); }
+    } catch(e) { afficherAlerteModal('Erreur serveur.', 'danger'); }
+  }
+
+  async function supprimerProg(id) {
+    if (!confirm('Supprimer ce programme ?')) return;
+    try {
+      const res = await fetch(`/api/programmes/${id}`, { method:'DELETE', headers:{ Authorization:`Bearer ${token}` } });
+      const data = await res.json();
+      if (res.ok) { afficherAlerte('Programme supprimé.', 'success'); chargerProgrammes(); }
+      else { afficherAlerte(data.message, 'danger'); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none'); setTimeout(() => a.classList.add('d-none'), 4000);
+  }
+  function afficherAlerteModal(msg, type) {
+    const a = document.getElementById('alerteModal'); a.className = `alert alert-${type}`; a.innerHTML = msg; a.classList.remove('d-none');
+  }
+
+  chargerProgrammes();
+</script>
+</body>
+</html>

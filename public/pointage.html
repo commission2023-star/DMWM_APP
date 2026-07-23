@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pointage — DMWM UASZ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; margin-bottom:20px; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:10px 14px; font-size:0.9rem; }
+.membre-row { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; border-radius:10px; margin-bottom:8px; background:white; border:2px solid #e0e0e0; transition:all 0.2s; }
+.membre-row.present { border-color:#28a745; background:#f0fff4; } .membre-row.absent { border-color:#dc3545; background:#fff5f5; }
+.avatar-sm { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#1B5E8A,#2E75B6); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.85rem; flex-shrink:0; }
+.btn-present { background:#28a745; border:none; color:white; border-radius:8px; padding:7px 16px; font-weight:600; font-size:0.85rem; cursor:pointer; }
+.btn-absent { background:#dc3545; border:none; color:white; border-radius:8px; padding:7px 16px; font-weight:600; font-size:0.85rem; cursor:pointer; }
+.btn-neutre { background:#e9ecef; border:none; color:#666; border-radius:8px; padding:7px 16px; font-weight:600; font-size:0.85rem; cursor:pointer; }
+.progress-pointage { height:8px; border-radius:4px; background:#e9ecef; margin-top:8px; }
+.progress-pointage-bar { height:100%; border-radius:4px; background:linear-gradient(135deg,#28a745,#20c997); transition:width 0.3s; }
+.stat-pointage { text-align:center; padding:12px; background:#f8f9fa; border-radius:10px; }
+.stat-pointage .num { font-size:1.5rem; font-weight:700; } .stat-pointage .label { font-size:0.78rem; color:#888; }
+.offline-banner { background:#fff3cd; color:#856404; padding:10px 20px; text-align:center; font-size:0.88rem; font-weight:600; display:none; position:sticky; top:0; z-index:200; border-bottom:2px solid #ffc107; }
+.offline-banner.visible { display:block; }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="offline-banner" id="offlineBanner"><i class="fas fa-wifi me-2"></i>Mode hors ligne — Les pointages sont sauvegardés localement et seront synchronisés à la reconnexion</div>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-check-square me-2"></i>Pointage</h5>
+    </div>
+    <div id="statutSync" class="badge bg-success"><i class="fas fa-wifi me-1"></i>En ligne</div>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div id="alerte" class="alert d-none mb-3"></div>
+
+  <div class="card-custom" id="etape1">
+    <h6 class="fw-bold text-primary mb-4"><i class="fas fa-calendar-check me-2"></i>Étape 1 — Sélectionner le programme</h6>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label fw-bold">Programme <span class="text-danger">*</span></label><select class="form-select" id="selectProgramme"><option value="">-- Choisir un programme --</option></select></div>
+      <div class="col-md-6"><label class="form-label fw-bold">Groupe à pointer</label>
+        <select class="form-select" id="selectSexe"><option value="">Tous (H + F)</option><option value="H">Hommes uniquement</option><option value="F">Femmes uniquement</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary mt-4" onclick="demarrerPointage()"><i class="fas fa-play me-2"></i>Démarrer le pointage</button>
+  </div>
+
+  <div id="etape2" style="display:none;">
+    <div class="card-custom" id="infoProgramme"></div>
+    <div class="card-custom">
+      <div class="row g-3 text-center mb-3">
+        <div class="col-4"><div class="stat-pointage"><div class="num text-success" id="comptPresents">0</div><div class="label">Présents</div></div></div>
+        <div class="col-4"><div class="stat-pointage"><div class="num text-danger" id="comptAbsents">0</div><div class="label">Absents</div></div></div>
+        <div class="col-4"><div class="stat-pointage"><div class="num text-muted" id="comptTotal">0</div><div class="label">Total</div></div></div>
+      </div>
+      <div class="progress-pointage"><div class="progress-pointage-bar" id="barrePresence" style="width:0%"></div></div>
+      <div class="text-center mt-1"><small class="text-muted" id="tauxPresence">0% de présence</small></div>
+    </div>
+
+    <div class="card-custom">
+      <div class="d-flex gap-3 flex-wrap align-items-center justify-content-between">
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-outline-success btn-sm" onclick="tousPresents()"><i class="fas fa-check-double me-1"></i>Tous présents</button>
+          <button class="btn btn-outline-danger btn-sm" onclick="tousAbsents()"><i class="fas fa-times me-1"></i>Tous absents</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="reinitialiserPointage()"><i class="fas fa-undo me-1"></i>Réinitialiser</button>
+        </div>
+        <input type="text" class="form-control" id="recherchePointage" placeholder="🔍 Rechercher un membre..." style="max-width:250px;" oninput="filtrerMembresPointage()">
+      </div>
+    </div>
+
+    <div class="card-custom"><div id="listeMembresPointage"></div></div>
+
+    <div class="card-custom">
+      <div class="d-flex gap-3 flex-wrap">
+        <button class="btn btn-success btn-lg flex-grow-1" onclick="enregistrerPointage()"><i class="fas fa-save me-2"></i>Enregistrer le pointage</button>
+        <button class="btn btn-outline-secondary" onclick="annulerPointage()"><i class="fas fa-times me-1"></i>Annuler</button>
+      </div>
+      <small class="text-muted d-block mt-2"><i class="fas fa-info-circle me-1"></i>Les données sont sauvegardées localement si vous êtes hors ligne</small>
+    </div>
+  </div>
+
+  <div id="etape3" style="display:none;" class="text-center">
+    <div class="card-custom py-4">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#28a745,#20c997);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;color:white;"><i class="fas fa-check"></i></div>
+      <h5 class="fw-bold text-success">Pointage enregistré !</h5>
+      <p class="text-muted mt-2" id="resumePointage"></p>
+      <div class="d-flex gap-3 justify-content-center mt-4 flex-wrap">
+        <button class="btn btn-primary" onclick="nouveauPointage()"><i class="fas fa-plus me-2"></i>Nouveau pointage</button>
+        <a href="/absences.html" class="btn btn-outline-warning"><i class="fas fa-user-times me-2"></i>Voir les absences</a>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  let membresData = [];
+  let pointagesLocaux = {};
+  let programmeSelectionne = null;
+  let estEnLigne = navigator.onLine;
+
+  function mettreAJourStatutConnexion() {
+    estEnLigne = navigator.onLine;
+    const banner = document.getElementById('offlineBanner');
+    const badge = document.getElementById('statutSync');
+    if (estEnLigne) {
+      banner.classList.remove('visible'); badge.className = 'badge bg-success'; badge.innerHTML = '<i class="fas fa-wifi me-1"></i>En ligne';
+      synchroniserDonneesLocales();
+    } else {
+      banner.classList.add('visible'); badge.className = 'badge bg-warning text-dark'; badge.innerHTML = '<i class="fas fa-wifi me-1"></i>Hors ligne';
+    }
+  }
+  window.addEventListener('online', mettreAJourStatutConnexion);
+  window.addEventListener('offline', mettreAJourStatutConnexion);
+  setInterval(mettreAJourStatutConnexion, 10000);
+  mettreAJourStatutConnexion();
+
+  function sauvegarderLocal(programme_id, pointages) {
+    localStorage.setItem(`pointage_${programme_id}`, JSON.stringify({ programme_id, pointages, date: new Date().toISOString() }));
+  }
+  function chargerLocal(programme_id) { const data = localStorage.getItem(`pointage_${programme_id}`); return data ? JSON.parse(data) : null; }
+  function supprimerLocal(programme_id) { localStorage.removeItem(`pointage_${programme_id}`); }
+  function getTousLocaux() {
+    const locaux = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const cle = localStorage.key(i);
+      if (cle.startsWith('pointage_')) { try { locaux.push(JSON.parse(localStorage.getItem(cle))); } catch(e) {} }
+    }
+    return locaux;
+  }
+
+  async function synchroniserDonneesLocales() {
+    if (!estEnLigne) return;
+    const locaux = getTousLocaux();
+    if (locaux.length === 0) return;
+    afficherAlerte(`🔄 Synchronisation de ${locaux.length} pointage(s) en cours...`, 'info');
+    let synces = 0, erreurs = 0, sessionExpiree = false;
+    for (const data of locaux) {
+      try {
+        const res = await fetch('/api/pointage/enregistrer', { method:'POST', headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify(data) });
+        if (res.status === 403 || res.status === 401) { sessionExpiree = true; break; }
+        if (res.ok) { supprimerLocal(data.programme_id); synces++; } else { erreurs++; }
+      } catch(e) { erreurs++; }
+    }
+    if (sessionExpiree) {
+      afficherAlerte('Session expirée. Votre pointage est sauvegardé localement.', 'warning', true);
+      return;
+    }
+    if (synces > 0) afficherAlerte(`✅ ${synces} pointage(s) synchronisé(s) avec succès !`, 'success');
+    if (erreurs > 0) afficherAlerte(`⚠️ ${erreurs} pointage(s) n'ont pas pu être synchronisés.`, 'warning');
+  }
+
+  async function chargerProgrammes() {
+    try {
+      const res = await fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } });
+      const programmes = await res.json();
+      const select = document.getElementById('selectProgramme');
+      select.innerHTML = '<option value="">-- Choisir un programme --</option>';
+
+      const aujourd_hui = new Date(); aujourd_hui.setHours(0,0,0,0);
+      const ilYA7Jours = new Date(aujourd_hui); ilYA7Jours.setDate(ilYA7Jours.getDate() - 7);
+      const filtres = programmes.filter(p => new Date(p.date+'T00:00:00') >= ilYA7Jours);
+
+      if (filtres.length === 0) { select.innerHTML += '<option disabled>Aucun programme disponible</option>'; return; }
+
+      filtres.forEach(p => {
+        const date = new Date(p.date+'T00:00:00').toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
+        select.innerHTML += `<option value="${p.id}" data-programme='${JSON.stringify(p)}'>${p.type} — ${date}</option>`;
+      });
+    } catch(e) { afficherAlerte('Erreur chargement programmes.', 'danger'); }
+  }
+
+  async function demarrerPointage() {
+    const selectProg = document.getElementById('selectProgramme');
+    const programme_id = selectProg.value;
+    const sexe = document.getElementById('selectSexe').value;
+    if (!programme_id) { afficherAlerte('Veuillez sélectionner un programme.', 'danger'); return; }
+
+    const option = selectProg.options[selectProg.selectedIndex];
+    try { programmeSelectionne = JSON.parse(option.getAttribute('data-programme')); } catch(e) { programmeSelectionne = { id: programme_id }; }
+
+    try {
+      const params = new URLSearchParams({ programme_id });
+      if (sexe) params.append('sexe', sexe);
+      const res = await fetch(`/api/pointage/membres?${params}`, { headers: { Authorization: `Bearer ${token}` } });
+      membresData = await res.json();
+
+      pointagesLocaux = {};
+      membresData.forEach(m => { pointagesLocaux[m.id] = m.presence || null; });
+
+      const local = chargerLocal(programme_id);
+      if (local) {
+        local.pointages.forEach(p => { pointagesLocaux[p.membre_id] = p.statut; });
+        afficherAlerte('Données locales chargées — pointage en cours récupéré.', 'info');
+      }
+
+      afficherInfoProgramme(); afficherMembresPointage(membresData); mettreAJourStats();
+      document.getElementById('etape1').style.display = 'none'; document.getElementById('etape2').style.display = 'block';
+    } catch(e) { afficherAlerte('Erreur lors du chargement des membres.', 'danger'); }
+  }
+
+  function afficherInfoProgramme() {
+    const p = programmeSelectionne;
+    const couleursType = { 'Goudy Aldiouma':'primary','Xadara':'info','Enseignement':'success','Autre':'warning' };
+    const date = p.date ? new Date(p.date+'T00:00:00').toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : '—';
+    document.getElementById('infoProgramme').innerHTML = `
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <span class="badge bg-${couleursType[p.type]||'secondary'} fs-6">${p.type}</span>
+        <div><div class="fw-bold text-capitalize">${date}</div>
+        <div class="text-muted small">${p.heure_debut ? p.heure_debut.substring(0,5)+' – '+(p.heure_fin?p.heure_fin.substring(0,5):'?') : ''}${p.lieu ? ' · '+p.lieu : ''}</div></div>
+      </div>`;
+  }
+
+  function afficherMembresPointage(membres) {
+    const container = document.getElementById('listeMembresPointage');
+    if (membres.length === 0) { container.innerHTML = '<p class="text-center text-muted py-3">Aucun membre trouvé</p>'; return; }
+    container.innerHTML = membres.map(m => {
+      const statut = pointagesLocaux[m.id];
+      const classe = statut === 'Present' ? 'present' : statut === 'Absent' ? 'absent' : '';
+      return `<div class="membre-row ${classe}" id="row_${m.id}">
+        <div class="d-flex align-items-center gap-3"><div class="avatar-sm">${m.prenom[0]}${m.nom[0]}</div>
+          <div><div class="fw-bold">${m.prenom} ${m.nom}</div><small class="text-muted">${m.filiere||''} ${m.niveau?'· '+m.niveau:''}</small></div></div>
+        <div class="d-flex gap-2">
+          <button class="${statut==='Present'?'btn-present':'btn-neutre'}" onclick="marquerPresence(${m.id}, 'Present')" title="Marquer présent" aria-label="Marquer présent"><i class="fas fa-check me-1"></i>P</button>
+          <button class="${statut==='Absent'?'btn-absent':'btn-neutre'}" onclick="marquerPresence(${m.id}, 'Absent')" title="Marquer absent" aria-label="Marquer absent"><i class="fas fa-times me-1"></i>A</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function marquerPresence(membre_id, statut) {
+    if (pointagesLocaux[membre_id] === statut) pointagesLocaux[membre_id] = null; else pointagesLocaux[membre_id] = statut;
+    const row = document.getElementById(`row_${membre_id}`);
+    row.className = `membre-row ${statut === pointagesLocaux[membre_id] ? (statut==='Present'?'present':'absent') : ''}`;
+    const btns = row.querySelectorAll('button');
+    btns[0].className = pointagesLocaux[membre_id] === 'Present' ? 'btn-present' : 'btn-neutre';
+    btns[1].className = pointagesLocaux[membre_id] === 'Absent' ? 'btn-absent' : 'btn-neutre';
+    mettreAJourStats();
+    const pointagesArray = Object.entries(pointagesLocaux).filter(([_,s])=>s!==null).map(([id,statut])=>({membre_id:parseInt(id),statut}));
+    sauvegarderLocal(programmeSelectionne.id, pointagesArray);
+  }
+
+  function tousPresents() { membresData.forEach(m => pointagesLocaux[m.id]='Present'); afficherMembresPointage(membresData); mettreAJourStats(); }
+  function tousAbsents() { membresData.forEach(m => pointagesLocaux[m.id]='Absent'); afficherMembresPointage(membresData); mettreAJourStats(); }
+  function reinitialiserPointage() { membresData.forEach(m => pointagesLocaux[m.id]=null); afficherMembresPointage(membresData); mettreAJourStats(); }
+
+  function filtrerMembresPointage() {
+    const q = document.getElementById('recherchePointage').value.toLowerCase();
+    afficherMembresPointage(membresData.filter(m => `${m.prenom} ${m.nom}`.toLowerCase().includes(q) || (m.filiere||'').toLowerCase().includes(q)));
+  }
+
+  function mettreAJourStats() {
+    const presents = Object.values(pointagesLocaux).filter(s=>s==='Present').length;
+    const absents = Object.values(pointagesLocaux).filter(s=>s==='Absent').length;
+    const total = membresData.length;
+    const taux = total > 0 ? Math.round((presents/total)*100) : 0;
+    document.getElementById('comptPresents').textContent = presents;
+    document.getElementById('comptAbsents').textContent = absents;
+    document.getElementById('comptTotal').textContent = total;
+    document.getElementById('barrePresence').style.width = `${taux}%`;
+    document.getElementById('tauxPresence').textContent = `${taux}% de présence`;
+  }
+
+  async function enregistrerPointage() {
+    const pointagesArray = membresData.map(m => ({ membre_id: m.id, statut: pointagesLocaux[m.id] || 'Absent' }));
+    const data = { programme_id: programmeSelectionne.id, pointages: pointagesArray };
+
+    sauvegarderLocal(programmeSelectionne.id, pointagesArray);
+
+    if (!estEnLigne) {
+      afficherEtape3(pointagesArray);
+      afficherAlerte('Pointage sauvegardé localement. Sera synchronisé à la reconnexion.', 'warning');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/pointage/enregistrer', { method:'POST', headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify(data) });
+
+      if (res.status === 403 || res.status === 401) {
+        afficherAlerte('Session expirée. Votre pointage est sauvegardé localement.', 'warning', true);
+        afficherEtape3(pointagesArray);
+        return;
+      }
+
+      const result = await res.json();
+      if (res.ok) { supprimerLocal(programmeSelectionne.id); afficherEtape3(pointagesArray); }
+      else { afficherAlerte(result.message, 'danger'); }
+    } catch(e) {
+      afficherEtape3(pointagesArray);
+      afficherAlerte('Connexion perdue. Pointage sauvegardé localement.', 'warning');
+    }
+  }
+
+  function afficherEtape3(pointages) {
+    const presents = pointages.filter(p=>p.statut==='Present').length;
+    const total = pointages.length;
+    const taux = total > 0 ? Math.round((presents/total)*100) : 0;
+    document.getElementById('resumePointage').innerHTML = `<strong>${presents}</strong> présents sur <strong>${total}</strong> membres (<strong>${taux}%</strong> de présence)`;
+    document.getElementById('etape2').style.display = 'none'; document.getElementById('etape3').style.display = 'block';
+  }
+
+  function annulerPointage() { if (confirm('Annuler le pointage ? Les données non enregistrées seront perdues.')) nouveauPointage(); }
+
+  function nouveauPointage() {
+    membresData = []; pointagesLocaux = {}; programmeSelectionne = null;
+    document.getElementById('etape1').style.display = 'block'; document.getElementById('etape2').style.display = 'none'; document.getElementById('etape3').style.display = 'none';
+    document.getElementById('selectProgramme').value = ''; document.getElementById('selectSexe').value = '';
+    chargerProgrammes();
+  }
+
+  function afficherAlerte(msg, type, avecReconnexion = false) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='warning'?'exclamation-triangle':type==='info'?'info-circle':'exclamation-circle'} me-2"></i>${msg}`;
+    if (avecReconnexion) {
+      a.innerHTML += ` <a href="/index.html" class="btn btn-sm btn-warning ms-2">Se reconnecter</a>`;
+    }
+    a.classList.remove('d-none');
+    if (['success','info'].includes(type)) setTimeout(() => a.classList.add('d-none'), 6000);
+  }
+
+  chargerProgrammes();
+  synchroniserDonneesLocales();
+</script>
+</body>
+</html>

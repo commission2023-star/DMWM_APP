@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Envoyer à la CA — DMWM UASZ</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/fontawesome.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; margin-bottom:20px; }
+.form-label { font-weight:600; color:#444; font-size:0.88rem; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:10px; padding:10px 14px; font-size:0.9rem; }
+.btn-envoyer { background:linear-gradient(135deg,#1B5E8A,#2E75B6); border:none; border-radius:10px; color:white; padding:12px 35px; font-weight:600; font-size:1rem; }
+.btn-envoyer:hover { opacity:0.9; color:white; }
+.message-hist { background:#f8f9fa; border-radius:10px; padding:15px; margin-bottom:10px; border-left:3px solid #1B5E8A; }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-paper-plane me-2"></i>Envoyer à la CA</h5>
+    </div>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div id="alerte" class="alert d-none mb-3"></div>
+
+  <div class="row g-4">
+    <div class="col-md-7">
+      <div class="card-custom">
+        <h6 class="fw-bold text-primary mb-4"><i class="fas fa-paper-plane me-2"></i>Nouveau message pour la CA</h6>
+        <div class="mb-3"><label class="form-label">Objet <span class="text-danger">*</span></label><input type="text" class="form-control" id="objet"></div>
+        <div class="mb-3"><label class="form-label">Message</label><textarea class="form-control" id="contenu" rows="6"></textarea></div>
+        <div class="mb-4"><label class="form-label">Fichier joint (optionnel)</label><input type="file" class="form-control" id="fichierJoint" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx"><small class="text-muted">PDF, Word, Excel, Image — max 10MB</small></div>
+        <button class="btn btn-envoyer" onclick="envoyerMessage()"><i class="fas fa-paper-plane me-2"></i>Envoyer à la CA</button>
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="card-custom">
+        <h6 class="fw-bold text-primary mb-4"><i class="fas fa-history me-2"></i>Mes messages envoyés</h6>
+        <div id="mesMessages"><div class="text-center text-muted py-3">Chargement...</div></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script src="/js-libs/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+
+  function formatDateTime(d) { if (!d) return '—'; return new Date(d).toLocaleString('fr-FR'); }
+
+  async function chargerMesMessages() {
+    try {
+      const res = await fetch('/api/messages/mes-messages', { headers: { Authorization: `Bearer ${token}` } });
+      const messages = await res.json();
+      const container = document.getElementById('mesMessages');
+      if (messages.length === 0) { container.innerHTML = '<p class="text-muted text-center">Aucun message envoyé</p>'; return; }
+      container.innerHTML = messages.map(m => `
+        <div class="message-hist">
+          <div class="d-flex justify-content-between align-items-start">
+            <strong style="font-size:0.88rem;">${m.objet}</strong>
+            <span class="badge bg-${m.statut==='En attente'?'warning':'success'} ms-2" style="font-size:0.7rem;">${m.statut}</span>
+          </div>
+          <div class="text-muted mt-1" style="font-size:0.78rem;"><i class="fas fa-clock me-1"></i>${formatDateTime(m.created_at)}${m.fichier_joint ? ' · <i class="fas fa-paperclip me-1"></i>Fichier joint' : ''}</div>
+        </div>`).join('');
+    } catch(e) {}
+  }
+
+  async function envoyerMessage() {
+    const objet = document.getElementById('objet').value.trim();
+    const contenu = document.getElementById('contenu').value.trim();
+    const fichier = document.getElementById('fichierJoint').files[0];
+    if (!objet) { afficherAlerte("L'objet est obligatoire.", 'danger'); return; }
+
+    const formData = new FormData();
+    formData.append('objet', objet);
+    if (contenu) formData.append('contenu', contenu);
+    if (fichier) formData.append('fichier_joint', fichier);
+
+    try {
+      const res = await fetch('/api/messages', { method:'POST', headers:{ Authorization:`Bearer ${token}` }, body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        afficherAlerte('Message envoyé à la CA avec succès !', 'success');
+        document.getElementById('objet').value=''; document.getElementById('contenu').value=''; document.getElementById('fichierJoint').value='';
+        chargerMesMessages();
+      } else { afficherAlerte(data.message, 'danger'); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`; a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none'); if (type==='success') setTimeout(() => a.classList.add('d-none'), 4000);
+  }
+
+  chargerMesMessages();
+</script>
+</body>
+</html>

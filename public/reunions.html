@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réunions — DMWM UASZ</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/fontawesome.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; margin-bottom:20px; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:8px 12px; font-size:0.88rem; }
+.reunion-card { background:white; border-radius:12px; padding:20px; border-left:4px solid #1B5E8A; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.05); cursor:pointer; }
+.cr-item { background:#f8f9fa; border-radius:8px; padding:12px; margin-bottom:8px; border-left:3px solid #28a745; }
+.modal-header { background:linear-gradient(135deg,#1B5E8A,#2E75B6); color:white; }
+.modal-header .btn-close { filter:brightness(0) invert(1); }
+.form-label { font-weight:600; font-size:0.88rem; color:#444; }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-handshake me-2"></i>Réunions du Conseil</h5>
+    </div>
+    <button class="btn btn-primary btn-sm" id="btnNouvelleReunion" onclick="ouvrirModalReunion()"><i class="fas fa-plus me-1"></i>Nouvelle réunion</button>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div id="alerte" class="alert d-none mb-3"></div>
+  <div id="listeReunions"><div class="text-center text-muted py-4">Chargement...</div></div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalReunion" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-calendar-plus me-2"></i>Nouvelle réunion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4">
+        <input type="hidden" id="reunionId">
+        <div id="alerteModal" class="alert d-none mb-3"></div>
+        <div class="row g-3">
+          <div class="col-12"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="rDate"></div>
+          <div class="col-6"><label class="form-label">Heure début</label><input type="time" class="form-control" id="rHeureDebut"></div>
+          <div class="col-6"><label class="form-label">Heure fin</label><input type="time" class="form-control" id="rHeureFin"></div>
+          <div class="col-12"><label class="form-label">Lieu</label><input type="text" class="form-control" id="rLieu"></div>
+          <div class="col-12"><label class="form-label">Ordre du jour</label><textarea class="form-control" id="rOrdreDuJour" rows="4"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderReunion()"><i class="fas fa-save me-2"></i>Enregistrer</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalDetail" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-handshake me-2"></i>Détail de la réunion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4" id="contenuDetail"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalCR" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-file-signature me-2"></i>Ajouter un compte rendu</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-4">
+        <input type="hidden" id="crReunionId">
+        <div id="alerteCR" class="alert d-none mb-3"></div>
+        <div class="mb-3"><label class="form-label">Compte rendu (texte)</label><textarea class="form-control" id="crContenu" rows="6"></textarea></div>
+        <div class="mb-3"><label class="form-label">Ou uploadez un fichier (PDF ou Word)</label><input type="file" class="form-control" id="crFichier" accept=".pdf,.doc,.docx"></div>
+        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Vous pouvez saisir du texte, uploader un fichier, ou les deux.</small>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-success rounded-3" onclick="soumettreCompteRendu()"><i class="fas fa-save me-2"></i>Soumettre</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="/js-libs/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  const user = window.currentUser;
+  const isCA = ['Super Admin', 'Admin CA'].includes(user.role);
+  if (!isCA) document.getElementById('btnNouvelleReunion').style.display = 'none';
+
+  function formatDate(d) { if (!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' }); }
+  function formatDateTime(d) { if (!d) return '—'; return new Date(d).toLocaleString('fr-FR'); }
+  function formatHeure(h) { return h ? h.substring(0,5) : '—'; }
+
+  async function chargerReunions() {
+    try {
+      const res = await fetch('/api/reunions', { headers: { Authorization: `Bearer ${token}` } });
+      const reunions = await res.json();
+      const container = document.getElementById('listeReunions');
+
+      if (reunions.length === 0) {
+        container.innerHTML = `<div class="text-center py-5"><i class="fas fa-calendar-times fa-3x text-muted mb-3"></i><p class="text-muted">Aucune réunion enregistrée</p>${isCA ? '<button class="btn btn-primary mt-2" onclick="ouvrirModalReunion()"><i class="fas fa-plus me-2"></i>Créer la première réunion</button>' : ''}</div>`;
+        return;
+      }
+
+      container.innerHTML = reunions.map(r => `
+        <div class="reunion-card" onclick="voirReunion(${r.id})">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div><h6 class="fw-bold mb-1 text-capitalize">${formatDate(r.date)}</h6>
+              <div class="text-muted small"><i class="fas fa-clock me-1"></i>${formatHeure(r.heure_debut)} – ${formatHeure(r.heure_fin)}${r.lieu ? ` · <i class="fas fa-map-marker-alt me-1"></i>${r.lieu}` : ''}</div>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <span class="badge bg-${r.CompteRendus?.length>0?'success':'warning'}"><i class="fas fa-file-alt me-1"></i>${r.CompteRendus?.length||0} CR</span>
+              ${isCA ? `<button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); ouvrirModalEditer(${r.id})"><i class="fas fa-edit"></i></button>` : ''}
+            </div>
+          </div>
+          ${r.ordre_du_jour ? `<div class="mt-2" style="font-size:0.83rem;color:#555;"><i class="fas fa-list-ul me-1"></i>${r.ordre_du_jour.substring(0,120)}${r.ordre_du_jour.length>120?'...':''}</div>` : ''}
+        </div>`).join('');
+    } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
+  }
+
+  async function voirReunion(id) {
+    try {
+      const res = await fetch(`/api/reunions/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await res.json();
+
+      let crHtml = '';
+      if (r.CompteRendus && r.CompteRendus.length > 0) {
+        crHtml = r.CompteRendus.map(cr => `
+          <div class="cr-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div><span class="badge bg-primary me-2">${cr.commission}</span><strong>${cr.Auteur?.nom||'Inconnu'}</strong><small class="text-muted ms-2">${formatDateTime(cr.created_at)}</small></div>
+              ${isCA ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerCR(${r.id}, ${cr.id})"><i class="fas fa-trash"></i></button>` : ''}
+            </div>
+            ${cr.contenu ? `<div class="mt-2" style="white-space:pre-wrap;font-size:0.85rem;">${cr.contenu}</div>` : ''}
+            ${cr.fichier ? `<div class="mt-2"><a href="${cr.fichier}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-1"></i>Télécharger le fichier</a></div>` : ''}
+          </div>`).join('');
+      } else { crHtml = '<p class="text-muted">Aucun compte rendu soumis pour cette réunion.</p>'; }
+
+      document.getElementById('contenuDetail').innerHTML = `
+        <div class="row g-4">
+          <div class="col-md-5">
+            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informations</h6>
+            <div class="mb-2"><strong>Date :</strong> <span class="text-capitalize">${formatDate(r.date)}</span></div>
+            <div class="mb-2"><strong>Horaire :</strong> ${formatHeure(r.heure_debut)} – ${formatHeure(r.heure_fin)}</div>
+            <div class="mb-2"><strong>Lieu :</strong> ${r.lieu||'—'}</div>
+            <div class="mb-2"><strong>Créée par :</strong> ${r.Createur?.nom||'—'}</div>
+            ${r.ordre_du_jour ? `<div class="mt-3"><strong>Ordre du jour :</strong><div class="p-3 bg-light rounded-3 mt-2" style="white-space:pre-wrap;font-size:0.85rem;">${r.ordre_du_jour}</div></div>` : ''}
+          </div>
+          <div class="col-md-7">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold text-success mb-0"><i class="fas fa-file-alt me-2"></i>Comptes rendus <span class="badge bg-secondary ms-1">${r.CompteRendus?.length||0}</span></h6>
+              <button class="btn btn-success btn-sm" onclick="ouvrirModalCR(${r.id})"><i class="fas fa-plus me-1"></i>Ajouter un CR</button>
+            </div>
+            ${crHtml}
+          </div>
+        </div>`;
+
+      new bootstrap.Modal(document.getElementById('modalDetail')).show();
+    } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
+  }
+
+  function ouvrirModalReunion() {
+    document.getElementById('reunionId').value=''; document.getElementById('rDate').value='';
+    document.getElementById('rHeureDebut').value=''; document.getElementById('rHeureFin').value='';
+    document.getElementById('rLieu').value=''; document.getElementById('rOrdreDuJour').value='';
+    document.getElementById('alerteModal').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('modalReunion')).show();
+  }
+
+  async function ouvrirModalEditer(id) {
+    try {
+      const res = await fetch(`/api/reunions/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const r = await res.json();
+      document.getElementById('reunionId').value = r.id; document.getElementById('rDate').value = r.date;
+      document.getElementById('rHeureDebut').value = r.heure_debut||''; document.getElementById('rHeureFin').value = r.heure_fin||'';
+      document.getElementById('rLieu').value = r.lieu||''; document.getElementById('rOrdreDuJour').value = r.ordre_du_jour||'';
+      new bootstrap.Modal(document.getElementById('modalReunion')).show();
+    } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
+  }
+
+  async function sauvegarderReunion() {
+    const id = document.getElementById('reunionId').value;
+    const date = document.getElementById('rDate').value;
+    if (!date) {
+      document.getElementById('alerteModal').className = 'alert alert-danger';
+      document.getElementById('alerteModal').textContent = 'La date est obligatoire.';
+      document.getElementById('alerteModal').classList.remove('d-none');
+      return;
+    }
+    const data = { date, heure_debut: document.getElementById('rHeureDebut').value, heure_fin: document.getElementById('rHeureFin').value, lieu: document.getElementById('rLieu').value, ordre_du_jour: document.getElementById('rOrdreDuJour').value };
+    try {
+      const url = id ? `/api/reunions/${id}` : '/api/reunions';
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify(data) });
+      const result = await res.json();
+      if (res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalReunion')).hide(); afficherAlerte(result.message, 'success'); chargerReunions(); }
+      else {
+        document.getElementById('alerteModal').className = 'alert alert-danger';
+        document.getElementById('alerteModal').textContent = result.message;
+        document.getElementById('alerteModal').classList.remove('d-none');
+      }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function ouvrirModalCR(reunionId) {
+    document.getElementById('crReunionId').value = reunionId;
+    document.getElementById('crContenu').value = ''; document.getElementById('crFichier').value = '';
+    document.getElementById('alerteCR').classList.add('d-none');
+    const modalDetail = bootstrap.Modal.getInstance(document.getElementById('modalDetail'));
+    if (modalDetail) modalDetail.hide();
+    setTimeout(() => { new bootstrap.Modal(document.getElementById('modalCR')).show(); }, 300);
+  }
+
+  async function soumettreCompteRendu() {
+    const reunionId = document.getElementById('crReunionId').value;
+    const contenu = document.getElementById('crContenu').value.trim();
+    const fichier = document.getElementById('crFichier').files[0];
+    if (!contenu && !fichier) {
+      document.getElementById('alerteCR').className = 'alert alert-danger';
+      document.getElementById('alerteCR').textContent = 'Veuillez saisir un texte ou uploader un fichier.';
+      document.getElementById('alerteCR').classList.remove('d-none');
+      return;
+    }
+    const formData = new FormData();
+    if (contenu) formData.append('contenu', contenu);
+    if (fichier) formData.append('fichier', fichier);
+    try {
+      const res = await fetch(`/api/reunions/${reunionId}/comptes-rendus`, { method:'POST', headers:{ Authorization:`Bearer ${token}` }, body: formData });
+      const data = await res.json();
+      if (res.ok) { bootstrap.Modal.getInstance(document.getElementById('modalCR')).hide(); afficherAlerte('Compte rendu soumis avec succès !', 'success'); chargerReunions(); }
+      else {
+        document.getElementById('alerteCR').className = 'alert alert-danger';
+        document.getElementById('alerteCR').textContent = data.message;
+        document.getElementById('alerteCR').classList.remove('d-none');
+      }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  async function supprimerCR(reunionId, crId) {
+    if (!confirm('Supprimer ce compte rendu ?')) return;
+    try {
+      const res = await fetch(`/api/reunions/${reunionId}/comptes-rendus/${crId}`, { method:'DELETE', headers:{ Authorization:`Bearer ${token}` } });
+      if (res.ok) { afficherAlerte('Compte rendu supprimé.', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalDetail')).hide(); chargerReunions(); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`; a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none'); if (type==='success') setTimeout(() => a.classList.add('d-none'), 4000);
+  }
+
+  chargerReunions();
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription — DMWM Conseil UASZ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:linear-gradient(135deg,#1B5E8A 0%,#0d3d5e 100%); min-height:100vh; font-family:'Segoe UI',sans-serif; }
+.header { text-align:center; padding:40px 20px 20px; color:white; }
+.header h1 { font-size:1.8rem; font-weight:700; }
+.header p { color:rgba(255,255,255,0.7); font-size:0.9rem; margin-top:8px; }
+.container-form { max-width:800px; margin:0 auto; padding:0 20px 40px; }
+.card-type { background:white; border-radius:15px; padding:20px 25px; margin-bottom:15px; cursor:pointer; border:3px solid transparent; transition:all 0.3s; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+.card-type:hover { border-color:#2E75B6; transform:translateY(-2px); }
+.card-type h6 { color:#1B5E8A; font-weight:700; margin:0; }
+.card-type p { color:#666; font-size:0.85rem; margin:5px 0 0; }
+.card-type .icon { width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:white; flex-shrink:0; }
+.form-card { background:white; border-radius:15px; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.15); display:none; }
+.form-card.active { display:block; }
+.section-title { color:#1B5E8A; font-weight:700; font-size:0.9rem; border-bottom:2px solid #EBF3FB; padding-bottom:8px; margin:20px 0 15px; }
+.form-label { font-weight:600; color:#444; font-size:0.85rem; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:10px 14px; font-size:0.9rem; }
+.form-control:focus, .form-select:focus { border-color:#1B5E8A; box-shadow:0 0 0 3px rgba(27,94,138,0.15); }
+.required::after { content:" *"; color:#dc3545; }
+.btn-submit { background:linear-gradient(135deg,#1B5E8A,#2E75B6); border:none; border-radius:10px; color:white; padding:13px; font-weight:700; width:100%; font-size:1rem; margin-top:15px; cursor:pointer; }
+.success-screen { text-align:center; padding:40px 20px; display:none; }
+.success-icon { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#28a745,#20c997); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; margin:0 auto 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:2.5rem; margin-bottom:10px;">🕌</div>
+  <h1>DMWM — Conseil UASZ</h1>
+  <p>Moustarchidine Junior — Université Assane Seck de Ziguinchor</p>
+  <p style="margin-top:10px; color:rgba(255,255,255,0.9); font-size:0.95rem;">Formulaire d'inscription et d'actualisation des membres</p>
+</div>
+
+<div class="container-form">
+
+  <div class="form-card success-screen" id="successScreen">
+    <div class="success-icon"><i class="fas fa-check"></i></div>
+    <h4 class="fw-bold text-success">Inscription soumise avec succès !</h4>
+    <p class="text-muted mt-3">Votre dossier a été transmis à la Commission Administrative du Conseil UASZ. Vous serez contacté(e) pour confirmation.</p>
+    <p class="text-muted mt-2"><strong>Numéro de dossier : <span id="numeroDossier" class="text-primary"></span></strong></p>
+    <button class="btn btn-outline-primary mt-4" onclick="recommencer()"><i class="fas fa-redo me-2"></i>Soumettre un autre formulaire</button>
+  </div>
+
+  <div id="choixType">
+    <div class="form-card active mb-4" style="padding:25px;">
+      <h5 class="fw-bold text-primary mb-4 text-center"><i class="fas fa-hand-pointer me-2"></i>Choisissez votre profil</h5>
+
+      <div class="card-type d-flex align-items-center gap-3" onclick="choisirType('Nouveau Bachelier')">
+        <div class="icon" style="background:linear-gradient(135deg,#17a2b8,#64B5F6)"><i class="fas fa-graduation-cap"></i></div>
+        <div><h6>Nouveau(elle) Bachelier(e)</h6><p>Étudiant(e) nouvellement orienté(e) à l'UASZ, déjà membre du mouvement dans votre section de base</p></div>
+      </div>
+
+      <div class="card-type d-flex align-items-center gap-3" onclick="choisirType('Nouveau Adherent')">
+        <div class="icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)"><i class="fas fa-user-plus"></i></div>
+        <div><h6>Nouveau(elle) Adhérent(e)</h6><p>Étudiant(e) qui a découvert le mouvement ici à l'UASZ et souhaite y adhérer pour la première fois</p></div>
+      </div>
+
+      <div class="card-type d-flex align-items-center gap-3" onclick="choisirType('Ancien')">
+        <div class="icon" style="background:linear-gradient(135deg,#343a40,#6c757d)"><i class="fas fa-user-check"></i></div>
+        <div><h6>Ancien(ne) Membre / Membre Confirmé(e)</h6><p>Étudiant(e) déjà membre du Conseil UASZ (L2, L3, Master...) souhaitant mettre à jour ses informations</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card" id="formulairePrincipal">
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <button class="btn btn-sm btn-outline-secondary" onclick="retourChoix()"><i class="fas fa-arrow-left"></i></button>
+      <h5 class="fw-bold text-primary mb-0" id="titreFormulaire"></h5>
+    </div>
+
+    <div id="alerteForm" class="alert d-none mb-3"></div>
+
+    <div class="section-title"><i class="fas fa-id-card me-2"></i>Informations personnelles</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label required">Prénom</label><input type="text" class="form-control" id="f_prenom"></div>
+      <div class="col-md-6"><label class="form-label required">Nom</label><input type="text" class="form-control" id="f_nom"></div>
+      <div class="col-md-4"><label class="form-label required">Genre</label>
+        <select class="form-select" id="f_sexe"><option value="">-- Choisir --</option><option value="H">Homme</option><option value="F">Femme</option></select>
+      </div>
+      <div class="col-md-4"><label class="form-label">Date de naissance</label><input type="date" class="form-control" id="f_date_naissance"></div>
+      <div class="col-md-4"><label class="form-label">Lieu de naissance</label><input type="text" class="form-control" id="f_lieu_naissance"></div>
+      <div class="col-md-6"><label class="form-label required">Numéro de téléphone</label><input type="text" class="form-control" id="f_telephone"></div>
+      <div class="col-md-6"><label class="form-label">Adresse mail</label><input type="email" class="form-control" id="f_email"></div>
+      <div class="col-12"><label class="form-label">Adresse / Résidence</label><input type="text" class="form-control" id="f_adresse"></div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-user-shield me-2"></i>Tuteur / Contact d'urgence</div>
+    <div class="row g-3">
+      <div class="col-md-8"><label class="form-label required">Prénom & Nom du tuteur</label><input type="text" class="form-control" id="f_tuteur_nom"></div>
+      <div class="col-md-4"><label class="form-label required">Téléphone tuteur</label><input type="text" class="form-control" id="f_tuteur_telephone"></div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-graduation-cap me-2"></i>Informations universitaires</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Filière</label><input type="text" class="form-control" id="f_filiere"></div>
+      <div class="col-md-6"><label class="form-label">Niveau</label><input type="text" class="form-control" id="f_niveau"></div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Origine géographique</div>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Région d'origine</label><input type="text" class="form-control" id="f_region_origine"></div>
+      <div class="col-md-6"><label class="form-label">Département</label><input type="text" class="form-control" id="f_departement"></div>
+      <div class="col-md-6"><label class="form-label">Arrondissement</label><input type="text" class="form-control" id="f_arrondissement"></div>
+      <div class="col-md-6"><label class="form-label">Commune</label><input type="text" class="form-control" id="f_commune"></div>
+    </div>
+
+    <div id="sectionMouvement">
+      <div class="section-title"><i class="fas fa-mosque me-2"></i>Origine dans le mouvement</div>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Comité / Axe d'origine</label><input type="text" class="form-control" id="f_comite_origine"></div>
+        <div class="col-md-6"><label class="form-label">Localité / Conseil d'origine</label><input type="text" class="form-control" id="f_conseil_origine"></div>
+        <div class="col-md-6"><label class="form-label">Section de base</label><input type="text" class="form-control" id="f_section_base"></div>
+        <div class="col-md-6"><label class="form-label">Poste occupé en section</label>
+          <select class="form-select" id="f_poste_section_base">
+            <option value="Aucun">Aucun</option><option value="PF">PF</option><option value="CA">CA</option>
+            <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
+          </select>
+        </div>
+        <div class="col-md-8"><label class="form-label">Prénom & Nom du PF / Président de section</label><input type="text" class="form-control" id="f_pf_nom"></div>
+        <div class="col-md-4"><label class="form-label">Téléphone PF / Président</label><input type="text" class="form-control" id="f_pf_telephone"></div>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="soumettre()"><i class="fas fa-paper-plane me-2"></i>Soumettre mon inscription</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let typeChoisi = '';
+  const titres = { 'Nouveau Bachelier':'🎓 Formulaire — Nouveau(elle) Bachelier(e)', 'Nouveau Adherent':'✋ Formulaire — Nouveau(elle) Adhérent(e)', 'Ancien':'✅ Formulaire — Ancien(ne) Membre / Membre Confirmé(e)' };
+
+  function choisirType(type) {
+    typeChoisi = type;
+    document.getElementById('titreFormulaire').textContent = titres[type];
+    document.getElementById('sectionMouvement').style.display = (type === 'Nouveau Adherent') ? 'none' : 'block';
+    document.getElementById('choixType').style.display = 'none';
+    document.getElementById('formulairePrincipal').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function retourChoix() {
+    document.getElementById('choixType').style.display = 'block';
+    document.getElementById('formulairePrincipal').classList.remove('active');
+    reinitialiserFormulaire();
+    window.scrollTo(0, 0);
+  }
+
+  function reinitialiserFormulaire() {
+    const champs = ['prenom','nom','sexe','date_naissance','lieu_naissance','telephone','email','adresse','tuteur_nom','tuteur_telephone','filiere','niveau','region_origine','departement','arrondissement','commune','comite_origine','conseil_origine','section_base','pf_nom','pf_telephone'];
+    champs.forEach(c => { const el = document.getElementById(`f_${c}`); if (el) el.value = ''; });
+    const poste = document.getElementById('f_poste_section_base'); if (poste) poste.value = 'Aucun';
+    document.getElementById('alerteForm').classList.add('d-none');
+  }
+
+  async function soumettre() {
+    const prenom = document.getElementById('f_prenom').value.trim();
+    const nom = document.getElementById('f_nom').value.trim();
+    const sexe = document.getElementById('f_sexe').value;
+    const telephone = document.getElementById('f_telephone').value.trim();
+    const tuteur_nom = document.getElementById('f_tuteur_nom').value.trim();
+    const tuteur_telephone = document.getElementById('f_tuteur_telephone').value.trim();
+
+    if (!prenom || !nom || !sexe || !telephone || !tuteur_nom || !tuteur_telephone) {
+      afficherAlerteForm('Veuillez remplir tous les champs obligatoires (*).', 'danger'); return;
+    }
+
+    const donnees = {
+      type_formulaire: typeChoisi, prenom, nom, sexe, telephone, tuteur_nom, tuteur_telephone,
+      date_naissance: document.getElementById('f_date_naissance').value,
+      lieu_naissance: document.getElementById('f_lieu_naissance').value,
+      email: document.getElementById('f_email').value,
+      adresse: document.getElementById('f_adresse').value,
+      filiere: document.getElementById('f_filiere').value,
+      niveau: document.getElementById('f_niveau').value,
+      region_origine: document.getElementById('f_region_origine').value,
+      departement: document.getElementById('f_departement').value,
+      arrondissement: document.getElementById('f_arrondissement').value,
+      commune: document.getElementById('f_commune').value,
+    };
+
+    if (typeChoisi !== 'Nouveau Adherent') {
+      donnees.comite_origine = document.getElementById('f_comite_origine').value;
+      donnees.conseil_origine = document.getElementById('f_conseil_origine').value;
+      donnees.section_base = document.getElementById('f_section_base').value;
+      donnees.poste_section_base = document.getElementById('f_poste_section_base').value;
+      donnees.pf_nom = document.getElementById('f_pf_nom').value;
+      donnees.pf_telephone = document.getElementById('f_pf_telephone').value;
+    }
+
+    try {
+      const res = await fetch('/api/inscriptions/soumettre', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(donnees) });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('formulairePrincipal').classList.remove('active');
+        document.getElementById('choixType').style.display = 'none';
+        const success = document.getElementById('successScreen');
+        success.style.display = 'block'; success.classList.add('active');
+        document.getElementById('numeroDossier').textContent = `#${data.id}`;
+        window.scrollTo(0, 0);
+      } else { afficherAlerteForm(data.message, 'danger'); }
+    } catch(e) { afficherAlerteForm('Erreur de connexion au serveur. Veuillez réessayer.', 'danger'); }
+  }
+
+  function recommencer() {
+    typeChoisi = ''; reinitialiserFormulaire();
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('successScreen').classList.remove('active');
+    document.getElementById('choixType').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function afficherAlerteForm(msg, type) {
+    const a = document.getElementById('alerteForm');
+    a.className = `alert alert-${type}`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none'); window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>

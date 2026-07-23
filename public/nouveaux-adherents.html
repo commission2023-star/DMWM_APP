@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nouveaux adhérents — DMWM UASZ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
+.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; }
+.table th { background:#1B5E8A; color:white; font-weight:600; border:none; font-size:0.85rem; }
+.table td { vertical-align:middle; font-size:0.88rem; }
+.avatar-sm { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#28a745,#20c997); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.85rem; flex-shrink:0; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:8px 12px; font-size:0.88rem; }
+.form-control:focus, .form-select:focus { border-color:#1B5E8A; box-shadow:0 0 0 3px rgba(27,94,138,0.15); }
+.jours-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; }
+</style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/labels.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-user-plus me-2"></i>Nouveaux adhérents</h5>
+    </div>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div class="card-custom mb-4">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4"><input type="text" class="form-control" id="recherche" placeholder="🔍 Rechercher par nom..."></div>
+      <div class="col-md-3">
+        <select class="form-select" id="filtreCategorie">
+          <option value="">Toutes catégories</option>
+          <option value="Nouveau Bachelier">Nouveau Bachelier</option>
+          <option value="Nouveau Adherent">Nouveau Adhérent</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" id="filtreSexe"><option value="">H + F</option><option value="H">Hommes</option><option value="F">Femmes</option></select>
+      </div>
+      <div class="col-md-2"><button class="btn btn-outline-secondary w-100" onclick="chargerNouveaux()"><i class="fas fa-search me-1"></i>Filtrer</button></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="fw-bold text-primary mb-0"><i class="fas fa-user-plus me-2"></i>Membres avec statut "Nouveau" <span class="badge bg-warning ms-2" id="compteur">0</span></h6>
+    </div>
+    <div id="alerte" class="alert d-none mb-3"></div>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead><tr><th>#</th><th>Membre</th><th>Catégorie</th><th>Téléphone</th><th>Filière</th><th>Date adhésion</th><th>Jours depuis adhésion</th><th>Actions</th></tr></thead>
+        <tbody id="tableNouveaux"><tr><td colspan="8" class="text-center text-muted py-4">Chargement...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  const couleursCategorie = { 'Nouveau Bachelier': 'info', 'Nouveau Adherent': 'primary', 'Ancien': 'dark' };
+
+  function joursDepuis(date) { if (!date) return null; const diff = Date.now() - new Date(date).getTime(); return Math.floor(diff / (1000*60*60*24)); }
+  function couleurJours(jours) { if (jours === null) return 'secondary'; if (jours <= 30) return 'success'; if (jours <= 60) return 'warning'; return 'danger'; }
+
+  async function chargerNouveaux() {
+    try {
+      const params = new URLSearchParams({ statut: 'Nouveau' });
+      const q = document.getElementById('recherche').value.trim();
+      const categorie = document.getElementById('filtreCategorie').value;
+      const sexe = document.getElementById('filtreSexe').value;
+      if (q) params.append('q', q);
+      if (categorie) params.append('categorie', categorie);
+      if (sexe) params.append('sexe', sexe);
+
+      const res = await fetch(`/api/membres?${params}`, { headers: { Authorization: `Bearer ${token}` } });
+      const membres = await res.json();
+
+      document.getElementById('compteur').textContent = membres.length;
+      const tbody = document.getElementById('tableNouveaux');
+
+      if (membres.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Aucun nouveau adhérent trouvé</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = membres.map((m, i) => {
+        const jours = joursDepuis(m.date_adhesion);
+        const couleur = couleurJours(jours);
+        return `<tr>
+          <td class="text-muted">${i+1}</td>
+          <td><div class="d-flex align-items-center gap-2"><div class="avatar-sm">${m.prenom[0]}${m.nom[0]}</div><div><div class="fw-bold">${m.prenom} ${m.nom}</div><small class="text-muted">${m.sexe==='H'?'♂':'♀'}</small></div></div></td>
+          <td><span class="badge bg-${couleursCategorie[m.categorie]||'secondary'}" style="font-size:0.75rem">${m.categorie}</span></td>
+          <td>${m.telephone || '—'}</td>
+          <td>${m.filiere || '—'}</td>
+          <td>${m.date_adhesion ? new Date(m.date_adhesion).toLocaleDateString('fr-FR') : '—'}</td>
+          <td>${jours !== null ? `<span class="jours-badge bg-${couleur} text-white">${jours} jour${jours>1?'s':''}</span>` : '<span class="text-muted">—</span>'}</td>
+          <td>
+            <a href="/membre-detail.html?id=${m.id}" class="btn btn-sm btn-outline-info me-1" title="Voir" aria-label="Voir le détail du membre"><i class="fas fa-eye"></i></a>
+            <button class="btn btn-sm btn-outline-success" onclick="confirmerMembre(${m.id}, '${m.prenom} ${m.nom}')" title="Confirmer" aria-label="Confirmer le membre"><i class="fas fa-check"></i></button>
+          </td>
+        </tr>`;
+      }).join('');
+    } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
+  }
+
+  async function confirmerMembre(id, nom) {
+    if (!confirm(`Confirmer ${nom} ? Son statut passera à "Confirmé".`)) return;
+    try {
+      const res = await fetch(`/api/membres/${id}/statut`, { method: 'PATCH', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ statut: 'Confirme' }) });
+      if (res.ok) { afficherAlerte(`${nom} confirmé avec succès !`, 'success'); chargerNouveaux(); }
+    } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.classList.remove('d-none');
+    setTimeout(() => a.classList.add('d-none'), 4000);
+  }
+
+  document.getElementById('recherche').addEventListener('input', chargerNouveaux);
+  document.getElementById('filtreCategorie').addEventListener('change', chargerNouveaux);
+  document.getElementById('filtreSexe').addEventListener('change', chargerNouveaux);
+  chargerNouveaux();
+</script>
+</body>
+</html>

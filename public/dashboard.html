@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord — DMWM UASZ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; }
+    .stat-card {
+      background: white; border-radius: 15px; padding: 22px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+      transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+    .stat-icon {
+      width: 50px; height: 50px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: white;
+    }
+    .stat-number { font-size: 2rem; font-weight: 700; color: #1B5E8A; line-height: 1; }
+    .stat-label { color: #888; font-size: 0.85rem; margin-top: 4px; }
+    .card-info {
+      background: white; border-radius: 15px; padding: 22px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.06); height: 100%;
+    }
+    .bienvenue {
+      background: linear-gradient(135deg, #1B5E8A, #2E75B6);
+      border-radius: 15px; padding: 25px;
+      color: white; margin-bottom: 25px;
+    }
+    .bienvenue h4 { font-weight: 700; margin: 0; }
+    .bienvenue p { color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h5><i class="fas fa-tachometer-alt me-2"></i>Tableau de bord</h5>
+    </div>
+    <span id="badgeRole" class="badge" style="padding:6px 14px;font-size:0.82rem;"></span>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+
+    <div class="bienvenue">
+      <h4>👋 Bienvenue, <span id="nomUser"></span> !</h4>
+      <p id="messageRole"></p>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="stat-number" id="dTotal">—</div>
+              <div class="stat-label">Total membres</div>
+            </div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)">
+              <i class="fas fa-users"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="stat-number" id="dNouveaux">—</div>
+              <div class="stat-label">Nouveaux</div>
+            </div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#28a745,#20c997)">
+              <i class="fas fa-user-plus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="stat-number" id="dInscriptions">—</div>
+              <div class="stat-label">Inscriptions en attente</div>
+            </div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#fd7e14,#ffc107)">
+              <i class="fas fa-clock"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="stat-number" id="dHommes">—</div>
+              <div class="stat-label">Hommes / <span id="dFemmes">—</span> Femmes</div>
+            </div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#6f42c1,#a855f7)">
+              <i class="fas fa-venus-mars"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card-info">
+          <h6 class="fw-bold text-primary mb-3">
+            <i class="fas fa-calendar-check me-2"></i>Prochains événements (5)
+          </h6>
+          <div id="prochainProg">
+            <div class="text-center text-muted py-2">
+              <i class="fas fa-spinner fa-spin"></i> Chargement...
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card-info">
+          <h6 class="fw-bold mb-3" style="color:#fd7e14;">
+            <i class="fas fa-exclamation-triangle me-2"></i>Membres à contacter
+            <span class="badge bg-danger ms-1" id="badgeAbsents" style="display:none;"></span>
+          </h6>
+          <div id="membresAbsents">
+            <div class="text-center text-muted py-2">
+              <i class="fas fa-spinner fa-spin"></i> Chargement...
+            </div>
+          </div>
+          <a href="/absences.html" class="btn btn-outline-warning btn-sm mt-3 w-100">
+            <i class="fas fa-user-times me-1"></i>Voir tous les absents
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const token = window.authToken;
+  const user = window.currentUser;
+
+  document.getElementById('nomUser').textContent = user.nom || '';
+
+  const messages = {
+    'Super Admin': 'Vous avez accès complet à toutes les fonctionnalités.',
+    'Admin CA': 'Gérez les membres, pointages et communications du Conseil.',
+    'Agent H': 'Vous pouvez effectuer le pointage des membres hommes.',
+    'Agent F': 'Vous pouvez effectuer le pointage des membres femmes.',
+    'PF': 'Supervisez les activités des commissions du Conseil.',
+    'CIPS': 'Gérez les activités pédagogiques et spirituelles.',
+    'CTC': 'Gérez les ressources et la capacitation.',
+    'CL': 'Gérez la logistique des programmes.'
+  };
+  document.getElementById('messageRole').textContent = messages[user.role] || '';
+
+  const couleursRole = {
+    'Super Admin': 'danger', 'Admin CA': 'primary',
+    'Agent H': 'success', 'Agent F': 'success',
+    'PF': 'warning', 'CIPS': 'info', 'CTC': 'secondary', 'CL': 'dark'
+  };
+  const badge = document.getElementById('badgeRole');
+  badge.textContent = user.role;
+  badge.classList.add('bg-' + (couleursRole[user.role] || 'secondary'));
+
+  async function chargerStats() {
+    try {
+      const [rM, rI, rP, rR] = await Promise.all([
+        fetch('/api/membres/stats', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/inscriptions/stats', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/reunions', { headers: { Authorization: `Bearer ${token}` } })
+      ]);
+
+      const m = await rM.json();
+      const ins = await rI.json();
+      const programmes = await rP.json();
+      const reunions = await rR.json();
+
+      document.getElementById('dTotal').textContent = m.total || 0;
+      document.getElementById('dNouveaux').textContent = m.nouveaux || 0;
+      document.getElementById('dHommes').textContent = m.hommes || 0;
+      document.getElementById('dFemmes').textContent = m.femmes || 0;
+      document.getElementById('dInscriptions').textContent = ins.enAttente || 0;
+
+      const aujourd_hui = new Date();
+      aujourd_hui.setHours(0, 0, 0, 0);
+
+      const prochainsProg = (programmes || [])
+        .filter(p => new Date(p.date + 'T00:00:00') >= aujourd_hui)
+        .map(p => ({
+          type: 'programme', label: p.type, date: p.date,
+          heure_debut: p.heure_debut, heure_fin: p.heure_fin,
+          lieu: p.lieu, oustaze: p.oustaze
+        }));
+
+      const prochainesReunions = (reunions || [])
+        .filter(r => new Date(r.date + 'T00:00:00') >= aujourd_hui)
+        .map(r => ({
+          type: 'reunion', label: 'Réunion du Conseil', date: r.date,
+          heure_debut: r.heure_debut, heure_fin: r.heure_fin,
+          lieu: r.lieu, nb_cr: r.CompteRendus?.length || 0
+        }));
+
+      const tousEvenements = [...prochainsProg, ...prochainesReunions]
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 5);
+
+      const divProg = document.getElementById('prochainProg');
+
+      if (tousEvenements.length === 0) {
+        divProg.innerHTML = `
+          <div class="text-center text-muted py-2">
+            <i class="fas fa-calendar-times fa-2x mb-2 d-block"></i>
+            Aucun événement planifié prochainement
+          </div>`;
+      } else {
+        const couleursType = {
+          'Goudy Aldiouma': 'primary', 'Xadara': 'info',
+          'Enseignement': 'success', 'Autre': 'warning', 'reunion': 'danger'
+        };
+
+        divProg.innerHTML = tousEvenements.map(e => {
+          const date = new Date(e.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+            weekday: 'short', day: 'numeric', month: 'short'
+          });
+          const couleur = e.type === 'reunion' ? 'danger' : (couleursType[e.label] || 'secondary');
+          const icone = e.type === 'reunion' ? 'fa-handshake' : 'fa-calendar-check';
+
+          return `
+            <div class="border rounded-3 p-2 mb-2">
+              <div class="d-flex align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-${couleur}">
+                    <i class="fas ${icone} me-1"></i>${e.label}
+                  </span>
+                </div>
+                <span class="fw-bold small text-capitalize">${date}</span>
+              </div>
+              <div class="text-muted mt-1" style="font-size:0.78rem;">
+                ${e.heure_debut ? `<i class="fas fa-clock me-1"></i>${e.heure_debut.substring(0,5)}${e.heure_fin ? ' – ' + e.heure_fin.substring(0,5) : ''} ` : ''}
+                ${e.lieu ? `<i class="fas fa-map-marker-alt me-1"></i>${e.lieu}` : ''}
+                ${e.type === 'reunion' ? `<span class="badge bg-light text-dark ms-1">${e.nb_cr} CR</span>` : ''}
+                ${e.oustaze ? `<i class="fas fa-user me-1"></i>${e.oustaze}` : ''}
+              </div>
+            </div>`;
+        }).join('');
+      }
+    } catch(e) {
+      console.log('Erreur stats:', e);
+    }
+
+    chargerAbsents();
+  }
+
+  async function chargerAbsents() {
+    try {
+      const res = await fetch('/api/pointage/absents-recurrents', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const absents = await res.json();
+      const div = document.getElementById('membresAbsents');
+      const badge = document.getElementById('badgeAbsents');
+
+      if (absents.length === 0) {
+        div.innerHTML = `
+          <div class="text-center text-success py-2">
+            <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
+            <small>Aucun membre avec 2+ absences consécutives</small>
+          </div>`;
+        return;
+      }
+
+      badge.textContent = absents.length;
+      badge.style.display = 'inline';
+
+      div.innerHTML = absents.slice(0, 4).map(m => {
+        const couleur = m.absences_consecutives >= 4 ? 'danger' :
+                        m.absences_consecutives >= 3 ? 'warning' : 'secondary';
+        return `
+          <div class="d-flex align-items-center justify-content-between mb-2 p-2 rounded-3 bg-light">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:32px;height:32px;border-radius:50%;
+                background:linear-gradient(135deg,#dc3545,#ff6b6b);
+                display:flex;align-items:center;justify-content:center;
+                color:white;font-weight:700;font-size:0.78rem;flex-shrink:0;">
+                ${m.prenom[0]}${m.nom[0]}
+              </div>
+              <div>
+                <div style="font-size:0.85rem;font-weight:600;">${m.prenom} ${m.nom}</div>
+                <div style="font-size:0.72rem;color:#888;">${m.telephone || '—'}</div>
+              </div>
+            </div>
+            <span class="badge bg-${couleur}">${m.absences_consecutives}×</span>
+          </div>`;
+      }).join('');
+
+      if (absents.length > 4) {
+        div.innerHTML += `<div class="text-center text-muted small mt-1">+ ${absents.length - 4} autre(s)</div>`;
+      }
+    } catch(e) {
+      document.getElementById('membresAbsents').innerHTML =
+        '<small class="text-muted">Disponible après le premier pointage</small>';
+    }
+  }
+
+  chargerStats();
+</script>
+</body>
+</html>
