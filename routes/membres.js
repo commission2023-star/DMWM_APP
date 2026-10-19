@@ -6,7 +6,7 @@ const { verifierToken, verifierRole } = require('../middleware/auth');
 const { validerMembre } = require('../middleware/validation');
 const {
   listerMembres, statsMembes, getMembre,
-  ajouterMembre, modifierMembre, changerStatut: changerMembreStatut, archiverMembre
+  ajouterMembre, modifierMembre, changerStatut, archiverMembre
 } = require('../controllers/membreController');
 
 const storage = multer.diskStorage({
@@ -40,7 +40,7 @@ router.get('/', verifierToken, verifierRole(...rolesLecture), listerMembres);
 router.get('/:id', verifierToken, verifierRole(...rolesLecture), getMembre);
 router.post('/', verifierToken, verifierRole(...rolesEcriture), uploadFields, validerMembre, ajouterMembre);
 router.put('/:id', verifierToken, verifierRole(...rolesEcriture), uploadFields, validerMembre, modifierMembre);
-router.patch('/:id/statut', verifierToken, verifierRole(...rolesEcriture), changerMembreStatut);
+router.patch('/:id/statut', verifierToken, verifierRole(...rolesEcriture), changerStatut);
 router.patch('/:id/archiver', verifierToken, verifierRole(...rolesEcriture), archiverMembre);
 
 module.exports = router;

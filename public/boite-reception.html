@@ -28,7 +28,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
       <h5><i class="fas fa-inbox me-2"></i>Boîte de réception</h5>
     </div>
   </div>
@@ -44,8 +44,8 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 
   <div class="card-custom">
     <div class="row g-2">
-      <div class="col-md-4"><select class="form-select" id="filtreStatut" onchange="chargerMessages()"><option value="">Tous</option><option value="En attente">En attente</option><option value="Traite">Traités</option></select></div>
-      <div class="col-md-4"><select class="form-select" id="filtreCommission" onchange="chargerMessages()"><option value="">Toutes commissions</option><option value="PF">PF</option><option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option></select></div>
+      <div class="col-md-4"><select class="form-select" id="filtreStatut" onchange="chargerMessages()" aria-label="Tous"><option value="">Tous</option><option value="En attente">En attente</option><option value="Traite">Traités</option></select></div>
+      <div class="col-md-4"><select class="form-select" id="filtreCommission" onchange="chargerMessages()" aria-label="Toutes commissions"><option value="">Toutes commissions</option><option value="PF">PF</option><option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option></select></div>
       <div class="col-md-4"><button class="btn btn-outline-secondary w-100" onclick="reinitialiserFiltres()"><i class="fas fa-redo me-1"></i>Réinitialiser</button></div>
     </div>
   </div>

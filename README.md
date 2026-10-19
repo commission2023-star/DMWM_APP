@@ -1,91 +1,29 @@
-# DMWM — Conseil UASZ — Application de gestion administrative
+# DMWM — Conseil UASZ — Application de gestion administrative (version 2)
 
-Ce dossier contient l'intégralité du projet reconstruit (Phases 1 à 7).
+Node.js + Express + MySQL (Sequelize). Production : Render (serveur) + Aiven (MySQL).
 
-## Réinstallation sur votre PC (WAMP)
+## Installation locale (WAMP)
+1. Placer le dossier dans `C:\wamp64\www\...` puis `cd` dedans.
+2. `npm install` (copie aussi Bootstrap, Font Awesome et Chart.js en local via `postinstall`).
+3. Copier `.env.example` en `.env` et verifier les valeurs (WAMP : `DB_HOST=localhost`, mot de passe vide).
+4. Creer la base `dmwm_uasz` dans phpMyAdmin (interclassement utf8mb4 / utf8 general).
+5. `node sync.js` : cree les 8 tables + le compte `superadmin` / `Admin@2025` (a changer apres la premiere connexion).
+6. `npm run dev` puis ouvrir http://localhost:3000
 
-### Étape 1 — Copier le dossier
-Placez tout ce dossier dans :
-```
-C:\wamp64\www\dmwm-uasz
-```
+## Production (Render + Aiven)
+- Build command : `npm install` (le `postinstall` copie les librairies) — ou garder `npm install && node public/js/copier-libs.js`.
+- Start command : `node server.js`
+- Variables Render : `PORT`, `JWT_SECRET`, `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`, plus (plus tard) les cles Cloudinary.
+- SSL vers Aiven : active automatiquement quand `DB_HOST` n'est pas local (forcable avec `DB_SSL=true/false`).
 
-### Étape 2 — Installer les dépendances
-Ouvrez un terminal dans VS Code, dans le dossier du projet, et lancez :
-```bash
-npm install
-```
-Cela réinstalle tous les packages listés dans `package.json` (express, sequelize, jwt, bcrypt, multer, bootstrap, fontawesome, etc.)
+## Contenu
+Phases 1 a 8 + corrections de la Phase 9 : voir `CHANGELOG_V2.md`.
 
-### Étape 3 — Copier les librairies locales (Bootstrap + FontAwesome)
-```bash
-node public/js/copier-libs.js
-```
-
-### Étape 4 — Recréer la base de données
-1. Démarrez WAMP
-2. Allez sur http://localhost/phpmyadmin
-3. Créez une base nommée `dmwm_uasz` (interclassement `utf8_general_ci`)
-
-### Étape 5 — Synchroniser les tables + créer le Super Admin
-```bash
-node sync.js
-```
-Cela crée automatiquement :
-- Les 8 tables (membres, utilisateurs, programmes, presences, inscriptions_en_attente, messages_ca, reunions, comptes_rendus)
-- Le compte Super Admin :
-  - Identifiant : `superadmin`
-  - Mot de passe : `Admin@2025`
-
-### Étape 6 — Lancer le serveur
-```bash
-npm run dev
-```
-Ouvrez ensuite : http://localhost:3000
-
----
-
-## Contenu déjà réalisé (Phases 1 à 7)
-
-- **Phase 1** — Environnement Node.js/Express + Base de données MySQL/Sequelize
-- **Phase 2** — Authentification JWT, rôles, gestion des comptes
-- **Phase 3** — Gestion complète des membres (CRUD + upload photo/document)
-- **Phase 4** — Formulaires publics d'inscription (3 formulaires) + validation CA + sidebar universelle
-- **Phase 5** — Programmes + calendrier automatique (Goudy/Xadara/Enseignement)
-- **Phase 6** — Pointage + mode hors ligne (localStorage) + suivi des absences
-- **Phase 7** — Communication interne (boîte de réception CA, réunions, comptes rendus)
-
-## Structure des dossiers
-
-```
-dmwm-uasz/
-├── config/          → connexion base de données
-├── controllers/      → logique métier (8 fichiers)
-├── middleware/        → authentification JWT (auth.js)
-├── models/           → 8 modèles Sequelize + index.js (associations)
-├── routes/            → 8 fichiers de routes API
-├── public/            → frontend (16 pages HTML + JS)
-│   ├── css/           → (généré par copier-libs.js)
-│   ├── js/             → auth-guard.js, sidebar.js, copier-libs.js
-│   ├── js-libs/        → (généré par copier-libs.js)
-│   └── fonts/          → (généré par copier-libs.js)
-├── uploads/            → fichiers uploadés (photos, docs, comptes rendus)
-├── server.js           → point d'entrée
-├── sync.js             → script de création des tables + Super Admin
-├── update-pages.js     → script d'injection sidebar (déjà appliqué)
-├── update-cdn.js       → script de conversion CDN → local (déjà appliqué)
-├── package.json
-└── .env                → variables d'environnement
-```
-
-## Notes importantes
-
-- Le fichier `.env` contient les identifiants de connexion à la base de données. Vérifiez que `DB_PASSWORD` correspond à votre configuration WAMP (vide par défaut).
-- Toutes les pages HTML sont déjà mises à jour avec la sidebar universelle (`sidebar.js`) — pas besoin de relancer `update-pages.js`.
-- Le mode hors ligne du pointage utilise le `localStorage` du navigateur — testez en coupant votre WiFi une fois le serveur lancé.
-
-## Phases restantes à développer
-
-- Phase 8 — Rapports et statistiques (export PDF/Excel, graphiques)
-- Phase 9 — Tests finaux et corrections
-- Phase 10 — Déploiement en production (Railway/Render)
+## Backlog prochaine version
+1. Reparer les pages Communication en production (boite de reception, envoyer a la CA, reunions) — voir note dans CHANGELOG_V2.md
+2. Stockage des fichiers persistant (Cloudinary) — les uploads sont perdus a chaque redeploiement Render
+3. Resilience Render + Aiven (retry connexion, `/api/health`, ping cron-job.org)
+4. Sortir le CSS des pages HTML vers des fichiers `.css`
+5. Strategie mobile (PWA installable ou application native)
+6. Liste "Visiteurs" au pointage (non-membres presents, table separee, conversion en membre)
+7. Refonte design "vibecode" (degrades violet/bleu, Inter + Space Grotesk + Instrument Serif, glassmorphism, dark mode, icones Lucide, animations) — a faire apres la tache 4

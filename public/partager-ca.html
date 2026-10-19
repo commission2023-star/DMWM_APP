@@ -23,7 +23,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
       <h5><i class="fas fa-paper-plane me-2"></i>Envoyer à la CA</h5>
     </div>
   </div>
@@ -35,9 +35,9 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
     <div class="col-md-7">
       <div class="card-custom">
         <h6 class="fw-bold text-primary mb-4"><i class="fas fa-paper-plane me-2"></i>Nouveau message pour la CA</h6>
-        <div class="mb-3"><label class="form-label">Objet <span class="text-danger">*</span></label><input type="text" class="form-control" id="objet"></div>
-        <div class="mb-3"><label class="form-label">Message</label><textarea class="form-control" id="contenu" rows="6"></textarea></div>
-        <div class="mb-4"><label class="form-label">Fichier joint (optionnel)</label><input type="file" class="form-control" id="fichierJoint" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx"><small class="text-muted">PDF, Word, Excel, Image — max 10MB</small></div>
+        <div class="mb-3"><label class="form-label">Objet <span class="text-danger">*</span></label><input type="text" class="form-control" id="objet" aria-label="Objet"></div>
+        <div class="mb-3"><label class="form-label">Message</label><textarea class="form-control" id="contenu" rows="6" aria-label="Message"></textarea></div>
+        <div class="mb-4"><label class="form-label">Fichier joint (optionnel)</label><input type="file" class="form-control" id="fichierJoint" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx" aria-label="Fichier joint (optionnel)"><small class="text-muted">PDF, Word, Excel, Image — max 10MB</small></div>
         <button class="btn btn-envoyer" onclick="envoyerMessage()"><i class="fas fa-paper-plane me-2"></i>Envoyer à la CA</button>
       </div>
     </div>

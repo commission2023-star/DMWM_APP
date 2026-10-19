@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Membre — DMWM UASZ</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
@@ -27,7 +27,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
       <h5 id="titreFormulaire"><i class="fas fa-user-plus me-2"></i>Nouveau membre</h5>
     </div>
   </div>
@@ -38,59 +38,59 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
   <div class="card-custom">
     <div class="section-title"><i class="fas fa-id-card me-2"></i>Informations personnelles</div>
     <div class="row g-3">
-      <div class="col-md-6"><label class="form-label required">Prénom</label><input type="text" class="form-control" id="prenom"></div>
-      <div class="col-md-6"><label class="form-label required">Nom</label><input type="text" class="form-control" id="nom"></div>
+      <div class="col-md-6"><label class="form-label required">Prénom</label><input type="text" class="form-control" id="prenom" aria-label="Prénom"></div>
+      <div class="col-md-6"><label class="form-label required">Nom</label><input type="text" class="form-control" id="nom" aria-label="Nom"></div>
       <div class="col-md-4"><label class="form-label required">Genre</label>
-        <select class="form-select" id="sexe"><option value="">-- Choisir --</option><option value="H">Homme</option><option value="F">Femme</option></select>
+        <select class="form-select" id="sexe" aria-label="Genre"><option value="">-- Choisir --</option><option value="H">Homme</option><option value="F">Femme</option></select>
       </div>
-      <div class="col-md-4"><label class="form-label">Date de naissance</label><input type="date" class="form-control" id="date_naissance"></div>
-      <div class="col-md-4"><label class="form-label">Lieu de naissance</label><input type="text" class="form-control" id="lieu_naissance"></div>
-      <div class="col-md-6"><label class="form-label required">Numéro de téléphone</label><input type="text" class="form-control" id="telephone"></div>
-      <div class="col-md-6"><label class="form-label">Adresse mail</label><input type="email" class="form-control" id="email"></div>
-      <div class="col-md-12"><label class="form-label">Adresse / Résidence à l'UASZ</label><input type="text" class="form-control" id="adresse"></div>
+      <div class="col-md-4"><label class="form-label">Date de naissance</label><input type="date" class="form-control" id="date_naissance" aria-label="Date de naissance"></div>
+      <div class="col-md-4"><label class="form-label">Lieu de naissance</label><input type="text" class="form-control" id="lieu_naissance" aria-label="Lieu de naissance"></div>
+      <div class="col-md-6"><label class="form-label required">Numéro de téléphone</label><input type="text" class="form-control" id="telephone" aria-label="Numéro de téléphone"></div>
+      <div class="col-md-6"><label class="form-label">Adresse mail</label><input type="email" class="form-control" id="email" aria-label="Adresse mail"></div>
+      <div class="col-md-12"><label class="form-label">Adresse / Résidence à l'UASZ</label><input type="text" class="form-control" id="adresse" aria-label="Adresse / Résidence à l'UASZ"></div>
     </div>
   </div>
 
   <div class="card-custom">
     <div class="section-title"><i class="fas fa-user-shield me-2"></i>Tuteur / Contact d'urgence</div>
     <div class="row g-3">
-      <div class="col-md-8"><label class="form-label">Prénom & Nom du tuteur</label><input type="text" class="form-control" id="tuteur_nom"></div>
-      <div class="col-md-4"><label class="form-label">Téléphone du tuteur</label><input type="text" class="form-control" id="tuteur_telephone"></div>
+      <div class="col-md-8"><label class="form-label">Prénom & Nom du tuteur</label><input type="text" class="form-control" id="tuteur_nom" aria-label="Prénom & Nom du tuteur"></div>
+      <div class="col-md-4"><label class="form-label">Téléphone du tuteur</label><input type="text" class="form-control" id="tuteur_telephone" aria-label="Téléphone du tuteur"></div>
     </div>
   </div>
 
   <div class="card-custom">
     <div class="section-title"><i class="fas fa-graduation-cap me-2"></i>Informations universitaires</div>
     <div class="row g-3">
-      <div class="col-md-6"><label class="form-label">Filière</label><input type="text" class="form-control" id="filiere"></div>
-      <div class="col-md-6"><label class="form-label">Niveau</label><input type="text" class="form-control" id="niveau"></div>
+      <div class="col-md-6"><label class="form-label">Filière</label><input type="text" class="form-control" id="filiere" aria-label="Filière"></div>
+      <div class="col-md-6"><label class="form-label">Niveau</label><input type="text" class="form-control" id="niveau" aria-label="Niveau"></div>
     </div>
   </div>
 
   <div class="card-custom">
     <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Origine géographique</div>
     <div class="row g-3">
-      <div class="col-md-6"><label class="form-label">Région d'origine</label><input type="text" class="form-control" id="region_origine"></div>
-      <div class="col-md-6"><label class="form-label">Département</label><input type="text" class="form-control" id="departement"></div>
-      <div class="col-md-6"><label class="form-label">Arrondissement</label><input type="text" class="form-control" id="arrondissement"></div>
-      <div class="col-md-6"><label class="form-label">Commune</label><input type="text" class="form-control" id="commune"></div>
+      <div class="col-md-6"><label class="form-label">Région d'origine</label><input type="text" class="form-control" id="region_origine" aria-label="Région d'origine"></div>
+      <div class="col-md-6"><label class="form-label">Département</label><input type="text" class="form-control" id="departement" aria-label="Département"></div>
+      <div class="col-md-6"><label class="form-label">Arrondissement</label><input type="text" class="form-control" id="arrondissement" aria-label="Arrondissement"></div>
+      <div class="col-md-6"><label class="form-label">Commune</label><input type="text" class="form-control" id="commune" aria-label="Commune"></div>
     </div>
   </div>
 
   <div class="card-custom section-mouvement" id="sectionMouvement">
     <div class="section-title"><i class="fas fa-mosque me-2"></i>Origine dans le mouvement</div>
     <div class="row g-3">
-      <div class="col-md-6"><label class="form-label">Comité / Axe d'origine</label><input type="text" class="form-control" id="comite_origine"></div>
-      <div class="col-md-6"><label class="form-label">Localité / Conseil d'origine</label><input type="text" class="form-control" id="conseil_origine"></div>
-      <div class="col-md-6"><label class="form-label">Section de base</label><input type="text" class="form-control" id="section_base"></div>
+      <div class="col-md-6"><label class="form-label">Comité / Axe d'origine</label><input type="text" class="form-control" id="comite_origine" aria-label="Comité / Axe d'origine"></div>
+      <div class="col-md-6"><label class="form-label">Localité / Conseil d'origine</label><input type="text" class="form-control" id="conseil_origine" aria-label="Localité / Conseil d'origine"></div>
+      <div class="col-md-6"><label class="form-label">Section de base</label><input type="text" class="form-control" id="section_base" aria-label="Section de base"></div>
       <div class="col-md-6"><label class="form-label">Poste en section de base</label>
-        <select class="form-select" id="poste_section_base">
+        <select class="form-select" id="poste_section_base" aria-label="Poste en section de base">
           <option value="Aucun">Aucun</option><option value="PF">PF</option><option value="CA">CA</option>
           <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
         </select>
       </div>
-      <div class="col-md-8"><label class="form-label">Prénom & Nom du PF / Président de section</label><input type="text" class="form-control" id="pf_nom"></div>
-      <div class="col-md-4"><label class="form-label">Téléphone PF / Président</label><input type="text" class="form-control" id="pf_telephone"></div>
+      <div class="col-md-8"><label class="form-label">Prénom & Nom du PF / Président de section</label><input type="text" class="form-control" id="pf_nom" aria-label="Prénom & Nom du PF / Président de section"></div>
+      <div class="col-md-4"><label class="form-label">Téléphone PF / Président</label><input type="text" class="form-control" id="pf_telephone" aria-label="Téléphone PF / Président"></div>
     </div>
   </div>
 
@@ -98,7 +98,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
     <div class="section-title"><i class="fas fa-user-tag me-2"></i>Statut au Conseil UASZ</div>
     <div class="row g-3">
       <div class="col-md-4"><label class="form-label required">Catégorie</label>
-        <select class="form-select" id="categorie" onchange="gererCategorie()">
+        <select class="form-select" id="categorie" onchange="gererCategorie()" aria-label="Catégorie">
           <option value="">-- Choisir --</option>
           <option value="Nouveau Bachelier">Nouveau Bachelier</option>
           <option value="Nouveau Adherent">Nouveau Adhérent</option>
@@ -106,15 +106,15 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
         </select>
       </div>
       <div class="col-md-4"><label class="form-label">Commission</label>
-        <select class="form-select" id="commission">
+        <select class="form-select" id="commission" aria-label="Commission">
           <option value="Membre simple">Membre simple</option><option value="PF">PF</option><option value="CA">CA</option>
           <option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option>
         </select>
       </div>
       <div class="col-md-4"><label class="form-label">Statut</label>
-        <select class="form-select" id="statut"><option value="Nouveau">Nouveau</option><option value="Confirme">Confirmé</option><option value="Inactif">Inactif</option></select>
+        <select class="form-select" id="statut" aria-label="Statut"><option value="Nouveau">Nouveau</option><option value="Confirme">Confirmé</option><option value="Inactif">Inactif</option></select>
       </div>
-      <div class="col-md-6"><label class="form-label">Date d'adhésion</label><input type="date" class="form-control" id="date_adhesion"></div>
+      <div class="col-md-6"><label class="form-label">Date d'adhésion</label><input type="date" class="form-control" id="date_adhesion" aria-label="Date d'adhésion"></div>
     </div>
   </div>
 
@@ -122,14 +122,14 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
     <div class="section-title"><i class="fas fa-file-image me-2"></i>Photo et documents</div>
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label">Photo de profil</label>
-        <input type="file" class="form-control" id="photo_profil" accept="image/*" onchange="previewImage(this,'previewPhoto')">
+        <input type="file" class="form-control" id="photo_profil" accept="image/*" onchange="previewImage(this,'previewPhoto')" aria-label="Photo de profil">
         <img id="previewPhoto" class="preview-img mt-2">
       </div>
       <div class="col-md-6"><label class="form-label">Carte d'identité / Carte étudiante</label>
-        <input type="file" class="form-control" id="document_identite" accept="image/*,.pdf">
+        <input type="file" class="form-control" id="document_identite" accept="image/*,.pdf" aria-label="Carte d'identité / Carte étudiante">
         <small class="text-muted">Formats acceptés : JPG, PNG, PDF (max 5MB)</small>
       </div>
-      <div class="col-12"><label class="form-label">Notes de suivi</label><textarea class="form-control" id="notes" rows="3"></textarea></div>
+      <div class="col-12"><label class="form-label">Notes de suivi</label><textarea class="form-control" id="notes" rows="3" aria-label="Notes de suivi"></textarea></div>
     </div>
   </div>
 
@@ -140,7 +140,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js-libs/bootstrap.bundle.min.js"></script>
 <script>
   const token = window.authToken;
   const urlParams = new URLSearchParams(window.location.search);

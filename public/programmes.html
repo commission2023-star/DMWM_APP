@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Programmes — DMWM UASZ</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
@@ -31,7 +31,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
       <h5><i class="fas fa-calendar-alt me-2"></i>Programmes</h5>
     </div>
     <button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()" id="btnNouveauProg"><i class="fas fa-plus me-1"></i>Nouveau programme</button>
@@ -48,17 +48,17 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
   <div class="card-custom">
     <div class="row g-2 align-items-end">
       <div class="col-md-3">
-        <select class="form-select" id="filtreType" onchange="chargerProgrammes()">
+        <select class="form-select" id="filtreType" onchange="chargerProgrammes()" aria-label="Tous types">
           <option value="">Tous types</option><option value="Goudy Aldiouma">Goudy Aldiouma</option>
           <option value="Xadara">Xadaratoul Joum'ah</option><option value="Enseignement">Enseignement</option><option value="Autre">Autre</option>
         </select>
       </div>
       <div class="col-md-3">
-        <select class="form-select" id="filtreStatut" onchange="chargerProgrammes()">
+        <select class="form-select" id="filtreStatut" onchange="chargerProgrammes()" aria-label="Tous statuts">
           <option value="">Tous statuts</option><option value="Planifie">Planifié</option><option value="Tenu">Tenu</option><option value="Annule">Annulé</option>
         </select>
       </div>
-      <div class="col-md-3"><input type="month" class="form-control" id="filtreMois" onchange="chargerProgrammes()"></div>
+      <div class="col-md-3"><input type="month" class="form-control" id="filtreMois" onchange="chargerProgrammes()" aria-label="filtreMois"></div>
       <div class="col-md-3"><button class="btn btn-outline-secondary w-100" onclick="reinitialiserFiltres()"><i class="fas fa-redo me-1"></i>Réinitialiser</button></div>
     </div>
   </div>
@@ -96,20 +96,20 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
         <div id="alerteModal" class="alert d-none mb-3"></div>
         <div class="row g-3">
           <div class="col-md-6"><label class="form-label fw-bold">Type <span class="text-danger">*</span></label>
-            <select class="form-select" id="pType" onchange="gererTypeAutre()">
+            <select class="form-select" id="pType" onchange="gererTypeAutre()" aria-label="Type">
               <option value="">-- Choisir --</option><option value="Goudy Aldiouma">Goudy Aldiouma</option>
               <option value="Xadara">Xadaratoul Joum'ah (Xadara)</option><option value="Enseignement">Enseignement</option><option value="Autre">Autre programme</option>
             </select>
           </div>
-          <div class="col-md-6" id="champNom" style="display:none;"><label class="form-label fw-bold">Nom du programme <span class="text-danger">*</span></label><input type="text" class="form-control" id="pNom"></div>
-          <div class="col-md-4"><label class="form-label fw-bold">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="pDate"></div>
-          <div class="col-md-4"><label class="form-label fw-bold">Heure début</label><input type="time" class="form-control" id="pHeureDebut"></div>
-          <div class="col-md-4"><label class="form-label fw-bold">Heure fin</label><input type="time" class="form-control" id="pHeureFin"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">Lieu</label><input type="text" class="form-control" id="pLieu"></div>
-          <div class="col-md-6"><label class="form-label fw-bold">Oustaze / Moniteur</label><input type="text" class="form-control" id="pOustaze"></div>
-          <div class="col-12"><label class="form-label fw-bold">Thème / Contenu traité</label><textarea class="form-control" id="pTheme" rows="3"></textarea></div>
+          <div class="col-md-6" id="champNom" style="display:none;"><label class="form-label fw-bold">Nom du programme <span class="text-danger">*</span></label><input type="text" class="form-control" id="pNom" aria-label="Nom du programme"></div>
+          <div class="col-md-4"><label class="form-label fw-bold">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="pDate" aria-label="Date"></div>
+          <div class="col-md-4"><label class="form-label fw-bold">Heure début</label><input type="time" class="form-control" id="pHeureDebut" aria-label="Heure début"></div>
+          <div class="col-md-4"><label class="form-label fw-bold">Heure fin</label><input type="time" class="form-control" id="pHeureFin" aria-label="Heure fin"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">Lieu</label><input type="text" class="form-control" id="pLieu" aria-label="Lieu"></div>
+          <div class="col-md-6"><label class="form-label fw-bold">Oustaze / Moniteur</label><input type="text" class="form-control" id="pOustaze" aria-label="Oustaze / Moniteur"></div>
+          <div class="col-12"><label class="form-label fw-bold">Thème / Contenu traité</label><textarea class="form-control" id="pTheme" rows="3" aria-label="Thème / Contenu traité"></textarea></div>
           <div class="col-md-6"><label class="form-label fw-bold">Statut</label>
-            <select class="form-select" id="pStatut"><option value="Planifie">Planifié</option><option value="Tenu">Tenu</option><option value="Annule">Annulé</option></select>
+            <select class="form-select" id="pStatut" aria-label="Statut"><option value="Planifie">Planifié</option><option value="Tenu">Tenu</option><option value="Annule">Annulé</option></select>
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js-libs/bootstrap.bundle.min.js"></script>
 <script>
   const token = window.authToken;
   const user = window.currentUser;
@@ -168,9 +168,9 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
         <td>${formatHeure(p.heure_debut)} – ${formatHeure(p.heure_fin)}</td><td>${p.lieu || '—'}</td><td>${p.oustaze || '—'}</td>
         <td><span class="badge bg-${couleursStatut[p.statut]}">${labelsStatut[p.statut]}</span>${p.recurrent ? '<span class="badge bg-light text-dark ms-1" style="font-size:0.65rem;">🔄 Auto</span>' : ''}</td>
         <td>${peutModifier ? `
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="ouvrirModalModifier(${p.id})"><i class="fas fa-edit"></i></button>
-          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})"><i class="fas fa-trash"></i></button>` : ''}
-        ` : `<button class="btn btn-sm btn-outline-info" onclick="ouvrirModalModifier(${p.id})"><i class="fas fa-eye"></i></button>`}</td>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="ouvrirModalModifier(${p.id})" title="Modifier" aria-label="Modifier"><i class="fas fa-edit"></i></button>
+          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})" title="Supprimer" aria-label="Supprimer"><i class="fas fa-trash"></i></button>` : ''}
+        ` : `<button class="btn btn-sm btn-outline-info" onclick="ouvrirModalModifier(${p.id})" title="Voir le détail" aria-label="Voir le détail"><i class="fas fa-eye"></i></button>`}</td>
       </tr>`;
     }).join('');
   }

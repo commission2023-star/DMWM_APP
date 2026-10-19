@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pointage — DMWM UASZ</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
@@ -45,9 +45,9 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
   <div class="card-custom" id="etape1">
     <h6 class="fw-bold text-primary mb-4"><i class="fas fa-calendar-check me-2"></i>Étape 1 — Sélectionner le programme</h6>
     <div class="row g-3">
-      <div class="col-md-6"><label class="form-label fw-bold">Programme <span class="text-danger">*</span></label><select class="form-select" id="selectProgramme"><option value="">-- Choisir un programme --</option></select></div>
+      <div class="col-md-6"><label class="form-label fw-bold">Programme <span class="text-danger">*</span></label><select class="form-select" id="selectProgramme" aria-label="Programme"><option value="">-- Choisir un programme --</option></select></div>
       <div class="col-md-6"><label class="form-label fw-bold">Groupe à pointer</label>
-        <select class="form-select" id="selectSexe"><option value="">Tous (H + F)</option><option value="H">Hommes uniquement</option><option value="F">Femmes uniquement</option></select>
+        <select class="form-select" id="selectSexe" aria-label="Groupe à pointer"><option value="">Tous (H + F)</option><option value="H">Hommes uniquement</option><option value="F">Femmes uniquement</option></select>
       </div>
     </div>
     <button class="btn btn-primary mt-4" onclick="demarrerPointage()"><i class="fas fa-play me-2"></i>Démarrer le pointage</button>
@@ -72,7 +72,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
           <button class="btn btn-outline-danger btn-sm" onclick="tousAbsents()"><i class="fas fa-times me-1"></i>Tous absents</button>
           <button class="btn btn-outline-secondary btn-sm" onclick="reinitialiserPointage()"><i class="fas fa-undo me-1"></i>Réinitialiser</button>
         </div>
-        <input type="text" class="form-control" id="recherchePointage" placeholder="🔍 Rechercher un membre..." style="max-width:250px;" oninput="filtrerMembresPointage()">
+        <input type="text" class="form-control" id="recherchePointage" placeholder="🔍 Rechercher un membre..." style="max-width:250px;" oninput="filtrerMembresPointage()" aria-label="Rechercher un membre">
       </div>
     </div>
 
@@ -101,7 +101,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js-libs/bootstrap.bundle.min.js"></script>
 <script>
   const token = window.authToken;
   let membresData = [];
@@ -148,14 +148,11 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
     for (const data of locaux) {
       try {
         const res = await fetch('/api/pointage/enregistrer', { method:'POST', headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify(data) });
-        if (res.status === 403 || res.status === 401) { sessionExpiree = true; break; }
+        if (res.status === 401 || res.status === 403) { sessionExpiree = true; break; }
         if (res.ok) { supprimerLocal(data.programme_id); synces++; } else { erreurs++; }
       } catch(e) { erreurs++; }
     }
-    if (sessionExpiree) {
-      afficherAlerte('Session expirée. Votre pointage est sauvegardé localement.', 'warning', true);
-      return;
-    }
+    if (sessionExpiree) { afficherAlerte('Session expirée. Vos pointages sont conservés sur cet appareil. Reconnectez-vous pour les synchroniser.', 'warning', true); return; }
     if (synces > 0) afficherAlerte(`✅ ${synces} pointage(s) synchronisé(s) avec succès !`, 'success');
     if (erreurs > 0) afficherAlerte(`⚠️ ${erreurs} pointage(s) n'ont pas pu être synchronisés.`, 'warning');
   }
@@ -231,8 +228,8 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
         <div class="d-flex align-items-center gap-3"><div class="avatar-sm">${m.prenom[0]}${m.nom[0]}</div>
           <div><div class="fw-bold">${m.prenom} ${m.nom}</div><small class="text-muted">${m.filiere||''} ${m.niveau?'· '+m.niveau:''}</small></div></div>
         <div class="d-flex gap-2">
-          <button class="${statut==='Present'?'btn-present':'btn-neutre'}" onclick="marquerPresence(${m.id}, 'Present')" title="Marquer présent" aria-label="Marquer présent"><i class="fas fa-check me-1"></i>P</button>
-          <button class="${statut==='Absent'?'btn-absent':'btn-neutre'}" onclick="marquerPresence(${m.id}, 'Absent')" title="Marquer absent" aria-label="Marquer absent"><i class="fas fa-times me-1"></i>A</button>
+          <button class="${statut==='Present'?'btn-present':'btn-neutre'}" onclick="marquerPresence(${m.id}, 'Present')" title="Marquer présent" aria-label="Marquer ${m.prenom} ${m.nom} présent"><i class="fas fa-check me-1"></i>P</button>
+          <button class="${statut==='Absent'?'btn-absent':'btn-neutre'}" onclick="marquerPresence(${m.id}, 'Absent')" title="Marquer absent" aria-label="Marquer ${m.prenom} ${m.nom} absent"><i class="fas fa-times me-1"></i>A</button>
         </div>
       </div>`;
     }).join('');
@@ -275,6 +272,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
     const pointagesArray = membresData.map(m => ({ membre_id: m.id, statut: pointagesLocaux[m.id] || 'Absent' }));
     const data = { programme_id: programmeSelectionne.id, pointages: pointagesArray };
 
+    // Toujours garder une copie locale AVANT d'envoyer
     sauvegarderLocal(programmeSelectionne.id, pointagesArray);
 
     if (!estEnLigne) {
@@ -285,13 +283,11 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 
     try {
       const res = await fetch('/api/pointage/enregistrer', { method:'POST', headers:{ Authorization:`Bearer ${token}`,'Content-Type':'application/json' }, body: JSON.stringify(data) });
-
-      if (res.status === 403 || res.status === 401) {
-        afficherAlerte('Session expirée. Votre pointage est sauvegardé localement.', 'warning', true);
+      if (res.status === 401 || res.status === 403) {
         afficherEtape3(pointagesArray);
+        afficherAlerte('Session expirée. Votre pointage est sauvegardé localement : reconnectez-vous puis revenez sur cette page pour le synchroniser.', 'warning', true);
         return;
       }
-
       const result = await res.json();
       if (res.ok) { supprimerLocal(programmeSelectionne.id); afficherEtape3(pointagesArray); }
       else { afficherAlerte(result.message, 'danger'); }
@@ -322,9 +318,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
     a.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':type==='warning'?'exclamation-triangle':type==='info'?'info-circle':'exclamation-circle'} me-2"></i>${msg}`;
-    if (avecReconnexion) {
-      a.innerHTML += ` <a href="/index.html" class="btn btn-sm btn-warning ms-2">Se reconnecter</a>`;
-    }
+    if (avecReconnexion) a.innerHTML += ' <a href="/index.html" class="btn btn-sm btn-warning ms-2">Se reconnecter</a>';
     a.classList.remove('d-none');
     if (['success','info'].includes(type)) setTimeout(() => a.classList.add('d-none'), 6000);
   }

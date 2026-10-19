@@ -1,9 +1,14 @@
 const { MessageCA, Utilisateur } = require('../models');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/messages/'),
+  destination: (req, file, cb) => {
+    const dir = 'uploads/messages/';
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
   filename: (req, file, cb) => {
     const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, unique + path.extname(file.originalname));

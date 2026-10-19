@@ -1,5 +1,6 @@
 const { Programme } = require('../models');
 const { Op } = require('sequelize');
+const { conditionMois } = require('../utils/mois');
 
 const genererProgrammesRecurrents = async () => {
   const aujourd_hui = new Date();
@@ -43,9 +44,8 @@ const listerProgrammes = async (req, res) => {
 
     if (statut) where.statut = statut;
     if (type) where.type = type;
-    if (mois) {
-      where.date = { [Op.like]: `${mois}%` };
-    }
+    const filtreMois = conditionMois(mois);
+    if (filtreMois) where.date = filtreMois;
 
     const programmes = await Programme.findAll({
       where,

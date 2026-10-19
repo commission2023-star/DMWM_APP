@@ -11,6 +11,10 @@ const copies = [
     dest: 'public/js-libs/bootstrap.bundle.min.js'
   },
   {
+    src: 'node_modules/chart.js/dist/chart.umd.min.js',
+    dest: 'public/js-libs/chart.umd.min.js'
+  },
+  {
     src: 'node_modules/@fortawesome/fontawesome-free/css/all.min.css',
     dest: 'public/css/fontawesome.min.css'
   }

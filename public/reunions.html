@@ -24,7 +24,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
       <h5><i class="fas fa-handshake me-2"></i>Réunions du Conseil</h5>
     </div>
     <button class="btn btn-primary btn-sm" id="btnNouvelleReunion" onclick="ouvrirModalReunion()"><i class="fas fa-plus me-1"></i>Nouvelle réunion</button>
@@ -44,11 +44,11 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
         <input type="hidden" id="reunionId">
         <div id="alerteModal" class="alert d-none mb-3"></div>
         <div class="row g-3">
-          <div class="col-12"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="rDate"></div>
-          <div class="col-6"><label class="form-label">Heure début</label><input type="time" class="form-control" id="rHeureDebut"></div>
-          <div class="col-6"><label class="form-label">Heure fin</label><input type="time" class="form-control" id="rHeureFin"></div>
-          <div class="col-12"><label class="form-label">Lieu</label><input type="text" class="form-control" id="rLieu"></div>
-          <div class="col-12"><label class="form-label">Ordre du jour</label><textarea class="form-control" id="rOrdreDuJour" rows="4"></textarea></div>
+          <div class="col-12"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="rDate" aria-label="Date"></div>
+          <div class="col-6"><label class="form-label">Heure début</label><input type="time" class="form-control" id="rHeureDebut" aria-label="Heure début"></div>
+          <div class="col-6"><label class="form-label">Heure fin</label><input type="time" class="form-control" id="rHeureFin" aria-label="Heure fin"></div>
+          <div class="col-12"><label class="form-label">Lieu</label><input type="text" class="form-control" id="rLieu" aria-label="Lieu"></div>
+          <div class="col-12"><label class="form-label">Ordre du jour</label><textarea class="form-control" id="rOrdreDuJour" rows="4" aria-label="Ordre du jour"></textarea></div>
         </div>
       </div>
       <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderReunion()"><i class="fas fa-save me-2"></i>Enregistrer</button></div>
@@ -72,8 +72,8 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
       <div class="modal-body p-4">
         <input type="hidden" id="crReunionId">
         <div id="alerteCR" class="alert d-none mb-3"></div>
-        <div class="mb-3"><label class="form-label">Compte rendu (texte)</label><textarea class="form-control" id="crContenu" rows="6"></textarea></div>
-        <div class="mb-3"><label class="form-label">Ou uploadez un fichier (PDF ou Word)</label><input type="file" class="form-control" id="crFichier" accept=".pdf,.doc,.docx"></div>
+        <div class="mb-3"><label class="form-label">Compte rendu (texte)</label><textarea class="form-control" id="crContenu" rows="6" aria-label="Compte rendu (texte)"></textarea></div>
+        <div class="mb-3"><label class="form-label">Ou uploadez un fichier (PDF ou Word)</label><input type="file" class="form-control" id="crFichier" accept=".pdf,.doc,.docx" aria-label="Ou uploadez un fichier (PDF ou Word)"></div>
         <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Vous pouvez saisir du texte, uploader un fichier, ou les deux.</small>
       </div>
       <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-success rounded-3" onclick="soumettreCompteRendu()"><i class="fas fa-save me-2"></i>Soumettre</button></div>
@@ -111,7 +111,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
             </div>
             <div class="d-flex gap-2 align-items-center">
               <span class="badge bg-${r.CompteRendus?.length>0?'success':'warning'}"><i class="fas fa-file-alt me-1"></i>${r.CompteRendus?.length||0} CR</span>
-              ${isCA ? `<button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); ouvrirModalEditer(${r.id})"><i class="fas fa-edit"></i></button>` : ''}
+              ${isCA ? `<button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); ouvrirModalEditer(${r.id})" title="Modifier" aria-label="Modifier"><i class="fas fa-edit"></i></button>` : ''}
             </div>
           </div>
           ${r.ordre_du_jour ? `<div class="mt-2" style="font-size:0.83rem;color:#555;"><i class="fas fa-list-ul me-1"></i>${r.ordre_du_jour.substring(0,120)}${r.ordre_du_jour.length>120?'...':''}</div>` : ''}
@@ -130,7 +130,7 @@ body { background:#f0f4f8; font-family:'Segoe UI',sans-serif; }
           <div class="cr-item">
             <div class="d-flex justify-content-between align-items-start">
               <div><span class="badge bg-primary me-2">${cr.commission}</span><strong>${cr.Auteur?.nom||'Inconnu'}</strong><small class="text-muted ms-2">${formatDateTime(cr.created_at)}</small></div>
-              ${isCA ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerCR(${r.id}, ${cr.id})"><i class="fas fa-trash"></i></button>` : ''}
+              ${isCA ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerCR(${r.id}, ${cr.id})" title="Supprimer" aria-label="Supprimer"><i class="fas fa-trash"></i></button>` : ''}
             </div>
             ${cr.contenu ? `<div class="mt-2" style="white-space:pre-wrap;font-size:0.85rem;">${cr.contenu}</div>` : ''}
             ${cr.fichier ? `<div class="mt-2"><a href="${cr.fichier}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-1"></i>Télécharger le fichier</a></div>` : ''}

@@ -86,9 +86,10 @@ const modifierMembre = async (req, res) => {
 
     const data = { ...req.body };
 
+    // Doublon telephone : refuser si un AUTRE membre a deja ce numero
     if (data.telephone && data.telephone !== membre.telephone) {
       const existe = await Membre.findOne({ where: { telephone: data.telephone } });
-      if (existe) return res.status(400).json({ message: 'Ce numéro de téléphone est déjà utilisé par un autre membre.' });
+      if (existe) return res.status(400).json({ message: 'Ce numero de telephone est deja utilise par un autre membre.' });
     }
 
     if (req.files?.photo_profil) {
