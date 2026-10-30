@@ -3,15 +3,21 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = 'uploads/messages/';
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, unique + path.extname(file.originalname));
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'dmwm-uasz/messages',
+    resource_type: 'auto',
+    public_id: (req, file) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      const nom = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      // Images et PDF : Cloudinary ajoute l'extension lui-même.
+      // Word / Excel : on garde l'extension dans le nom.
+      return ['.jpg', '.jpeg', '.png', '.pdf'].includes(ext) ? nom : nom + ext;
+    }
   }
 });
 const upload = multer({
@@ -43,7 +49,7 @@ const envoyerMessage = async (req, res) => {
     };
 
     if (req.file) {
-      data.fichier_joint = '/uploads/messages/' + req.file.filename;
+      data.fichier_joint = req.file.path;
     }
 
     const message = await MessageCA.create(data);

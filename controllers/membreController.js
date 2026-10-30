@@ -1,7 +1,6 @@
 const { Membre } = require('../models');
 const { Op } = require('sequelize');
-const path = require('path');
-const fs = require('fs');
+
 
 const listerMembres = async (req, res) => {
   try {
@@ -60,13 +59,13 @@ const ajouterMembre = async (req, res) => {
   try {
     const data = { ...req.body };
 
+    // Cloudinary renvoie directement l'URL complète dans "path"
     if (req.files?.photo_profil) {
-      data.photo_profil = '/uploads/' + req.files.photo_profil[0].filename;
+      data.photo_profil = req.files.photo_profil[0].path;
     }
     if (req.files?.document_identite) {
-      data.document_identite = '/uploads/' + req.files.document_identite[0].filename;
+      data.document_identite = req.files.document_identite[0].path;
     }
-
     if (data.telephone) {
       const existe = await Membre.findOne({ where: { telephone: data.telephone } });
       if (existe) return res.status(400).json({ message: 'Ce numero de telephone est deja enregistre.' });
@@ -92,21 +91,13 @@ const modifierMembre = async (req, res) => {
       if (existe) return res.status(400).json({ message: 'Ce numero de telephone est deja utilise par un autre membre.' });
     }
 
+    // Cloudinary renvoie directement l'URL complète dans "path"
     if (req.files?.photo_profil) {
-      if (membre.photo_profil) {
-        const oldPath = path.join(__dirname, '..', 'public', membre.photo_profil);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      data.photo_profil = '/uploads/' + req.files.photo_profil[0].filename;
+      data.photo_profil = req.files.photo_profil[0].path;
     }
     if (req.files?.document_identite) {
-      if (membre.document_identite) {
-        const oldPath = path.join(__dirname, '..', 'public', membre.document_identite);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      data.document_identite = '/uploads/' + req.files.document_identite[0].filename;
+      data.document_identite = req.files.document_identite[0].path;
     }
-
     await membre.update(data);
     res.json({ message: 'Membre modifie avec succes.', membre });
   } catch (error) {

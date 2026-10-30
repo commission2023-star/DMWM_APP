@@ -1,17 +1,20 @@
 const { Reunion, CompteRendu, Utilisateur } = require('../models');
 const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = 'uploads/comptes-rendus/';
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, unique + path.extname(file.originalname));
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'dmwm-uasz/comptes-rendus',
+    resource_type: 'auto',
+    public_id: (req, file) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      const nom = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      return ext === '.pdf' ? nom : nom + ext;
+    }
   }
 });
 const upload = multer({
@@ -98,7 +101,7 @@ const ajouterCompteRendu = async (req, res) => {
     };
 
     if (req.file) {
-      data.fichier = '/uploads/comptes-rendus/' + req.file.filename;
+      data.fichier = req.file.path;
     }
 
     if (!data.contenu && !data.fichier) {

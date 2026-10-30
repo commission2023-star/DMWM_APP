@@ -9,13 +9,18 @@ const {
   ajouterMembre, modifierMembre, changerStatut, archiverMembre
 } = require('../controllers/membreController');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, unique + path.extname(file.originalname));
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
+
+// Où et comment ranger les fichiers : chez Cloudinary, dans le dossier "dmwm-uasz/membres"
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'dmwm-uasz/membres',
+    resource_type: 'auto'
   }
-});
+}); 
+
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -26,7 +31,18 @@ const upload = multer({
     else cb(new Error('Format non supporte. Utilisez JPG, PNG ou PDF.'));
   }
 });
-
+/*
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|pdf/;
+    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    if (ext) cb(null, true);
+    else cb(new Error('Format non supporte. Utilisez JPG, PNG ou PDF.'));
+  }
+});
+*/
 const uploadFields = upload.fields([
   { name: 'photo_profil', maxCount: 1 },
   { name: 'document_identite', maxCount: 1 }
