@@ -18,12 +18,28 @@ const sequelize = new Sequelize(
     dialectOptions: utiliserSSL
       ? { ssl: { require: true, rejectUnauthorized: false } }
       : { charset: 'utf8mb4' },
-    pool: { max: 5, min: 0, acquire: 30000, idle: 10000 }
+pool: { max: 5, min: 0, acquire: 60000, idle: 10000 },
+retry: {
+  max: 5,
+  backoffBase: 2000,
+  backoffExponent: 1.5,
+  match: [
+    /ETIMEDOUT/,
+    /ECONNRESET/,
+    /ECONNREFUSED/,
+    /EHOSTUNREACH/,
+    /PROTOCOL_CONNECTION_LOST/,
+    /SequelizeConnectionError/,
+    /SequelizeConnectionRefusedError/,
+    /SequelizeHostNotReachableError/,
+    /SequelizeConnectionTimedOutError/
+  ]
+}
   }
 );
 
 sequelize.authenticate()
   .then(() => console.log('Base de donnees connectee'))
-  .catch(err => console.error('Erreur connexion DB:', err.message));
+  .catch(err => console.error('Erreur connexion DB (apres plusieurs essais):', err.message));
 
 module.exports = sequelize;

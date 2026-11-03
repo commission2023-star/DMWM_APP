@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const sequelize = require('./config/database');
 
 const app = express();
 
@@ -22,6 +23,15 @@ app.use('/api/pointage', require('./routes/pointage'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/reunions', require('./routes/reunions'));
 app.use('/api/rapports', require('./routes/rapports'));
+// Route de sante (publique) : verifie que le serveur ET la base repondent
+app.get('/api/health', async (req, res) => {
+  try {
+    await sequelize.query('SELECT 1');
+    res.status(200).json({ status: 'ok' });
+  } catch (err) {
+    res.status(503).json({ status: 'erreur', message: 'Base de donnees indisponible' });
+  }
+});
 
 // Route test
 app.get('/', (req, res) => {
