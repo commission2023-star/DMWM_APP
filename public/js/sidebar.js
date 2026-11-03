@@ -75,6 +75,7 @@ function creerSidebar() {
     menuHtml += lien('/membres.html', 'chart-bar', 'Statistiques');
     menuHtml += lien('/boite-reception.html', 'inbox', 'Boite de reception');
     menuHtml += lien('/reunions.html', 'handshake', 'Reunions');
+    menuHtml += lien('/rapports.html', 'file-alt', 'Rapports');
     menuHtml += lien('/partager-ca.html', 'paper-plane', 'Envoyer a la CA');
   }
 
