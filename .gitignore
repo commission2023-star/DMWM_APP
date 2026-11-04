@@ -2,7 +2,8 @@ node_modules/
 .env
 uploads/*
 !uploads/.gitkeep
-public/css/*
+public/css/bootstrap.min.css
+public/css/fontawesome.min.css
 !public/css/.gitkeep
 public/js-libs/*
 !public/js-libs/.gitkeep
