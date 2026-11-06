@@ -1,0 +1,7 @@
+﻿.card-custom { background:white; border-radius:15px; box-shadow:0 2px 15px rgba(0,0,0,0.06); border:none; padding:25px; margin-bottom:20px; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:8px 12px; font-size:0.88rem; }
+.reunion-card { background:white; border-radius:12px; padding:20px; border-left:4px solid #1B5E8A; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.05); cursor:pointer; }
+.cr-item { background:#f8f9fa; border-radius:8px; padding:12px; margin-bottom:8px; border-left:3px solid #28a745; }
+.modal-header { background:linear-gradient(135deg,#1B5E8A,#2E75B6); color:white; }
+.modal-header .btn-close { filter:brightness(0) invert(1); }
+.form-label { font-weight:600; font-size:0.88rem; color:#444; }
