@@ -114,6 +114,9 @@
   }
   function chargerLocal(programme_id) { const data = localStorage.getItem(`pointage_${programme_id}`); return data ? JSON.parse(data) : null; }
   function supprimerLocal(programme_id) { localStorage.removeItem(`pointage_${programme_id}`); }
+  function sauvegarderBrouillon(programme_id, pointages) { localStorage.setItem(`brouillon_${programme_id}`, JSON.stringify({ programme_id, pointages, date: new Date().toISOString() })); }
+  function chargerBrouillon(programme_id) { const data = localStorage.getItem(`brouillon_${programme_id}`); return data ? JSON.parse(data) : null; }
+  function supprimerBrouillon(programme_id) { localStorage.removeItem(`brouillon_${programme_id}`); }
   function getTousLocaux() {
     const locaux = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -185,6 +188,12 @@
         afficherAlerte('Données locales chargées — pointage en cours récupéré.', 'info');
       }
 
+      const brouillon = chargerBrouillon(programme_id);
+      if (brouillon) {
+        brouillon.pointages.forEach(p => { pointagesLocaux[p.membre_id] = p.statut; });
+        afficherAlerte('Brouillon local restauré : pointage en cours récupéré.', 'info');
+      }
+
       afficherInfoProgramme(); afficherMembresPointage(membresData); mettreAJourStats();
       document.getElementById('etape1').style.display = 'none'; document.getElementById('etape2').style.display = 'block';
     } catch(e) { afficherAlerte('Erreur lors du chargement des membres.', 'danger'); }
@@ -228,7 +237,7 @@
     btns[1].className = pointagesLocaux[membre_id] === 'Absent' ? 'btn-absent' : 'btn-neutre';
     mettreAJourStats();
     const pointagesArray = Object.entries(pointagesLocaux).filter(([_,s])=>s!==null).map(([id,statut])=>({membre_id:parseInt(id),statut}));
-    sauvegarderLocal(programmeSelectionne.id, pointagesArray);
+    sauvegarderBrouillon(programmeSelectionne.id, pointagesArray);
   }
 
   function tousPresents() { membresData.forEach(m => pointagesLocaux[m.id]='Present'); afficherMembresPointage(membresData); mettreAJourStats(); }
@@ -258,6 +267,7 @@
 
     // Toujours garder une copie locale AVANT d'envoyer
     sauvegarderLocal(programmeSelectionne.id, pointagesArray);
+    supprimerBrouillon(programmeSelectionne.id);
 
     if (!estEnLigne) {
       afficherEtape3(pointagesArray);
@@ -289,7 +299,7 @@
     document.getElementById('etape2').style.display = 'none'; document.getElementById('etape3').style.display = 'block';
   }
 
-  function annulerPointage() { if (confirm('Annuler le pointage ? Les données non enregistrées seront perdues.')) nouveauPointage(); }
+  function annulerPointage() { if (confirm('Annuler le pointage ? Les données non enregistrées seront perdues.')) { if (programmeSelectionne) supprimerBrouillon(programmeSelectionne.id); nouveauPointage(); } }
 
   function nouveauPointage() {
     membresData = []; pointagesLocaux = {}; programmeSelectionne = null;
