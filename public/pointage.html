@@ -143,11 +143,32 @@
     if (synces > 0) afficherAlerte(`✅ ${synces} pointage(s) synchronisé(s) avec succès !`, 'success');
     if (erreurs > 0) afficherAlerte(`⚠️ ${erreurs} pointage(s) n'ont pas pu être synchronisés.`, 'warning');
   }
-
+    async function prechargerMembres(programme_id) {
+    try {
+      const res = await fetch(`/api/pointage/membres?programme_id=${programme_id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const membres = await res.json();
+      if (!Array.isArray(membres)) return;
+      const allege = membres.map(m => ({ id: m.id, prenom: m.prenom, nom: m.nom, sexe: m.sexe, filiere: m.filiere, niveau: m.niveau }));
+      localStorage.setItem('cache_membres', JSON.stringify({ date: new Date().toISOString(), membres: allege }));
+    } catch (e) {}
+  }
+  
   async function chargerProgrammes() {
     try {
-      const res = await fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } });
-      const programmes = await res.json();
+      let programmes;
+      try {
+        const res = await fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } });
+        programmes = await res.json();
+        if (Array.isArray(programmes)) {
+          localStorage.setItem('cache_programmes', JSON.stringify(programmes));
+          if (programmes.length > 0) prechargerMembres(programmes[0].id);
+        }
+      } catch (e) {
+        const copie = localStorage.getItem('cache_programmes');
+        if (!copie) { afficherAlerte('Erreur chargement programmes.', 'danger'); return; }
+        programmes = JSON.parse(copie);
+        afficherAlerte('Hors ligne : liste des programmes lue depuis cet appareil.', 'info');
+      }
       const select = document.getElementById('selectProgramme');
       select.innerHTML = '<option value="">-- Choisir un programme --</option>';
 
@@ -176,8 +197,15 @@
     try {
       const params = new URLSearchParams({ programme_id });
       if (sexe) params.append('sexe', sexe);
-      const res = await fetch(`/api/pointage/membres?${params}`, { headers: { Authorization: `Bearer ${token}` } });
-      membresData = await res.json();
+      try {
+        const res = await fetch(`/api/pointage/membres?${params}`, { headers: { Authorization: `Bearer ${token}` } });
+        membresData = await res.json();
+      } catch (e) {
+        const copie = JSON.parse(localStorage.getItem('cache_membres') || 'null');
+        if (!copie) { afficherAlerte('Hors ligne : liste des membres indisponible. Ouvrez cette page une fois avec Internet.', 'danger'); return; }
+        membresData = copie.membres.filter(m => !sexe || m.sexe === sexe).map(m => ({ ...m, presence: null }));
+        afficherAlerte(`Hors ligne : liste des membres enregistrée le ${new Date(copie.date).toLocaleString('fr-FR')}.`, 'info');
+      }
 
       pointagesLocaux = {};
       membresData.forEach(m => { pointagesLocaux[m.id] = m.presence || null; });

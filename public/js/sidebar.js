@@ -250,6 +250,8 @@ function deconnexion() {
   if (confirm('Voulez-vous vous deconnecter ?')) {
     localStorage.removeItem('token');
     localStorage.removeItem('utilisateur');
+    localStorage.removeItem('cache_programmes');
+    localStorage.removeItem('cache_membres');
     window.location.href = '/index.html';
   }
 }
