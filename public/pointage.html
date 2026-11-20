@@ -7,6 +7,10 @@
 <link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/pointage.css">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" type="image/png" href="/images/icon-192.png">
+  <script src="/js/pwa.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -114,6 +118,9 @@
   }
   function chargerLocal(programme_id) { const data = localStorage.getItem(`pointage_${programme_id}`); return data ? JSON.parse(data) : null; }
   function supprimerLocal(programme_id) { localStorage.removeItem(`pointage_${programme_id}`); }
+  function sauvegarderBrouillon(programme_id, pointages) { localStorage.setItem(`brouillon_${programme_id}`, JSON.stringify({ programme_id, pointages, date: new Date().toISOString() })); }
+  function chargerBrouillon(programme_id) { const data = localStorage.getItem(`brouillon_${programme_id}`); return data ? JSON.parse(data) : null; }
+  function supprimerBrouillon(programme_id) { localStorage.removeItem(`brouillon_${programme_id}`); }
   function getTousLocaux() {
     const locaux = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -140,11 +147,32 @@
     if (synces > 0) afficherAlerte(`✅ ${synces} pointage(s) synchronisé(s) avec succès !`, 'success');
     if (erreurs > 0) afficherAlerte(`⚠️ ${erreurs} pointage(s) n'ont pas pu être synchronisés.`, 'warning');
   }
-
+    async function prechargerMembres(programme_id) {
+    try {
+      const res = await fetch(`/api/pointage/membres?programme_id=${programme_id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const membres = await res.json();
+      if (!Array.isArray(membres)) return;
+      const allege = membres.map(m => ({ id: m.id, prenom: m.prenom, nom: m.nom, sexe: m.sexe, filiere: m.filiere, niveau: m.niveau }));
+      localStorage.setItem('cache_membres', JSON.stringify({ date: new Date().toISOString(), membres: allege }));
+    } catch (e) {}
+  }
+  
   async function chargerProgrammes() {
     try {
-      const res = await fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } });
-      const programmes = await res.json();
+      let programmes;
+      try {
+        const res = await fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } });
+        programmes = await res.json();
+        if (Array.isArray(programmes)) {
+          localStorage.setItem('cache_programmes', JSON.stringify(programmes));
+          if (programmes.length > 0) prechargerMembres(programmes[0].id);
+        }
+      } catch (e) {
+        const copie = localStorage.getItem('cache_programmes');
+        if (!copie) { afficherAlerte('Erreur chargement programmes.', 'danger'); return; }
+        programmes = JSON.parse(copie);
+        afficherAlerte('Hors ligne : liste des programmes lue depuis cet appareil.', 'info');
+      }
       const select = document.getElementById('selectProgramme');
       select.innerHTML = '<option value="">-- Choisir un programme --</option>';
 
@@ -173,8 +201,15 @@
     try {
       const params = new URLSearchParams({ programme_id });
       if (sexe) params.append('sexe', sexe);
-      const res = await fetch(`/api/pointage/membres?${params}`, { headers: { Authorization: `Bearer ${token}` } });
-      membresData = await res.json();
+      try {
+        const res = await fetch(`/api/pointage/membres?${params}`, { headers: { Authorization: `Bearer ${token}` } });
+        membresData = await res.json();
+      } catch (e) {
+        const copie = JSON.parse(localStorage.getItem('cache_membres') || 'null');
+        if (!copie) { afficherAlerte('Hors ligne : liste des membres indisponible. Ouvrez cette page une fois avec Internet.', 'danger'); return; }
+        membresData = copie.membres.filter(m => !sexe || m.sexe === sexe).map(m => ({ ...m, presence: null }));
+        afficherAlerte(`Hors ligne : liste des membres enregistrée le ${new Date(copie.date).toLocaleString('fr-FR')}.`, 'info');
+      }
 
       pointagesLocaux = {};
       membresData.forEach(m => { pointagesLocaux[m.id] = m.presence || null; });
@@ -183,6 +218,12 @@
       if (local) {
         local.pointages.forEach(p => { pointagesLocaux[p.membre_id] = p.statut; });
         afficherAlerte('Données locales chargées — pointage en cours récupéré.', 'info');
+      }
+
+      const brouillon = chargerBrouillon(programme_id);
+      if (brouillon) {
+        brouillon.pointages.forEach(p => { pointagesLocaux[p.membre_id] = p.statut; });
+        afficherAlerte('Brouillon local restauré : pointage en cours récupéré.', 'info');
       }
 
       afficherInfoProgramme(); afficherMembresPointage(membresData); mettreAJourStats();
@@ -228,7 +269,7 @@
     btns[1].className = pointagesLocaux[membre_id] === 'Absent' ? 'btn-absent' : 'btn-neutre';
     mettreAJourStats();
     const pointagesArray = Object.entries(pointagesLocaux).filter(([_,s])=>s!==null).map(([id,statut])=>({membre_id:parseInt(id),statut}));
-    sauvegarderLocal(programmeSelectionne.id, pointagesArray);
+    sauvegarderBrouillon(programmeSelectionne.id, pointagesArray);
   }
 
   function tousPresents() { membresData.forEach(m => pointagesLocaux[m.id]='Present'); afficherMembresPointage(membresData); mettreAJourStats(); }
@@ -258,6 +299,7 @@
 
     // Toujours garder une copie locale AVANT d'envoyer
     sauvegarderLocal(programmeSelectionne.id, pointagesArray);
+    supprimerBrouillon(programmeSelectionne.id);
 
     if (!estEnLigne) {
       afficherEtape3(pointagesArray);
@@ -289,7 +331,7 @@
     document.getElementById('etape2').style.display = 'none'; document.getElementById('etape3').style.display = 'block';
   }
 
-  function annulerPointage() { if (confirm('Annuler le pointage ? Les données non enregistrées seront perdues.')) nouveauPointage(); }
+  function annulerPointage() { if (confirm('Annuler le pointage ? Les données non enregistrées seront perdues.')) { if (programmeSelectionne) supprimerBrouillon(programmeSelectionne.id); nouveauPointage(); } }
 
   function nouveauPointage() {
     membresData = []; pointagesLocaux = {}; programmeSelectionne = null;
