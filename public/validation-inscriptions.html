@@ -103,6 +103,15 @@
   function formatDate(d) { return d ? new Date(d).toLocaleDateString('fr-FR') : '—'; }
   function formatDateTime(d) { return d ? new Date(d).toLocaleString('fr-FR') : '—'; }
 
+  function fichierLien(url, label) {
+    if (!url) return '—';
+    const extension = url.split('?')[0].split('.').pop().toLowerCase();
+    if (extension === 'pdf') {
+      return `<a href="${url}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-danger"><i class="fas fa-file-pdf me-1"></i>${label}</a>`;
+    }
+    return `<a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="${label}" style="max-width:120px;max-height:120px;border-radius:8px;border:1px solid #eee;object-fit:cover"></a>`;
+  }
+
   async function chargerStats() {
     try {
       const res = await fetch('/api/inscriptions/stats', { headers: { Authorization: `Bearer ${token}` } });
@@ -191,6 +200,16 @@
           <div class="info-ligne"><span class="info-cle">Poste</span><span class="info-val">${val(d.poste_section_base)}</span></div>
           <div class="info-ligne"><span class="info-cle">PF / Président</span><span class="info-val">${val(d.pf_nom)}</span></div>
           <div class="info-ligne"><span class="info-cle">Tél. PF</span><span class="info-val">${val(d.pf_telephone)}</span></div>
+        `;
+      }
+
+      if (d.photo_profil || d.document_identite) {
+        html += `
+          <div class="section-modal"><i class="fas fa-file-image me-2"></i>Photo et documents</div>
+          <div class="row">
+            <div class="col-md-6"><div class="info-ligne"><span class="info-cle">Photo de profil</span><span class="info-val">${fichierLien(d.photo_profil, 'Voir la photo')}</span></div></div>
+            <div class="col-md-6"><div class="info-ligne"><span class="info-cle">Carte d'identité</span><span class="info-val">${fichierLien(d.document_identite, 'Voir le document')}</span></div></div>
+          </div>
         `;
       }
 

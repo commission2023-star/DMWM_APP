@@ -15,6 +15,7 @@
 .form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:10px 14px; font-size:0.9rem; }
 .form-control:focus, .form-select:focus { border-color:#1B5E8A; box-shadow:0 0 0 3px rgba(27,94,138,0.15); }
 .required::after { content:" *"; color:#dc3545; }
+.preview-img { width:100px; height:100px; border-radius:10px; object-fit:cover; border:2px solid #e0e0e0; display:none; }
 .btn-submit { background:linear-gradient(135deg,#1B5E8A,#2E75B6); border:none; border-radius:10px; color:white; padding:13px; font-weight:700; width:100%; font-size:1rem; margin-top:15px; cursor:pointer; }
 .success-screen { text-align:center; padding:40px 20px; display:none; }
 .success-icon { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#28a745,#20c997); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; margin:0 auto 20px; }

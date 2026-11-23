@@ -8,6 +8,16 @@ const soumettre = async (req, res) => {
       return res.status(400).json({ message: 'Type de formulaire requis.' });
     }
 
+    // Les fichiers sont envoyes vers Cloudinary par le middleware d'upload.
+    // On conserve leurs URL avec le reste du dossier pour les retrouver
+    // lors de la validation de l'inscription.
+    if (req.files?.photo_profil) {
+      donnees.photo_profil = req.files.photo_profil[0].path;
+    }
+    if (req.files?.document_identite) {
+      donnees.document_identite = req.files.document_identite[0].path;
+    }
+
     const inscription = await InscriptionEnAttente.create({
       type_formulaire,
       donnees,
