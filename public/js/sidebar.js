@@ -61,7 +61,7 @@ function creerSidebar() {
     menuHtml += lien('/programmes.html', 'calendar-alt', 'Programmes');
     menuHtml += lien('/pointage.html', 'check-square', 'Pointage');
     menuHtml += lien('/absences.html', 'user-times', 'Absences');
-
+    menuHtml += lien('/visiteurs.html', 'user-friends', 'Visiteurs');
     menuHtml += label('Communication');
     menuHtml += lien('/boite-reception.html', 'inbox', 'Boite de reception');
     menuHtml += lien('/reunions.html', 'handshake', 'Reunions');
@@ -73,6 +73,7 @@ function creerSidebar() {
   if (menuPF) {
     menuHtml += label('Supervision');
     menuHtml += lien('/membres.html', 'chart-bar', 'Statistiques');
+    menuHtml += lien('/visiteurs.html', 'user-friends', 'Visiteurs');
     menuHtml += lien('/boite-reception.html', 'inbox', 'Boite de reception');
     menuHtml += lien('/reunions.html', 'handshake', 'Reunions');
     menuHtml += lien('/rapports.html', 'file-alt', 'Rapports');
