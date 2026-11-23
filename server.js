@@ -20,6 +20,7 @@ app.use('/api/membres', require('./routes/membres'));
 app.use('/api/inscriptions', require('./routes/inscriptions'));
 app.use('/api/programmes', require('./routes/programmes'));
 app.use('/api/pointage', require('./routes/pointage'));
+app.use('/api/visiteurs', require('./routes/visiteurs'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/reunions', require('./routes/reunions'));
 app.use('/api/rapports', require('./routes/rapports'));
