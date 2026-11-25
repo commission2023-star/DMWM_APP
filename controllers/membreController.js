@@ -1,6 +1,6 @@
-const { Membre } = require('../models');
+const { Membre, Visiteur, sequelize } = require('../models');
 const { Op } = require('sequelize');
-
+const { normaliserTelephone } = require('../utils/telephone');
 
 const listerMembres = async (req, res) => {
   try {
@@ -56,9 +56,8 @@ const getMembre = async (req, res) => {
 };
 
 const ajouterMembre = async (req, res) => {
+  const { visiteur_id, ...data } = req.body;
   try {
-    const data = { ...req.body };
-
     // Cloudinary renvoie directement l'URL complète dans "path"
     if (req.files?.photo_profil) {
       data.photo_profil = req.files.photo_profil[0].path;
@@ -66,12 +65,37 @@ const ajouterMembre = async (req, res) => {
     if (req.files?.document_identite) {
       data.document_identite = req.files.document_identite[0].path;
     }
+
+    // Téléphone : on stocke les 9 chiffres, et on cherche les doublons sous les 3 formes
     if (data.telephone) {
-      const existe = await Membre.findOne({ where: { telephone: data.telephone } });
+      const numero = normaliserTelephone(data.telephone);
+      if (!numero) return res.status(400).json({ message: 'Numero de telephone invalide.' });
+      data.telephone = numero;
+      const existe = await Membre.findOne({
+        where: { telephone: { [Op.in]: [numero, `221${numero}`, `+221${numero}`] } }
+      });
       if (existe) return res.status(400).json({ message: 'Ce numero de telephone est deja enregistre.' });
     }
 
-    const membre = await Membre.create(data);
+    // Conversion d'un visiteur : il doit exister et ne pas être déjà converti
+    let visiteur = null;
+    if (visiteur_id) {
+      visiteur = await Visiteur.findByPk(visiteur_id);
+      if (!visiteur) return res.status(404).json({ message: 'Visiteur introuvable.' });
+      if (visiteur.statut_suivi === 'Devenu membre') {
+        return res.status(400).json({ message: 'Ce visiteur est deja devenu membre.' });
+      }
+    }
+
+    // Transaction : le membre et le statut du visiteur réussissent ensemble, ou aucun
+    const membre = await sequelize.transaction(async (t) => {
+      const cree = await Membre.create(data, { transaction: t });
+      if (visiteur) {
+        await visiteur.update({ statut_suivi: 'Devenu membre', membre_id: cree.id }, { transaction: t });
+      }
+      return cree;
+    });
+
     res.status(201).json({ message: 'Membre ajoute avec succes.', membre });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur.', erreur: error.message });

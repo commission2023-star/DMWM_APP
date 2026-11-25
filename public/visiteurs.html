@@ -72,6 +72,32 @@
 </div>
 
 <script src="/js-libs/bootstrap.bundle.min.js"></script>
+<div class="modal fade" id="modalConversion" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header" style="border-radius:15px 15px 0 0;">
+        <h5 class="modal-title"><i class="fas fa-user-check me-2"></i>Convertir en membre</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p>Visiteur : <strong id="nomConversion"></strong></p>
+        <label class="form-label" for="typeConversion">Type de membre</label>
+        <select class="form-select" id="typeConversion">
+          <option value="">-- Choisir --</option>
+          <option value="Nouveau Bachelier">Nouveau Bachelier</option>
+          <option value="Nouveau Adherent">Nouveau Adhérent</option>
+          <option value="Ancien">Ancien / Membre Confirmé</option>
+        </select>
+        <div class="text-danger small mt-2" id="erreurConversion"></div>
+        <p class="text-muted small mt-3 mb-0">Vous compléterez ensuite les informations manquantes dans le formulaire.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-primary" onclick="continuerConversion()">Continuer</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -172,6 +198,7 @@
         <td class="text-nowrap">
           <button class="btn btn-sm btn-outline-primary" onclick="voirHistorique(${v.id})" title="Historique" aria-label="Historique"><i class="fas fa-history"></i></button>
           <a class="btn btn-sm btn-outline-success" href="https://wa.me/221${echapper(v.telephone)}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          ${(peutGerer && v.statut_suivi !== 'Devenu membre') ? `<button class="btn btn-sm btn-outline-dark" onclick="ouvrirConversion(${v.id})" title="Convertir en membre" aria-label="Convertir en membre"><i class="fas fa-user-check"></i></button>` : ''}
         </td>
       </tr>`;
     }).join('');
@@ -234,6 +261,28 @@
   }
 
   modale = new bootstrap.Modal(document.getElementById('modalHistorique'));
+  const modaleConversion = new bootstrap.Modal(document.getElementById('modalConversion'));
+  let visiteurAConvertir = null;
+
+  function ouvrirConversion(id) {
+    visiteurAConvertir = tousVisiteurs.find(v => v.id === id) || null;
+    if (!visiteurAConvertir) return;
+    document.getElementById('nomConversion').textContent = `${visiteurAConvertir.prenom} ${visiteurAConvertir.nom}`;
+    document.getElementById('typeConversion').value = '';
+    document.getElementById('erreurConversion').textContent = '';
+    modaleConversion.show();
+  }
+
+  function continuerConversion() {
+    const type = document.getElementById('typeConversion').value;
+    if (!type || !visiteurAConvertir) {
+      document.getElementById('erreurConversion').textContent = 'Choisissez le type de membre.';
+      return;
+    }
+    const v = visiteurAConvertir;
+    const p = new URLSearchParams({ visiteur_id: v.id, prenom: v.prenom, nom: v.nom, telephone: v.telephone, categorie: type });
+    window.location.href = '/membre-form.html?' + p.toString();
+  }
   if (peutGerer) { document.getElementById('btnSeuil').classList.remove('d-none'); }
   else { document.getElementById('seuilSaisie').disabled = true; }
   chargerVisiteurs();

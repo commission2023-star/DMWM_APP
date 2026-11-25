@@ -138,6 +138,16 @@
   const urlParams = new URLSearchParams(window.location.search);
   const membreId = urlParams.get('id');
   let modeEdition = !!membreId;
+  const visiteurId = urlParams.get('visiteur_id');
+  if (visiteurId && !modeEdition) {
+    ['prenom', 'nom', 'telephone', 'categorie'].forEach(c => {
+      const v = urlParams.get(c);
+      const el = document.getElementById(c);
+      if (v && el) el.value = v;
+    });
+    gererCategorie();
+    document.getElementById('titreFormulaire').innerHTML = '<i class="fas fa-user-check me-2"></i>Convertir un visiteur en membre';
+  }
 
   if (modeEdition) {
     document.getElementById('titreFormulaire').innerHTML = '<i class="fas fa-edit me-2"></i>Modifier le membre';
@@ -184,6 +194,7 @@
     const formData = new FormData();
     const champs = ['prenom','nom','sexe','date_naissance','lieu_naissance','telephone','email','adresse','tuteur_nom','tuteur_telephone','filiere','niveau','region_origine','departement','arrondissement','commune','comite_origine','conseil_origine','section_base','poste_section_base','pf_nom','pf_telephone','categorie','commission','statut','date_adhesion','notes'];
     champs.forEach(c => { const el = document.getElementById(c); if (el && el.value) formData.append(c, el.value); });
+    if (visiteurId) formData.append('visiteur_id', visiteurId);
 
     const photo = document.getElementById('photo_profil').files[0];
     const doc = document.getElementById('document_identite').files[0];
@@ -197,7 +208,7 @@
       const data = await res.json();
       if (res.ok) {
         afficherAlerte(data.message, 'success');
-        setTimeout(() => window.location.href = '/membres.html', 1500);
+        setTimeout(() => window.location.href = visiteurId ? '/visiteurs.html' : '/membres.html', 1500);
       } else { afficherAlerte(data.message, 'danger'); }
     } catch(e) { afficherAlerte('Erreur serveur.', 'danger'); }
   }
