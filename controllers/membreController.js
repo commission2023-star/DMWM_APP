@@ -1,6 +1,6 @@
 const { Membre, Visiteur, sequelize } = require('../models');
 const { Op } = require('sequelize');
-const { normaliserTelephone } = require('../utils/telephone');
+const { normaliserTelephone, formesTelephone } = require('../utils/telephone');
 
 const listerMembres = async (req, res) => {
   try {
@@ -109,9 +109,14 @@ const modifierMembre = async (req, res) => {
 
     const data = { ...req.body };
 
-    // Doublon telephone : refuser si un AUTRE membre a deja ce numero
-    if (data.telephone && data.telephone !== membre.telephone) {
-      const existe = await Membre.findOne({ where: { telephone: data.telephone } });
+        // Telephone : 9 chiffres en base, doublon refuse si un AUTRE membre a deja ce numero (sous l'une des 3 formes)
+    if (data.telephone) {
+      const numero = normaliserTelephone(data.telephone);
+      if (!numero) return res.status(400).json({ message: 'Numero de telephone invalide.' });
+      data.telephone = numero;
+      const existe = await Membre.findOne({
+        where: { telephone: { [Op.in]: formesTelephone(numero) }, id: { [Op.ne]: membre.id } }
+      });
       if (existe) return res.status(400).json({ message: 'Ce numero de telephone est deja utilise par un autre membre.' });
     }
 

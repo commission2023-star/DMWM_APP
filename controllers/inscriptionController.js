@@ -1,4 +1,6 @@
 const { InscriptionEnAttente } = require('../models');
+const { Op } = require('sequelize');
+const { normaliserChampsTelephone, formesTelephone } = require('../utils/telephone');
 
 const soumettre = async (req, res) => {
   try {
@@ -70,10 +72,13 @@ const valider = async (req, res) => {
     }
 
     const { Membre } = require('../models');
-    const donnees = inscription.donnees;
+    const donnees = { ...inscription.donnees };
 
+    // Les anciens dossiers peuvent contenir un numero a l'ancien format : on le normalise ici
+    const invalide = normaliserChampsTelephone(donnees);
+    if (invalide) return res.status(400).json({ message: `${invalide} invalide dans le dossier. Modifiez-le avant de valider.` });
     if (donnees.telephone) {
-      const existe = await Membre.findOne({ where: { telephone: donnees.telephone } });
+      const existe = await Membre.findOne({ where: { telephone: { [Op.in]: formesTelephone(donnees.telephone) } } });
       if (existe) {
         return res.status(400).json({ message: 'Un membre avec ce numero de telephone existe deja.' });
       }
@@ -136,6 +141,8 @@ const modifier = async (req, res) => {
     if (!inscription) return res.status(404).json({ message: 'Inscription introuvable.' });
 
     const { donnees } = req.body;
+    const invalide = donnees ? normaliserChampsTelephone(donnees) : null;
+    if (invalide) return res.status(400).json({ message: `${invalide} invalide.` });
     await inscription.update({ donnees });
 
     res.json({ message: 'Inscription modifiee avec succes.' });
