@@ -1,10 +1,12 @@
 const { InscriptionEnAttente } = require('../models');
 const { Op } = require('sequelize');
 const { normaliserChampsTelephone, formesTelephone } = require('../utils/telephone');
+const { filtrerDonnees } = require('../utils/champsInscription');
 
 const soumettre = async (req, res) => {
   try {
-    const { type_formulaire, ...donnees } = req.body;
+const { type_formulaire, ...brut } = req.body;
+    const donnees = filtrerDonnees(brut);
 
     if (!type_formulaire) {
       return res.status(400).json({ message: 'Type de formulaire requis.' });
@@ -72,7 +74,7 @@ const valider = async (req, res) => {
     }
 
     const { Membre } = require('../models');
-    const donnees = { ...inscription.donnees };
+    const donnees = filtrerDonnees(inscription.donnees, true);
 
     // Les anciens dossiers peuvent contenir un numero a l'ancien format : on le normalise ici
     const invalide = normaliserChampsTelephone(donnees);
