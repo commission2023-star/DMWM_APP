@@ -1,5 +1,5 @@
 // Changer la version (v1 -> v2...) quand les fichiers pré-cachés changent
-const VERSION = "v2";
+const VERSION = "v3";
 const CACHE_NAME = "dmwm-" + VERSION;
 
 const PRECACHE = [
@@ -13,6 +13,7 @@ const PRECACHE = [
   "/js/auth-guard.js",
   "/js/sidebar.js",
   "/js/pwa.js",
+  "/js/telephone-input.js",
   "/js-libs/bootstrap.bundle.min.js",
   "/fonts/fa-solid-900.woff2",
   "/fonts/fa-regular-400.woff2",

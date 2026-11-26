@@ -1,5 +1,6 @@
-const { Presence, Membre, Programme } = require('../models');
+const { Presence, Membre, Programme, Visiteur, Visite } = require('../models');
 const { Op } = require('sequelize');
+const { normaliserTelephone } = require('../utils/telephone');
 
 const getMembresPointage = async (req, res) => {
   try {
@@ -40,7 +41,7 @@ const getMembresPointage = async (req, res) => {
 
 const enregistrerPointage = async (req, res) => {
   try {
-    const { programme_id, pointages } = req.body;
+    const { programme_id, pointages, visiteurs } = req.body;
 
     if (!programme_id || !pointages || !Array.isArray(pointages)) {
       return res.status(400).json({ message: 'Donnees invalides.' });
@@ -70,12 +71,39 @@ const enregistrerPointage = async (req, res) => {
         crees++;
       }
     }
+    let visiteursEnregistres = 0;
+    let visiteursIgnores = 0;
 
+    if (Array.isArray(visiteurs)) {
+      for (const v of visiteurs) {
+        const prenom = String(v.prenom || '').trim();
+        const nom = String(v.nom || '').trim();
+        const telephone = normaliserTelephone(v.telephone);
+
+        if (!prenom || !nom || !telephone) {
+          visiteursIgnores++;
+          continue;
+        }
+
+        const [visiteur] = await Visiteur.findOrCreate({
+          where: { telephone },
+          defaults: { prenom, nom }
+        });
+
+        const [, creee] = await Visite.findOrCreate({
+          where: { visiteur_id: visiteur.id, programme_id }
+        });
+
+        if (creee) visiteursEnregistres++;
+      }
+    }
     await programme.update({ statut: 'Tenu' });
 
     res.json({
       message: `Pointage enregistre. ${crees} crees, ${modifies} mis a jour.`,
-      total: pointages.length
+      total: pointages.length,
+      visiteurs_enregistres: visiteursEnregistres,
+      visiteurs_ignores: visiteursIgnores
     });
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur.', erreur: error.message });

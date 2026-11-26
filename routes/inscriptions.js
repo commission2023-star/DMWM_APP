@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { verifierToken, verifierRole } = require('../middleware/auth');
 const { validerMembre } = require('../middleware/validation');
+const { uploadMembreFields } = require('../middleware/upload');
 const {
   soumettre, lister, getInscription,
   valider, rejeter, modifier, stats
@@ -9,7 +10,7 @@ const {
 
 const rolesCA = ['Super Admin', 'Admin CA'];
 
-router.post('/soumettre', validerMembre, soumettre);
+router.post('/soumettre', uploadMembreFields, validerMembre, soumettre);
 router.get('/stats', verifierToken, stats);
 router.get('/', verifierToken, verifierRole(...rolesCA), lister);
 router.get('/:id', verifierToken, verifierRole(...rolesCA), getInscription);

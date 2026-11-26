@@ -99,9 +99,21 @@
   const couleursType = { 'Nouveau Bachelier':'info', 'Nouveau Adherent':'primary', 'Ancien':'dark' };
   const couleursStatut = { 'En attente':'warning', 'Valide':'success', 'Rejete':'danger' };
 
-  function val(v) { return v || '—'; }
+function echapper(t) {
+    return String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function val(v) { return echapper(v || '—'); }
   function formatDate(d) { return d ? new Date(d).toLocaleDateString('fr-FR') : '—'; }
   function formatDateTime(d) { return d ? new Date(d).toLocaleString('fr-FR') : '—'; }
+  function fichierLien(url, label) {
+    if (!url || !/^https:\/\/res\.cloudinary\.com\//.test(String(url))) return '—';
+    const sure = echapper(url);
+    const extension = String(url).split('?')[0].split('.').pop().toLowerCase();
+    if (extension === 'pdf') {
+      return `<a href="${sure}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-danger"><i class="fas fa-file-pdf me-1"></i>${echapper(label)}</a>`;
+    }
+    return `<a href="${sure}" target="_blank" rel="noopener"><img src="${sure}" alt="${echapper(label)}" style="max-width:120px;max-height:120px;border-radius:8px;border:1px solid #eee;object-fit:cover"></a>`;
+  }
 
   async function chargerStats() {
     try {
@@ -194,7 +206,17 @@
         `;
       }
 
-      if (ins.statut === 'Rejete' && ins.motif_rejet) html += `<div class="alert alert-danger mt-3"><strong>Motif du rejet :</strong> ${ins.motif_rejet}</div>`;
+      if (d.photo_profil || d.document_identite) {
+        html += `
+          <div class="section-modal"><i class="fas fa-file-image me-2"></i>Photo et documents</div>
+          <div class="row">
+            <div class="col-md-6"><div class="info-ligne"><span class="info-cle">Photo de profil</span><span class="info-val">${fichierLien(d.photo_profil, 'Voir la photo')}</span></div></div>
+            <div class="col-md-6"><div class="info-ligne"><span class="info-cle">Carte d'identité</span><span class="info-val">${fichierLien(d.document_identite, 'Voir le document')}</span></div></div>
+          </div>
+        `;
+      }
+
+      if (ins.statut === 'Rejete' && ins.motif_rejet) html += `<div class="alert alert-danger mt-3"><strong>Motif du rejet :</strong> ${echapper(ins.motif_rejet)}</div>`;
 
       document.getElementById('contenuModal').innerHTML = html;
 

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visiteurs — DMWM UASZ</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/commun.css">
+<link rel="stylesheet" href="/css/visiteurs.css">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" type="image/png" href="/images/icon-192.png">
+  <script src="/js/pwa.js" defer></script>
+</head>
+<body>
+<script src="/js/auth-guard.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<div class="page-wrapper">
+  <div class="topbar-page">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-user-friends me-2"></i>Visiteurs</h5>
+    </div>
+  </div>
+
+  <div style="padding:25px;flex:1;">
+  <div id="alerte" class="alert d-none mb-3"></div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)"><i class="fas fa-user-friends"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Visiteurs</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#198754,#20c997)"><i class="fas fa-star"></i></div><div><div class="stat-mini-num" id="sPotentiels">—</div><div class="stat-mini-label">Membres potentiels</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fd7e14,#ffc107)"><i class="fas fa-phone"></i></div><div><div class="stat-mini-num" id="sAContacter">—</div><div class="stat-mini-label">À contacter</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#6f42c1,#a77bf0)"><i class="fas fa-user-check"></i></div><div><div class="stat-mini-num" id="sDevenus">—</div><div class="stat-mini-label">Devenus membres</div></div></div></div>
+  </div>
+
+  <div class="card-custom">
+    <div class="seuil-zone">
+      <strong><i class="fas fa-bullseye me-2"></i>Seuil « membre potentiel » :</strong>
+      <input type="number" class="form-control" id="seuilSaisie" min="1" max="50" aria-label="Seuil de participations">
+      <span class="text-muted small">participations au même programme</span>
+      <button class="btn btn-primary btn-sm d-none" id="btnSeuil" onclick="enregistrerSeuil()">Enregistrer</button>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div class="row g-2">
+      <div class="col-md-3"><input type="text" class="form-control" id="recherche" placeholder="🔍 Nom ou téléphone..." aria-label="Rechercher" oninput="afficherTableau()"></div>
+      <div class="col-md-3"><select class="form-select" id="filtreProgramme" aria-label="Programme" onchange="afficherTableau()"><option value="">Tous les programmes</option></select></div>
+      <div class="col-md-2"><select class="form-select" id="filtreStatut" aria-label="Statut" onchange="afficherTableau()"><option value="">Tous les statuts</option><option value="A contacter">À contacter</option><option value="Contacte">Contacté</option><option value="Devenu membre">Devenu membre</option></select></div>
+      <div class="col-md-2"><input type="number" class="form-control" id="filtreMin" min="1" placeholder="Min. participations" aria-label="Minimum de participations" oninput="afficherTableau()"></div>
+      <div class="col-md-2 d-flex align-items-center"><div class="form-check"><input class="form-check-input" type="checkbox" id="filtrePotentiels" onchange="afficherTableau()"><label class="form-check-label small" for="filtrePotentiels">Potentiels seulement</label></div></div>
+    </div>
+  </div>
+
+  <div class="card-custom">
+    <div id="tableVisiteurs"><div class="text-center text-muted py-4">Chargement...</div></div>
+  </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalHistorique" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header" style="border-radius:15px 15px 0 0;">
+        <h5 class="modal-title"><i class="fas fa-history me-2"></i><span id="titreHistorique">Historique</span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body p-4" id="contenuHistorique">Chargement...</div>
+    </div>
+  </div>
+</div>
+
+<script src="/js-libs/bootstrap.bundle.min.js"></script>
+<div class="modal fade" id="modalConversion" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header" style="border-radius:15px 15px 0 0;">
+        <h5 class="modal-title"><i class="fas fa-user-check me-2"></i>Convertir en membre</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p>Visiteur : <strong id="nomConversion"></strong></p>
+        <label class="form-label" for="typeConversion">Type de membre</label>
+        <select class="form-select" id="typeConversion">
+          <option value="">-- Choisir --</option>
+          <option value="Nouveau Bachelier">Nouveau Bachelier</option>
+          <option value="Nouveau Adherent">Nouveau Adhérent</option>
+          <option value="Ancien">Ancien / Membre Confirmé</option>
+        </select>
+        <div class="text-danger small mt-2" id="erreurConversion"></div>
+        <p class="text-muted small mt-3 mb-0">Vous compléterez ensuite les informations manquantes dans le formulaire.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-primary" onclick="continuerConversion()">Continuer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script>
+  const token = window.authToken;
+  const roleUtilisateur = (window.currentUser && window.currentUser.role) || '';
+  const peutGerer = ['Super Admin', 'Admin CA'].includes(roleUtilisateur);
+  const LIBELLES = { 'A contacter': 'À contacter', 'Contacte': 'Contacté', 'Devenu membre': 'Devenu membre' };
+  let tousVisiteurs = [];
+  let seuilActuel = 3;
+  let modale = null;
+
+  function echapper(t) {
+    return String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  async function appeler(url, options = {}) {
+    const res = await fetch(url, { ...options, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  function afficherAlerte(msg, type) {
+    const a = document.getElementById('alerte');
+    a.className = `alert alert-${type}`;
+    a.textContent = msg;
+    a.classList.remove('d-none');
+    if (type === 'success') setTimeout(() => a.classList.add('d-none'), 3000);
+    window.scrollTo(0, 0);
+  }
+
+  function remplirProgrammes(liste) {
+    const sel = document.getElementById('filtreProgramme');
+    const courant = sel.value;
+    sel.innerHTML = '<option value="">Tous les programmes</option>' +
+      liste.map(p => `<option value="${echapper(p.cle)}">${echapper(p.libelle)}</option>`).join('');
+    sel.value = courant;
+  }
+
+  function nombreRef(v, cle) {
+    if (!cle) return v.meilleur;
+    const p = v.participations.find(x => x.cle === cle);
+    return p ? p.nombre : 0;
+  }
+
+  function mettreAJourCompteurs() {
+    document.getElementById('sTotal').textContent = tousVisiteurs.length;
+    document.getElementById('sPotentiels').textContent = tousVisiteurs.filter(v => v.potentiel && v.statut_suivi !== 'Devenu membre').length;
+    document.getElementById('sAContacter').textContent = tousVisiteurs.filter(v => v.statut_suivi === 'A contacter').length;
+    document.getElementById('sDevenus').textContent = tousVisiteurs.filter(v => v.statut_suivi === 'Devenu membre').length;
+  }
+
+  function afficherTableau() {
+    const q = document.getElementById('recherche').value.trim().toLowerCase();
+    const cle = document.getElementById('filtreProgramme').value;
+    const statut = document.getElementById('filtreStatut').value;
+    const min = parseInt(document.getElementById('filtreMin').value, 10);
+    const seulementPotentiels = document.getElementById('filtrePotentiels').checked;
+
+    const lignes = tousVisiteurs.filter(v => {
+      if (q && !`${v.prenom} ${v.nom} ${v.telephone}`.toLowerCase().includes(q)) return false;
+      if (statut && v.statut_suivi !== statut) return false;
+      const n = nombreRef(v, cle);
+      if (cle && n === 0) return false;
+      if (Number.isInteger(min) && n < min) return false;
+      if (seulementPotentiels && n < seuilActuel) return false;
+      return true;
+    });
+
+    const zone = document.getElementById('tableVisiteurs');
+    if (!lignes.length) {
+      zone.innerHTML = '<div class="text-center text-muted py-4">Aucun visiteur trouvé.</div>';
+      return;
+    }
+
+    const corps = lignes.map(v => {
+      const initiales = (v.prenom.charAt(0) + v.nom.charAt(0)).toUpperCase();
+      const puces = v.participations.length
+        ? v.participations.map(p => `<span class="chip-participation${p.nombre >= seuilActuel ? ' atteint' : ''}">${echapper(p.programme)} : ${p.nombre}</span>`).join('')
+        : '<span class="text-muted">—</span>';
+      const potentiel = (v.potentiel && v.statut_suivi !== 'Devenu membre')
+        ? '<div><span class="badge-potentiel"><i class="fas fa-star me-1"></i>Membre potentiel</span></div>' : '';
+      let statutHtml;
+      if (peutGerer && v.statut_suivi !== 'Devenu membre') {
+        statutHtml = `<select class="form-select form-select-sm" aria-label="Statut de suivi" onchange="changerStatut(${v.id}, this.value)">` +
+          ['A contacter', 'Contacte'].map(s => `<option value="${s}"${v.statut_suivi === s ? ' selected' : ''}>${LIBELLES[s]}</option>`).join('') +
+          '</select>';
+      } else {
+        statutHtml = `<span class="fw-semibold">${echapper(LIBELLES[v.statut_suivi] || v.statut_suivi)}</span>`;
+      }
+      return `<tr>
+        <td><div class="d-flex align-items-center gap-2"><div class="avatar-sm">${echapper(initiales)}</div><div><div class="fw-semibold">${echapper(v.prenom)} ${echapper(v.nom)}</div>${potentiel}</div></div></td>
+        <td>${echapper(v.telephone)}</td>
+        <td>${puces}</td>
+        <td>${statutHtml}</td>
+        <td class="text-nowrap">
+          <button class="btn btn-sm btn-outline-primary" onclick="voirHistorique(${v.id})" title="Historique" aria-label="Historique"><i class="fas fa-history"></i></button>
+          <a class="btn btn-sm btn-outline-success" href="https://wa.me/221${echapper(v.telephone)}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          ${(peutGerer && v.statut_suivi !== 'Devenu membre') ? `<button class="btn btn-sm btn-outline-dark" onclick="ouvrirConversion(${v.id})" title="Convertir en membre" aria-label="Convertir en membre"><i class="fas fa-user-check"></i></button>` : ''}
+        </td>
+      </tr>`;
+    }).join('');
+
+    zone.innerHTML = `<div class="table-responsive"><table class="table table-hover">
+      <thead><tr><th>Visiteur</th><th>Téléphone</th><th>Participations</th><th>Statut</th><th>Actions</th></tr></thead>
+      <tbody>${corps}</tbody></table></div>`;
+  }
+
+  async function chargerVisiteurs() {
+    try {
+      const r = await appeler('/api/visiteurs');
+      if (r.status === 403) {
+        document.getElementById('tableVisiteurs').innerHTML = "<div class='text-center text-muted py-4'>Vous n'avez pas accès à cette page.</div>";
+        return;
+      }
+      if (!r.ok) { afficherAlerte(r.data.message || 'Erreur serveur.', 'danger'); return; }
+      tousVisiteurs = r.data.visiteurs;
+      seuilActuel = r.data.seuil;
+      document.getElementById('seuilSaisie').value = seuilActuel;
+      remplirProgrammes(r.data.programmes);
+      mettreAJourCompteurs();
+      afficherTableau();
+    } catch (e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  async function changerStatut(id, statut) {
+    try {
+      const r = await appeler(`/api/visiteurs/${id}/statut`, { method: 'PATCH', body: JSON.stringify({ statut }) });
+      afficherAlerte(r.data.message || 'Erreur serveur.', r.ok ? 'success' : 'danger');
+      await chargerVisiteurs();
+    } catch (e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  async function enregistrerSeuil() {
+    const valeur = parseInt(document.getElementById('seuilSaisie').value, 10);
+    try {
+      const r = await appeler('/api/visiteurs/seuil', { method: 'PUT', body: JSON.stringify({ seuil: valeur }) });
+      afficherAlerte(r.data.message || 'Erreur serveur.', r.ok ? 'success' : 'danger');
+      await chargerVisiteurs();
+    } catch (e) { afficherAlerte('Erreur serveur.', 'danger'); }
+  }
+
+  async function voirHistorique(id) {
+    const zone = document.getElementById('contenuHistorique');
+    zone.textContent = 'Chargement...';
+    modale.show();
+    try {
+      const r = await appeler(`/api/visiteurs/${id}/historique`);
+      if (!r.ok) { zone.textContent = r.data.message || 'Erreur serveur.'; return; }
+      const v = r.data.visiteur;
+      document.getElementById('titreHistorique').textContent = `Historique — ${v.prenom} ${v.nom}`;
+      if (!r.data.historique.length) { zone.textContent = 'Aucune participation enregistrée.'; return; }
+      const lignes = r.data.historique.map(h => `<tr>
+        <td>${echapper(h.date ? new Date(h.date).toLocaleDateString('fr-FR') : '—')}</td>
+        <td>${echapper(h.programme)}</td>
+        <td>${echapper(h.lieu || '—')}</td></tr>`).join('');
+      zone.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Programme</th><th>Lieu</th></tr></thead><tbody>${lignes}</tbody></table></div>`;
+    } catch (e) { zone.textContent = 'Erreur serveur.'; }
+  }
+
+  modale = new bootstrap.Modal(document.getElementById('modalHistorique'));
+  const modaleConversion = new bootstrap.Modal(document.getElementById('modalConversion'));
+  let visiteurAConvertir = null;
+
+  function ouvrirConversion(id) {
+    visiteurAConvertir = tousVisiteurs.find(v => v.id === id) || null;
+    if (!visiteurAConvertir) return;
+    document.getElementById('nomConversion').textContent = `${visiteurAConvertir.prenom} ${visiteurAConvertir.nom}`;
+    document.getElementById('typeConversion').value = '';
+    document.getElementById('erreurConversion').textContent = '';
+    modaleConversion.show();
+  }
+
+  function continuerConversion() {
+    const type = document.getElementById('typeConversion').value;
+    if (!type || !visiteurAConvertir) {
+      document.getElementById('erreurConversion').textContent = 'Choisissez le type de membre.';
+      return;
+    }
+    const v = visiteurAConvertir;
+    const p = new URLSearchParams({ visiteur_id: v.id, prenom: v.prenom, nom: v.nom, telephone: v.telephone, categorie: type });
+    window.location.href = '/membre-form.html?' + p.toString();
+  }
+  if (peutGerer) { document.getElementById('btnSeuil').classList.remove('d-none'); }
+  else { document.getElementById('seuilSaisie').disabled = true; }
+  chargerVisiteurs();
+</script>
+</body>
+</html>

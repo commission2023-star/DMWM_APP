@@ -1,11 +1,25 @@
 const { InscriptionEnAttente } = require('../models');
+const { Op } = require('sequelize');
+const { normaliserChampsTelephone, formesTelephone } = require('../utils/telephone');
+const { filtrerDonnees } = require('../utils/champsInscription');
 
 const soumettre = async (req, res) => {
   try {
-    const { type_formulaire, ...donnees } = req.body;
+const { type_formulaire, ...brut } = req.body;
+    const donnees = filtrerDonnees(brut);
 
     if (!type_formulaire) {
       return res.status(400).json({ message: 'Type de formulaire requis.' });
+    }
+
+    // Les fichiers sont envoyes vers Cloudinary par le middleware d'upload.
+    // On conserve leurs URL avec le reste du dossier pour les retrouver
+    // lors de la validation de l'inscription.
+    if (req.files?.photo_profil) {
+      donnees.photo_profil = req.files.photo_profil[0].path;
+    }
+    if (req.files?.document_identite) {
+      donnees.document_identite = req.files.document_identite[0].path;
     }
 
     const inscription = await InscriptionEnAttente.create({
@@ -60,10 +74,13 @@ const valider = async (req, res) => {
     }
 
     const { Membre } = require('../models');
-    const donnees = inscription.donnees;
+    const donnees = filtrerDonnees(inscription.donnees, true);
 
+    // Les anciens dossiers peuvent contenir un numero a l'ancien format : on le normalise ici
+    const invalide = normaliserChampsTelephone(donnees);
+    if (invalide) return res.status(400).json({ message: `${invalide} invalide dans le dossier. Modifiez-le avant de valider.` });
     if (donnees.telephone) {
-      const existe = await Membre.findOne({ where: { telephone: donnees.telephone } });
+      const existe = await Membre.findOne({ where: { telephone: { [Op.in]: formesTelephone(donnees.telephone) } } });
       if (existe) {
         return res.status(400).json({ message: 'Un membre avec ce numero de telephone existe deja.' });
       }
@@ -126,6 +143,8 @@ const modifier = async (req, res) => {
     if (!inscription) return res.status(404).json({ message: 'Inscription introuvable.' });
 
     const { donnees } = req.body;
+    const invalide = donnees ? normaliserChampsTelephone(donnees) : null;
+    if (invalide) return res.status(400).json({ message: `${invalide} invalide.` });
     await inscription.update({ donnees });
 
     res.json({ message: 'Inscription modifiee avec succes.' });
