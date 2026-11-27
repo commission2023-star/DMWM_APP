@@ -106,7 +106,7 @@ DMWM_APP/
 │  ├─ manifest.webmanifest
 │  └─ service-worker.js   cache hors ligne (versionné)
 ├─ uploads/               hérité de l'ancien stockage local (vide)
-├─ docs/                  briefing de passation
+├─ docs/                  roadmap, briefing, architecture, API, exploitation, changelog
 └─ CHANGELOG_V2.md        historique des phases 1 à 9
 ```
 
@@ -325,8 +325,13 @@ Render ne conservant pas les fichiers locaux, tout passe par Cloudinary. Le doss
 
 | Fichier | Contenu |
 |---|---|
+| `docs/ROADMAP.md` | Feuille de route : ce qui est fait, ce qui reste à faire |
 | `docs/BRIEFING_PROJET.md` | Passation complète : métier, modèle, API, état réel, backlog |
-| `CHANGELOG_V2.md` | Phases 1 à 9, corrections et limites |
+| `docs/ARCHITECTURE.md` | Couches, flux métier, matrice des droits, écarts connus |
+| `docs/API.md` | Toutes les routes : rôles, corps, réponses, erreurs |
+| `docs/EXPLOITATION.md` | Déploiement, supervision, sauvegardes, incidents |
+| `docs/CHANGELOG.md` | Historique consolidé et backlog |
+| `CHANGELOG_V2.md` | Phases 1 à 9, corrections et limites (source historique) |
 | `README.md` | Ce document : installation, structure, rôles, API |
 
 Le document `Documentation_Phases3_4_DMWM.docx` est partiellement obsolète (upload
