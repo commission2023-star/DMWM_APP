@@ -9,3 +9,7 @@ public/js-libs/*
 !public/js-libs/.gitkeep
 public/fonts/*
 !public/fonts/.gitkeep
+
+# Outils locaux (jamais partages)
+.opencode/
+verifier_tables.js
