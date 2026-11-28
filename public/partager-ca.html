@@ -1,16 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      var t = localStorage.getItem('dmwm-theme');
+      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) {}
+  </script>
 <title>Envoyer à la CA — DMWM UASZ</title>
 <link rel="stylesheet" href="/css/bootstrap.min.css">
-<link rel="stylesheet" href="/css/fontawesome.min.css">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/partager-ca.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#6d28d9">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
+  <script src="/js-libs/lucide.min.js" defer></script>
+  <script src="/js/icons.js" defer></script>
+  <script src="/js/theme.js" defer></script>
 </head>
 
 <body>
@@ -20,28 +28,28 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
-      <h5><i class="fas fa-paper-plane me-2"></i>Envoyer à la CA</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
+      <h5><i class="me-2" data-lucide="send" aria-hidden="true"></i>Envoyer à la CA</h5>
     </div>
   </div>
 
-  <div style="padding:25px;flex:1;">
+  <div class="page-contenu">
   <div id="alerte" class="alert d-none mb-3"></div>
 
   <div class="row g-4">
     <div class="col-md-7">
       <div class="card-custom">
-        <h6 class="fw-bold text-primary mb-4"><i class="fas fa-paper-plane me-2"></i>Nouveau message pour la CA</h6>
+        <h6 class="fw-bold text-primary mb-4"><i class="me-2" data-lucide="send" aria-hidden="true"></i>Nouveau message pour la CA</h6>
         <div class="mb-3"><label class="form-label">Objet <span class="text-danger">*</span></label><input type="text" class="form-control" id="objet" aria-label="Objet"></div>
         <div class="mb-3"><label class="form-label">Message</label><textarea class="form-control" id="contenu" rows="6" aria-label="Message"></textarea></div>
         <div class="mb-4"><label class="form-label">Fichier joint (optionnel)</label><input type="file" class="form-control" id="fichierJoint" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx" aria-label="Fichier joint (optionnel)"><small class="text-muted">PDF, Word, Excel, Image — max 10MB</small></div>
-        <button class="btn btn-envoyer" onclick="envoyerMessage()"><i class="fas fa-paper-plane me-2"></i>Envoyer à la CA</button>
+        <button class="btn btn-envoyer" onclick="envoyerMessage()"><i class="me-2" data-lucide="send" aria-hidden="true"></i>Envoyer à la CA</button>
       </div>
     </div>
 
     <div class="col-md-5">
       <div class="card-custom">
-        <h6 class="fw-bold text-primary mb-4"><i class="fas fa-history me-2"></i>Mes messages envoyés</h6>
+        <h6 class="fw-bold text-primary mb-4"><i class="me-2" data-lucide="history" aria-hidden="true"></i>Mes messages envoyés</h6>
         <div id="mesMessages"><div class="text-center text-muted py-3">Chargement...</div></div>
       </div>
     </div>
@@ -67,7 +75,7 @@
             <strong style="font-size:0.88rem;">${m.objet}</strong>
             <span class="badge bg-${m.statut==='En attente'?'warning':'success'} ms-2" style="font-size:0.7rem;">${m.statut}</span>
           </div>
-          <div class="text-muted mt-1" style="font-size:0.78rem;"><i class="fas fa-clock me-1"></i>${formatDateTime(m.created_at)}${m.fichier_joint ? ' · <i class="fas fa-paperclip me-1"></i>Fichier joint' : ''}</div>
+          <div class="text-muted mt-1" style="font-size:0.78rem;"><i class="me-1" data-lucide="clock" aria-hidden="true"></i>${formatDateTime(m.created_at)}${m.fichier_joint ? ' · <i class="me-1" data-lucide="paperclip" aria-hidden="true"></i>Fichier joint' : ''}</div>
         </div>`).join('');
     } catch(e) {}
   }
@@ -96,7 +104,7 @@
 
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
-    a.className = `alert alert-${type}`; a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.className = `alert alert-${type}`; a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
     a.classList.remove('d-none'); if (type==='success') setTimeout(() => a.classList.add('d-none'), 4000);
   }
 

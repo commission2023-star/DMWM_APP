@@ -1,16 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      var t = localStorage.getItem('dmwm-theme');
+      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) {}
+  </script>
 <title>Visiteurs — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
-<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/visiteurs.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#6d28d9">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
+  <script src="/js-libs/lucide.min.js" defer></script>
+  <script src="/js/icons.js" defer></script>
+  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -19,24 +27,24 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
-      <h5><i class="fas fa-user-friends me-2"></i>Visiteurs</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
+      <h5><i class="me-2" data-lucide="users-round" aria-hidden="true"></i>Visiteurs</h5>
     </div>
   </div>
 
-  <div style="padding:25px;flex:1;">
+  <div class="page-contenu">
   <div id="alerte" class="alert d-none mb-3"></div>
 
   <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)"><i class="fas fa-user-friends"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Visiteurs</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#198754,#20c997)"><i class="fas fa-star"></i></div><div><div class="stat-mini-num" id="sPotentiels">—</div><div class="stat-mini-label">Membres potentiels</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fd7e14,#ffc107)"><i class="fas fa-phone"></i></div><div><div class="stat-mini-num" id="sAContacter">—</div><div class="stat-mini-label">À contacter</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#6f42c1,#a77bf0)"><i class="fas fa-user-check"></i></div><div><div class="stat-mini-num" id="sDevenus">—</div><div class="stat-mini-label">Devenus membres</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)"><i data-lucide="users-round" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Visiteurs</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i data-lucide="star" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sPotentiels">—</div><div class="stat-mini-label">Membres potentiels</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"><i data-lucide="phone" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sAContacter">—</div><div class="stat-mini-label">À contacter</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)"><i data-lucide="user-check" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sDevenus">—</div><div class="stat-mini-label">Devenus membres</div></div></div></div>
   </div>
 
   <div class="card-custom">
     <div class="seuil-zone">
-      <strong><i class="fas fa-bullseye me-2"></i>Seuil « membre potentiel » :</strong>
+      <strong><i class="me-2" data-lucide="target" aria-hidden="true"></i>Seuil « membre potentiel » :</strong>
       <input type="number" class="form-control" id="seuilSaisie" min="1" max="50" aria-label="Seuil de participations">
       <span class="text-muted small">participations au même programme</span>
       <button class="btn btn-primary btn-sm d-none" id="btnSeuil" onclick="enregistrerSeuil()">Enregistrer</button>
@@ -62,8 +70,8 @@
 <div class="modal fade" id="modalHistorique" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header" style="border-radius:15px 15px 0 0;">
-        <h5 class="modal-title"><i class="fas fa-history me-2"></i><span id="titreHistorique">Historique</span></h5>
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="me-2" data-lucide="history" aria-hidden="true"></i><span id="titreHistorique">Historique</span></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
       <div class="modal-body p-4" id="contenuHistorique">Chargement...</div>
@@ -75,8 +83,8 @@
 <div class="modal fade" id="modalConversion" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header" style="border-radius:15px 15px 0 0;">
-        <h5 class="modal-title"><i class="fas fa-user-check me-2"></i>Convertir en membre</h5>
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="me-2" data-lucide="user-check" aria-hidden="true"></i>Convertir en membre</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
       <div class="modal-body p-4">
@@ -181,7 +189,7 @@
         ? v.participations.map(p => `<span class="chip-participation${p.nombre >= seuilActuel ? ' atteint' : ''}">${echapper(p.programme)} : ${p.nombre}</span>`).join('')
         : '<span class="text-muted">—</span>';
       const potentiel = (v.potentiel && v.statut_suivi !== 'Devenu membre')
-        ? '<div><span class="badge-potentiel"><i class="fas fa-star me-1"></i>Membre potentiel</span></div>' : '';
+        ? '<div><span class="badge-potentiel"><i class="me-1" data-lucide="star" aria-hidden="true"></i>Membre potentiel</span></div>' : '';
       let statutHtml;
       if (peutGerer && v.statut_suivi !== 'Devenu membre') {
         statutHtml = `<select class="form-select form-select-sm" aria-label="Statut de suivi" onchange="changerStatut(${v.id}, this.value)">` +
@@ -196,9 +204,9 @@
         <td>${puces}</td>
         <td>${statutHtml}</td>
         <td class="text-nowrap">
-          <button class="btn btn-sm btn-outline-primary" onclick="voirHistorique(${v.id})" title="Historique" aria-label="Historique"><i class="fas fa-history"></i></button>
-          <a class="btn btn-sm btn-outline-success" href="https://wa.me/221${echapper(v.telephone)}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-          ${(peutGerer && v.statut_suivi !== 'Devenu membre') ? `<button class="btn btn-sm btn-outline-dark" onclick="ouvrirConversion(${v.id})" title="Convertir en membre" aria-label="Convertir en membre"><i class="fas fa-user-check"></i></button>` : ''}
+          <button class="btn btn-sm btn-outline-primary" onclick="voirHistorique(${v.id})" title="Historique" aria-label="Historique"><i data-lucide="history" aria-hidden="true"></i></button>
+          <a class="btn btn-sm btn-outline-success" href="https://wa.me/221${echapper(v.telephone)}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp"><i data-lucide="message-circle" aria-hidden="true"></i></a>
+          ${(peutGerer && v.statut_suivi !== 'Devenu membre') ? `<button class="btn btn-sm btn-outline-dark" onclick="ouvrirConversion(${v.id})" title="Convertir en membre" aria-label="Convertir en membre"><i data-lucide="user-check" aria-hidden="true"></i></button>` : ''}
         </td>
       </tr>`;
     }).join('');

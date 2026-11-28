@@ -1,16 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      var t = localStorage.getItem('dmwm-theme');
+      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) {}
+  </script>
 <title>Programmes — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
-<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/programmes.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#6d28d9">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
+  <script src="/js-libs/lucide.min.js" defer></script>
+  <script src="/js/icons.js" defer></script>
+  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -19,18 +27,18 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
-      <h5><i class="fas fa-calendar-alt me-2"></i>Programmes</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
+      <h5><i class="me-2" data-lucide="calendar-days" aria-hidden="true"></i>Programmes</h5>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()" id="btnNouveauProg"><i class="fas fa-plus me-1"></i>Nouveau programme</button>
+    <button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()" id="btnNouveauProg"><i class="me-1" data-lucide="plus" aria-hidden="true"></i>Nouveau programme</button>
   </div>
 
-  <div style="padding:25px;flex:1;">
+  <div class="page-contenu">
   <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)"><i class="fas fa-calendar"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Total</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#28a745,#20c997)"><i class="fas fa-clock"></i></div><div><div class="stat-mini-num" id="sPlanifies">—</div><div class="stat-mini-label">Planifiés</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#6f42c1,#a855f7)"><i class="fas fa-check"></i></div><div><div class="stat-mini-num" id="sTenus">—</div><div class="stat-mini-label">Tenus</div></div></div></div>
-    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#dc3545,#ff6b6b)"><i class="fas fa-times"></i></div><div><div class="stat-mini-num" id="sAnnules">—</div><div class="stat-mini-label">Annulés</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)"><i data-lucide="calendar" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Total</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i data-lucide="clock" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sPlanifies">—</div><div class="stat-mini-label">Planifiés</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)"><i data-lucide="check" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sTenus">—</div><div class="stat-mini-label">Tenus</div></div></div></div>
+    <div class="col-6 col-md-3"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fb7185,#e11d48)"><i data-lucide="x" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sAnnules">—</div><div class="stat-mini-label">Annulés</div></div></div></div>
   </div>
 
   <div class="card-custom">
@@ -47,7 +55,7 @@
         </select>
       </div>
       <div class="col-md-3"><input type="month" class="form-control" id="filtreMois" onchange="chargerProgrammes()" aria-label="filtreMois"></div>
-      <div class="col-md-3"><button class="btn btn-outline-secondary w-100" onclick="reinitialiserFiltres()"><i class="fas fa-redo me-1"></i>Réinitialiser</button></div>
+      <div class="col-md-3"><button class="btn btn-outline-secondary w-100" onclick="reinitialiserFiltres()"><i class="me-1" data-lucide="rotate-cw" aria-hidden="true"></i>Réinitialiser</button></div>
     </div>
   </div>
 
@@ -55,10 +63,10 @@
 
   <div class="card-custom">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h6 class="fw-bold text-primary mb-0"><i class="fas fa-list me-2"></i>Liste des programmes <span class="badge bg-secondary ms-2" id="compteur">0</span></h6>
+      <h6 class="fw-bold text-primary mb-0"><i class="me-2" data-lucide="list" aria-hidden="true"></i>Liste des programmes <span class="badge bg-secondary ms-2" id="compteur">0</span></h6>
       <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-outline-primary" onclick="toggleVue('liste')" id="btnVueListe"><i class="fas fa-list"></i></button>
-        <button class="btn btn-sm btn-outline-secondary" onclick="toggleVue('cartes')" id="btnVueCartes"><i class="fas fa-th-large"></i></button>
+        <button class="btn btn-sm btn-outline-primary" onclick="toggleVue('liste')" id="btnVueListe"><i data-lucide="list" aria-hidden="true"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggleVue('cartes')" id="btnVueCartes"><i data-lucide="layout-grid" aria-hidden="true"></i></button>
       </div>
     </div>
 
@@ -78,7 +86,7 @@
 <div class="modal fade" id="modalProgramme" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header rounded-top-4"><h5 class="modal-title" id="titreModal"><i class="fas fa-calendar-plus me-2"></i>Nouveau programme</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header rounded-top-4"><h5 class="modal-title" id="titreModal"><i class="me-2" data-lucide="calendar-plus" aria-hidden="true"></i>Nouveau programme</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body p-4">
         <input type="hidden" id="progId">
         <div id="alerteModal" class="alert d-none mb-3"></div>
@@ -101,7 +109,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderProgramme()"><i class="fas fa-save me-2"></i>Enregistrer</button></div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderProgramme()"><i class="me-2" data-lucide="save" aria-hidden="true"></i>Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -156,9 +164,9 @@
         <td>${formatHeure(p.heure_debut)} – ${formatHeure(p.heure_fin)}</td><td>${p.lieu || '—'}</td><td>${p.oustaze || '—'}</td>
         <td><span class="badge bg-${couleursStatut[p.statut]}">${labelsStatut[p.statut]}</span>${p.recurrent ? '<span class="badge bg-light text-dark ms-1" style="font-size:0.65rem;">🔄 Auto</span>' : ''}</td>
         <td>${peutModifier ? `
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="ouvrirModalModifier(${p.id})" title="Modifier" aria-label="Modifier"><i class="fas fa-edit"></i></button>
-          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})" title="Supprimer" aria-label="Supprimer"><i class="fas fa-trash"></i></button>` : ''}
-        ` : `<button class="btn btn-sm btn-outline-info" onclick="ouvrirModalModifier(${p.id})" title="Voir le détail" aria-label="Voir le détail"><i class="fas fa-eye"></i></button>`}</td>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="ouvrirModalModifier(${p.id})" title="Modifier" aria-label="Modifier"><i data-lucide="pencil" aria-hidden="true"></i></button>
+          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})" title="Supprimer" aria-label="Supprimer"><i data-lucide="trash-2" aria-hidden="true"></i></button>` : ''}
+        ` : `<button class="btn btn-sm btn-outline-info" onclick="ouvrirModalModifier(${p.id})" title="Voir le détail" aria-label="Voir le détail"><i data-lucide="eye" aria-hidden="true"></i></button>`}</td>
       </tr>`;
     }).join('');
   }
@@ -172,18 +180,18 @@
       return `<div class="prog-card ${c.classe} ${p.statut==='Tenu'?'tenu':''} ${p.statut==='Annule'?'annule':''}">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
           <div><span class="badge ${c.bg} me-2">${p.type}</span>${p.recurrent ? '<span class="badge bg-light text-dark" style="font-size:0.65rem;">🔄 Auto</span>' : ''}<span class="badge bg-${couleursStatut[p.statut]} ms-1">${labelsStatut[p.statut]}</span></div>
-          <div class="text-muted" style="font-size:0.82rem;"><i class="fas fa-calendar me-1"></i>${formatDate(p.date)}</div>
+          <div class="text-muted" style="font-size:0.82rem;"><i class="me-1" data-lucide="calendar" aria-hidden="true"></i>${formatDate(p.date)}</div>
         </div>
         ${p.nom ? `<div class="fw-bold mt-2">${p.nom}</div>` : ''}
         <div class="row mt-2 g-2" style="font-size:0.83rem; color:#555;">
-          <div class="col-md-4"><i class="fas fa-clock me-1 text-primary"></i>${formatHeure(p.heure_debut)} – ${formatHeure(p.heure_fin)}</div>
-          ${p.lieu ? `<div class="col-md-4"><i class="fas fa-map-marker-alt me-1 text-danger"></i>${p.lieu}</div>` : ''}
-          ${p.oustaze ? `<div class="col-md-4"><i class="fas fa-user me-1 text-success"></i>${p.oustaze}</div>` : ''}
+          <div class="col-md-4"><i class="me-1 text-primary" data-lucide="clock" aria-hidden="true"></i>${formatHeure(p.heure_debut)} – ${formatHeure(p.heure_fin)}</div>
+          ${p.lieu ? `<div class="col-md-4"><i class="me-1 text-danger" data-lucide="map-pin" aria-hidden="true"></i>${p.lieu}</div>` : ''}
+          ${p.oustaze ? `<div class="col-md-4"><i class="me-1 text-success" data-lucide="user" aria-hidden="true"></i>${p.oustaze}</div>` : ''}
         </div>
-        ${p.theme ? `<div class="mt-2" style="font-size:0.82rem;color:#666;font-style:italic;"><i class="fas fa-book me-1"></i>${p.theme}</div>` : ''}
+        ${p.theme ? `<div class="mt-2" style="font-size:0.82rem;color:#666;font-style:italic;"><i class="me-1" data-lucide="book-open" aria-hidden="true"></i>${p.theme}</div>` : ''}
         ${peutModifier ? `<div class="mt-2 d-flex gap-2">
-          <button class="btn btn-sm btn-outline-primary" onclick="ouvrirModalModifier(${p.id})"><i class="fas fa-edit me-1"></i>Modifier</button>
-          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})"><i class="fas fa-trash me-1"></i>Supprimer</button>` : ''}
+          <button class="btn btn-sm btn-outline-primary" onclick="ouvrirModalModifier(${p.id})"><i class="me-1" data-lucide="pencil" aria-hidden="true"></i>Modifier</button>
+          ${!p.recurrent ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerProg(${p.id})"><i class="me-1" data-lucide="trash-2" aria-hidden="true"></i>Supprimer</button>` : ''}
         </div>` : ''}
       </div>`;
     }).join('');
@@ -215,7 +223,7 @@
 
   function ouvrirModalCreer() {
     viderModal();
-    document.getElementById('titreModal').innerHTML = '<i class="fas fa-calendar-plus me-2"></i>Nouveau programme';
+    document.getElementById('titreModal').innerHTML = '<i class="me-2" data-lucide="calendar-plus" aria-hidden="true"></i>Nouveau programme';
     new bootstrap.Modal(document.getElementById('modalProgramme')).show();
   }
 
@@ -230,7 +238,7 @@
       document.getElementById('pOustaze').value = p.oustaze || ''; document.getElementById('pTheme').value = p.theme || '';
       document.getElementById('pStatut').value = p.statut;
       gererTypeAutre();
-      document.getElementById('titreModal').innerHTML = '<i class="fas fa-edit me-2"></i>Modifier le programme';
+      document.getElementById('titreModal').innerHTML = '<i class="me-2" data-lucide="pencil" aria-hidden="true"></i>Modifier le programme';
       new bootstrap.Modal(document.getElementById('modalProgramme')).show();
     } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
   }
@@ -273,7 +281,7 @@
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
-    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
     a.classList.remove('d-none'); setTimeout(() => a.classList.add('d-none'), 4000);
   }
   function afficherAlerteModal(msg, type) {

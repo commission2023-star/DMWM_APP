@@ -1,16 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      var t = localStorage.getItem('dmwm-theme');
+      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) {}
+  </script>
 <title>Détail membre — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
-<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/membre-detail.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#6d28d9">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
+  <script src="/js-libs/lucide.min.js" defer></script>
+  <script src="/js/icons.js" defer></script>
+  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -20,17 +28,17 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
-      <h5><i class="fas fa-user me-2"></i>Détail du membre</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
+      <h5><i class="me-2" data-lucide="user" aria-hidden="true"></i>Détail du membre</h5>
     </div>
     <div class="d-flex gap-2">
-      <a href="#" id="btnModifier" class="btn btn-primary btn-action"><i class="fas fa-edit me-1"></i>Modifier</a>
-      <button id="btnStatut" class="btn btn-success btn-action" onclick="confirmerMembre()"><i class="fas fa-check me-1"></i>Confirmer</button>
-      <button class="btn btn-danger btn-action" onclick="archiverMembre()"><i class="fas fa-archive me-1"></i>Archiver</button>
+      <a href="#" id="btnModifier" class="btn btn-primary btn-action"><i class="me-1" data-lucide="pencil" aria-hidden="true"></i>Modifier</a>
+      <button id="btnStatut" class="btn btn-success btn-action" onclick="confirmerMembre()"><i class="me-1" data-lucide="check" aria-hidden="true"></i>Confirmer</button>
+      <button class="btn btn-danger btn-action" onclick="archiverMembre()"><i class="me-1" data-lucide="archive" aria-hidden="true"></i>Archiver</button>
     </div>
   </div>
 
-  <div style="padding:25px;flex:1;">
+  <div class="page-contenu">
   <div id="alerte" class="alert d-none mb-3"></div>
 
   <div class="card-custom">
@@ -51,7 +59,7 @@
   <div class="row g-4">
     <div class="col-md-6">
       <div class="card-custom">
-        <div class="section-title"><i class="fas fa-id-card me-2"></i>Informations personnelles</div>
+        <div class="section-title"><i class="me-2" data-lucide="id-card" aria-hidden="true"></i>Informations personnelles</div>
         <div class="info-row"><span class="info-label">Téléphone</span><span class="info-value" id="dTelephone">—</span></div>
         <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="dEmail">—</span></div>
         <div class="info-row"><span class="info-label">Date de naissance</span><span class="info-value" id="dNaissance">—</span></div>
@@ -60,12 +68,12 @@
         <div class="info-row"><span class="info-label">Date d'adhésion</span><span class="info-value" id="dAdhesion">—</span></div>
       </div>
       <div class="card-custom">
-        <div class="section-title"><i class="fas fa-user-shield me-2"></i>Tuteur / Contact urgence</div>
+        <div class="section-title"><i class="me-2" data-lucide="shield-user" aria-hidden="true"></i>Tuteur / Contact urgence</div>
         <div class="info-row"><span class="info-label">Nom tuteur</span><span class="info-value" id="dTuteurNom">—</span></div>
         <div class="info-row"><span class="info-label">Téléphone tuteur</span><span class="info-value" id="dTuteurTel">—</span></div>
       </div>
       <div class="card-custom">
-        <div class="section-title"><i class="fas fa-graduation-cap me-2"></i>Informations universitaires</div>
+        <div class="section-title"><i class="me-2" data-lucide="graduation-cap" aria-hidden="true"></i>Informations universitaires</div>
         <div class="info-row"><span class="info-label">Filière</span><span class="info-value" id="dFiliere">—</span></div>
         <div class="info-row"><span class="info-label">Niveau</span><span class="info-value" id="dNiveau">—</span></div>
       </div>
@@ -73,14 +81,14 @@
 
     <div class="col-md-6">
       <div class="card-custom">
-        <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Origine géographique</div>
+        <div class="section-title"><i class="me-2" data-lucide="map-pin" aria-hidden="true"></i>Origine géographique</div>
         <div class="info-row"><span class="info-label">Région</span><span class="info-value" id="dRegion">—</span></div>
         <div class="info-row"><span class="info-label">Département</span><span class="info-value" id="dDepartement">—</span></div>
         <div class="info-row"><span class="info-label">Arrondissement</span><span class="info-value" id="dArrondissement">—</span></div>
         <div class="info-row"><span class="info-label">Commune</span><span class="info-value" id="dCommune">—</span></div>
       </div>
       <div class="card-custom" id="cardMouvement">
-        <div class="section-title"><i class="fas fa-mosque me-2"></i>Origine dans le mouvement</div>
+        <div class="section-title"><i class="me-2" data-lucide="landmark" aria-hidden="true"></i>Origine dans le mouvement</div>
         <div class="info-row"><span class="info-label">Comité / Axe</span><span class="info-value" id="dComite">—</span></div>
         <div class="info-row"><span class="info-label">Conseil d'origine</span><span class="info-value" id="dConseil">—</span></div>
         <div class="info-row"><span class="info-label">Section de base</span><span class="info-value" id="dSection">—</span></div>
@@ -89,18 +97,18 @@
         <div class="info-row"><span class="info-label">Tél. PF</span><span class="info-value" id="dPfTel">—</span></div>
       </div>
       <div class="card-custom" id="cardDocument">
-        <div class="section-title"><i class="fas fa-file me-2"></i>Document d'identité</div>
+        <div class="section-title"><i class="me-2" data-lucide="file" aria-hidden="true"></i>Document d'identité</div>
         <div id="documentZone" class="text-muted">Aucun document uploadé</div>
       </div>
     </div>
   </div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="fas fa-sticky-note me-2"></i>Notes de suivi</div>
+    <div class="section-title"><i class="me-2" data-lucide="sticky-note" aria-hidden="true"></i>Notes de suivi</div>
     <div id="dNotes" class="text-muted fst-italic">Aucune note</div>
     <div class="mt-3">
       <textarea class="form-control" id="nouvelleNote" rows="2" placeholder="Ajouter une note..." aria-label="Ajouter une note"></textarea>
-      <button class="btn btn-outline-primary mt-2 btn-sm" onclick="ajouterNote()"><i class="fas fa-plus me-1"></i>Ajouter la note</button>
+      <button class="btn btn-outline-primary mt-2 btn-sm" onclick="ajouterNote()"><i class="me-1" data-lucide="plus" aria-hidden="true"></i>Ajouter la note</button>
     </div>
   </div>
   </div>
@@ -167,7 +175,7 @@
       if (m.document_identite) {
         const ext = m.document_identite.split('.').pop().toLowerCase();
         if (ext === 'pdf') {
-          document.getElementById('documentZone').innerHTML = `<a href="${m.document_identite}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Voir le document PDF</a>`;
+          document.getElementById('documentZone').innerHTML = `<a href="${m.document_identite}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="me-2" data-lucide="file-text" aria-hidden="true"></i>Voir le document PDF</a>`;
         } else {
           document.getElementById('documentZone').innerHTML = `<img src="${m.document_identite}" style="max-width:100%;border-radius:8px;border:1px solid #eee">`;
         }
@@ -208,7 +216,7 @@
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
-    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
+    a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
     a.classList.remove('d-none');
     setTimeout(() => a.classList.add('d-none'), 4000);
     window.scrollTo(0, 0);
