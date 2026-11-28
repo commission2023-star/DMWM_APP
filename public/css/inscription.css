@@ -1,158 +1,21 @@
-﻿/* Formulaire public d'inscription */
-
-/* --- En-tete -------------------------------------------------------------- */
-.inscription-header {
-  position: relative;
-  z-index: 1;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 40px 20px 22px;
-  text-align: center;
-}
-
-.inscription-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 1.6rem;
-  text-align: left;
-}
-
-.inscription-mark {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border-radius: 15px;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height: 1;
-  color: #fff;
-  background: var(--grad-primary);
-  box-shadow: 0 12px 26px -12px rgba(109, 40, 217, 0.9);
-}
-
-.inscription-brand-name {
-  font-family: var(--font-ui);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--c-text);
-}
-
-.inscription-brand-sub {
-  font-size: 0.66rem;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--c-muted);
-}
-
-.inscription-header h1 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.9rem, 4vw, 2.6rem);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-}
-
-.inscription-header > p {
-  max-width: 56ch;
-  margin: 0.6rem auto 0;
-  font-size: 0.88rem;
-  color: var(--c-muted);
-}
-
-/* --- Cartes de choix ------------------------------------------------------ */
-.container-form {
-  position: relative;
-  z-index: 1;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 0 20px 48px;
-}
-
-.card-type {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-  padding: 18px 22px;
-  border: 2px solid var(--c-border);
-  border-radius: var(--radius-lg);
-  background: var(--c-surface);
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: transform 0.2s var(--ease), border-color 0.2s, box-shadow 0.2s;
-}
-
-.card-type:hover {
-  transform: translateY(-2px);
-  border-color: var(--c-primary);
-  box-shadow: var(--shadow);
-}
-
-.card-type h6 {
-  margin: 0;
-  font-size: 0.94rem;
-  font-weight: 600;
-  color: var(--c-text);
-}
-
-.card-type p {
-  margin: 4px 0 0;
-  font-size: 0.82rem;
-  line-height: 1.5;
-  color: var(--c-muted);
-}
-
-.card-type .icon {
-  width: 46px;
-  height: 46px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  color: #fff;
-}
-
-.card-type .icon svg { width: 21px; height: 21px; }
-
-/* --- Formulaire ----------------------------------------------------------- */
-.form-card {
-  display: none;
-  padding: 2rem;
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-xl);
-  background: var(--c-surface);
-  box-shadow: var(--shadow);
-}
-
-.form-card.active { display: block; }
-
-.form-card .section-title:first-of-type { margin-top: 0.4rem; }
-
-/* --- Ecran de confirmation ------------------------------------------------ */
-.success-screen { text-align: center; padding: 2.6rem 1.5rem; }
-
-.success-icon {
-  width: 80px;
-  height: 80px;
-  display: grid;
-  place-items: center;
-  margin: 0 auto 1.4rem;
-  border-radius: 50%;
-  color: #fff;
-  background: linear-gradient(135deg, #10b981, #047857);
-  box-shadow: 0 16px 34px -16px rgba(4, 120, 87, 0.9);
-}
-
-.success-icon svg { width: 34px; height: 34px; }
-
-/* --- Responsive ----------------------------------------------------------- */
-@media (max-width: 576px) {
-  .inscription-header { padding: 26px 16px 18px; }
-  .container-form { padding: 0 16px 36px; }
-  .form-card { padding: 1.3rem; border-radius: var(--radius-lg); }
-  .card-type { padding: 15px 16px; gap: 12px; }
-  .card-type .icon { width: 40px; height: 40px; border-radius: 12px; }
-  .card-type .icon svg { width: 18px; height: 18px; }
-}
+﻿body { background:linear-gradient(135deg,#1B5E8A 0%,#0d3d5e 100%); min-height:100vh; font-family:'Segoe UI',sans-serif; }
+.header { text-align:center; padding:40px 20px 20px; color:white; }
+.header h1 { font-size:1.8rem; font-weight:700; }
+.header p { color:rgba(255,255,255,0.7); font-size:0.9rem; margin-top:8px; }
+.container-form { max-width:800px; margin:0 auto; padding:0 20px 40px; }
+.card-type { background:white; border-radius:15px; padding:20px 25px; margin-bottom:15px; cursor:pointer; border:3px solid transparent; transition:all 0.3s; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+.card-type:hover { border-color:#2E75B6; transform:translateY(-2px); }
+.card-type h6 { color:#1B5E8A; font-weight:700; margin:0; }
+.card-type p { color:#666; font-size:0.85rem; margin:5px 0 0; }
+.card-type .icon { width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:white; flex-shrink:0; }
+.form-card { background:white; border-radius:15px; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.15); display:none; }
+.form-card.active { display:block; }
+.section-title { color:#1B5E8A; font-weight:700; font-size:0.9rem; border-bottom:2px solid #EBF3FB; padding-bottom:8px; margin:20px 0 15px; }
+.form-label { font-weight:600; color:#444; font-size:0.85rem; }
+.form-control, .form-select { border:2px solid #e0e0e0; border-radius:8px; padding:10px 14px; font-size:0.9rem; }
+.form-control:focus, .form-select:focus { border-color:#1B5E8A; box-shadow:0 0 0 3px rgba(27,94,138,0.15); }
+.required::after { content:" *"; color:#dc3545; }
+.preview-img { width:100px; height:100px; border-radius:10px; object-fit:cover; border:2px solid #e0e0e0; display:none; }
+.btn-submit { background:linear-gradient(135deg,#1B5E8A,#2E75B6); border:none; border-radius:10px; color:white; padding:13px; font-weight:700; width:100%; font-size:1rem; margin-top:15px; cursor:pointer; }
+.success-screen { text-align:center; padding:40px 20px; display:none; }
+.success-icon { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#28a745,#20c997); display:flex; align-items:center; justify-content:center; font-size:2rem; color:white; margin:0 auto 20px; }

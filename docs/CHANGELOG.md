@@ -54,9 +54,8 @@ Toutes les pages ont désormais un fichier CSS séparé.
 | `fdd3df0` | Préchargement des membres, lecture hors ligne, effacement des caches à la déconnexion |
 | `380815f` | `manifest.webmanifest`, service worker, page `offline.html`, icônes provisoires, liaison dans les pages |
 
-Service worker : `VERSION = "v4"`, 21 fichiers pré-cachés (Bootstrap, Lucide, polices,
-icônes PWA, pages de pointage et hors ligne). Toute modification d'un fichier pré-caché
-impose une nouvelle version.
+Service worker : `VERSION = "v3"`, 14 fichiers pré-cachés. Toute modification d'un
+fichier pré-caché impose une nouvelle version.
 
 ## Tâche 6 — Visiteurs
 
@@ -80,20 +79,6 @@ de 1 à 50 ; aucun cumul entre programmes ; aucune adhésion automatique.
 | `4528725` | Même structure dans tous les formulaires : préfixe `+221`, groupes, 9 chiffres |
 
 Format en base : 9 chiffres, sans `+221` ni espaces. L'affichage ajoute `+221`.
-
-## Tâche 7 — Refonte design
-
-| Commit | Contenu |
-|---|---|
-| à venir | Design system dans `commun.css` : tokens, dégradés violet/bleu, grain, polices Inter + Space Grotesk + Instrument Serif servies en local, cartes, tableaux, formulaires, boutons, badges, modales |
-| à venir | Mode clair/sombre avec bascule mémorisée (`theme.js`) |
-| à venir | Lucide remplace Font Awesome ; `icons.js` convertit aussi les icônes ajoutées par JavaScript |
-| à venir | Nouveau shell de navigation (`sidebar.js`) et page de connexion en deux panneaux |
-| à venir | Icônes PWA définitives (`icon-192`, `icon-512`, `icon-maskable-512`) |
-
-Le CSS de page ne garde que les styles propres à la page ; tout le reste vient de
-`commun.css`. Les 19 pages ont été vérifiées par captures Edge en clair, en sombre et
-sur mobile.
 
 ## Sécurité
 
@@ -130,7 +115,7 @@ Documents ajoutés le 26/11/2026 : `docs/ARCHITECTURE.md`, `docs/API.md`,
 |---|---|---|
 | 1 | Sessions sécurité S1 à S7 | À planifier |
 | 2 | Préparation du lancement : vider les données fictives, vérifier le Super Admin, sauvegardes | À faire |
-| 3 | Tâche 7 — refonte design (violet/bleu, Inter + Space Grotesk + Instrument Serif, glassmorphism, mode sombre, Lucide) | Terminé, à tester en production puis PR |
+| 3 | Tâche 7 — refonte design (violet/bleu, Inter + Space Grotesk + Instrument Serif, glassmorphism, mode sombre, Lucide) | Prochain chantier |
 | 4 | Cases de la checklist V2 jamais testées | Sans urgence |
 | 5 | Durée du JWT, pièces d'identité publiques, fichiers Cloudinary orphelins | Sans urgence |
 | 6 | Visiteurs non réaffichés à la réouverture d'un programme pointé | Ouvert |

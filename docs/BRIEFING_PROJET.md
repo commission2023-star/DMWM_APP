@@ -136,7 +136,7 @@ Point d'architecture [MÉM] : côté navigateur, `window.currentUser.role` et `w
 | Auth | JWT (durée 8 h, décision : ne pas changer pour l'instant), mots de passe hachés avec bcryptjs (10 tours vus dans `sync.js`) | [MÉM/VU] |
 | Fichiers | Multer + Cloudinary (`multer-storage-cloudinary`) | [VU] |
 | Rapports | PDFKit, ExcelJS ; graphiques Chart.js | [MÉM] |
-| Frontend | HTML statique dans `public/`, Bootstrap 5 et Lucide servis en local, design system dans `commun.css` (mode clair/sombre), JavaScript natif, PWA (service worker) | [MÉM] |
+| Frontend | HTML statique dans `public/`, Bootstrap 5 et Font Awesome servis en local, JavaScript natif, PWA (service worker) | [MÉM] |
 
 **Flux d'une requête** : navigateur → `server.js` → `routes/<domaine>.js` (middlewares `verifierToken`, `verifierRole(...)`, `uploadMembreFields`, `validerMembre`) → `controllers/<domaine>Controller.js` → `models/*` (Sequelize) → MySQL. Les contrôleurs répondent en JSON ; les erreurs serveur renvoient `{ message: 'Erreur serveur.', erreur: <message d'erreur> }` [VU].
 
@@ -154,11 +154,11 @@ Point d'architecture [MÉM] : côté navigateur, `window.currentUser.role` et `w
 | `routes/` (`membres.js`, `inscriptions.js`, `visiteurs.js`, …) | Déclaration des routes et de leurs protections | [MÉM] |
 | `middleware/` (`auth.js`, `validation.js`, `upload.js`) | Authentification/rôles ; validation (téléphones, email) ; upload Cloudinary partagé (`uploadMembreFields`, dossier `dmwm-uasz/membres`, 5 Mo, JPG/PNG/PDF) | [VU] |
 | `utils/` (`telephone.js`, `champsInscription.js`, …) | Normalisation des téléphones ; liste blanche des champs d'un dossier | [VU] |
-| `public/` | Pages HTML, `css/` (un fichier par page + `commun.css`), `js/` (`sidebar.js`, `auth-guard.js`, `labels.js`, `telephone-input.js`, `pwa.js`, `theme.js`, `icons.js`), `js-libs/` (Bootstrap, Lucide), `service-worker.js` | [MÉM] |
-| `public/js/copier-libs.js` | Copie Bootstrap, Chart.js, Lucide et les polices dans `public/` ; exécuté automatiquement par `npm run postinstall`, donc à chaque `npm install`, y compris sur Render. Les copies sont ignorées par Git. | [VU] |
+| `public/` | Pages HTML, `css/` (un fichier par page + `commun.css`), `js/` (`sidebar.js`, `auth-guard.js`, `labels.js`, `telephone-input.js`, `pwa.js`), `js-libs/` (Bootstrap), `service-worker.js` | [MÉM] |
+| `public/js/copier-libs.js` | Copie Bootstrap, Font Awesome et Chart.js dans `public/` ; exécuté automatiquement par `npm run postinstall`, donc à chaque `npm install`, y compris sur Render. Les copies sont ignorées par Git. | [VU] |
 | `docs/` | Documentation (ce briefing) | |
 
-Ordre des `<link>` CSS dans chaque page : bootstrap, commun, page [MÉM]. `commun.css` porte le design system (couleurs, polices, shell, cartes, tableaux, formulaires, mode sombre) ; les fichiers de page ne gardent que leurs styles propres. `page-wrapper`, `topbar-page`, `btn-hamburger` sont définis dans `commun.css` et le shell est généré par `sidebar.js` [MÉM].
+Ordre des `<link>` CSS dans chaque page : bootstrap, fontawesome, commun, page [MÉM]. `page-wrapper`, `topbar-page`, `btn-hamburger` sont définis dans `sidebar.js` [MÉM].
 
 ## 7. Modèle de données
 

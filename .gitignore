@@ -3,6 +3,7 @@ node_modules/
 uploads/*
 !uploads/.gitkeep
 public/css/bootstrap.min.css
+public/css/fontawesome.min.css
 !public/css/.gitkeep
 public/js-libs/*
 !public/js-libs/.gitkeep

@@ -1,24 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    try {
-      var t = localStorage.getItem('dmwm-theme');
-      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    } catch (e) {}
-  </script>
 <title>Absences — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/absences.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6d28d9">
+  <meta name="theme-color" content="#2563eb">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
-  <script src="/js-libs/lucide.min.js" defer></script>
-  <script src="/js/icons.js" defer></script>
-  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -27,30 +19,30 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
-      <h5><i class="me-2" data-lucide="user-x" aria-hidden="true"></i>Suivi des absences</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-user-times me-2"></i>Suivi des absences</h5>
     </div>
   </div>
 
-  <div class="page-contenu">
+  <div style="padding:25px;flex:1;">
   <div id="alerte" class="alert d-none mb-3"></div>
 
   <div class="row g-3 mb-4">
-    <div class="col-6 col-md-4"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fb7185,#e11d48)"><i data-lucide="user-x" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sAbsents">—</div><div class="stat-mini-label">À contacter</div></div></div></div>
-    <div class="col-6 col-md-4"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"><i data-lucide="triangle-alert" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sAbsents3Plus">—</div><div class="stat-mini-label">3+ absences</div></div></div></div>
-    <div class="col-6 col-md-4"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)"><i data-lucide="users" aria-hidden="true"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Total membres actifs</div></div></div></div>
+    <div class="col-6 col-md-4"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#dc3545,#ff6b6b)"><i class="fas fa-user-times"></i></div><div><div class="stat-mini-num" id="sAbsents">—</div><div class="stat-mini-label">À contacter</div></div></div></div>
+    <div class="col-6 col-md-4"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#fd7e14,#ffc107)"><i class="fas fa-exclamation-triangle"></i></div><div><div class="stat-mini-num" id="sAbsents3Plus">—</div><div class="stat-mini-label">3+ absences</div></div></div></div>
+    <div class="col-6 col-md-4"><div class="stat-mini"><div class="stat-mini-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)"><i class="fas fa-users"></i></div><div><div class="stat-mini-num" id="sTotal">—</div><div class="stat-mini-label">Total membres actifs</div></div></div></div>
   </div>
 
   <div class="card-custom">
     <div class="row g-2">
       <div class="col-md-4"><input type="text" class="form-control" id="recherche" placeholder="🔍 Rechercher par nom..." aria-label="Rechercher par nom"></div>
       <div class="col-md-4"><select class="form-select" id="filtreSexe" aria-label="H + F"><option value="">H + F</option><option value="H">Hommes</option><option value="F">Femmes</option></select></div>
-      <div class="col-md-4"><button class="btn btn-outline-secondary w-100" onclick="chargerAbsents()"><i class="me-1" data-lucide="search" aria-hidden="true"></i>Filtrer</button></div>
+      <div class="col-md-4"><button class="btn btn-outline-secondary w-100" onclick="chargerAbsents()"><i class="fas fa-search me-1"></i>Filtrer</button></div>
     </div>
   </div>
 
   <div class="card-custom">
-    <h6 class="fw-bold text-danger mb-4"><i class="me-2" data-lucide="triangle-alert" aria-hidden="true"></i>Membres absents 2+ fois consécutivement</h6>
+    <h6 class="fw-bold text-danger mb-4"><i class="fas fa-exclamation-triangle me-2"></i>Membres absents 2+ fois consécutivement</h6>
     <div id="tableAbsents"><div class="text-center text-muted py-4">Chargement...</div></div>
   </div>
   </div>
@@ -59,9 +51,9 @@
 <div class="modal fade" id="modalHistorique" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;border-radius:15px 15px 0 0;">
-        <h5 class="modal-title"><i class="me-2" data-lucide="history" aria-hidden="true"></i>Historique des présences</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-header" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6);color:white;border-radius:15px 15px 0 0;">
+        <h5 class="modal-title"><i class="fas fa-history me-2"></i>Historique des présences</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter:brightness(0) invert(1);"></button>
       </div>
       <div class="modal-body p-4" id="contenuHistorique">Chargement...</div>
     </div>
@@ -99,7 +91,7 @@
   function afficherAbsents(membres) {
     const container = document.getElementById('tableAbsents');
     if (membres.length === 0) {
-      container.innerHTML = `<div class="text-center py-4"><i class="text-success mb-3 icon-xl" data-lucide="circle-check" aria-hidden="true"></i><p class="text-muted">Aucun membre avec 2+ absences consécutives</p></div>`;
+      container.innerHTML = `<div class="text-center py-4"><i class="fas fa-check-circle fa-3x text-success mb-3"></i><p class="text-muted">Aucun membre avec 2+ absences consécutives</p></div>`;
       return;
     }
     container.innerHTML = `<div class="table-responsive"><table class="table table-hover">
@@ -112,8 +104,8 @@
           <td>${m.telephone || '—'}</td>
           <td><span class="absence-badge bg-${couleur}">${m.absences_consecutives}</span><span class="ms-2 text-${couleur}" style="font-size:0.82rem;">absence${m.absences_consecutives>1?'s':''} consécutive${m.absences_consecutives>1?'s':''}</span></td>
           <td>
-            <button class="btn btn-sm btn-outline-info me-1" onclick="voirHistorique(${m.id}, '${m.prenom} ${m.nom}')"><i class="me-1" data-lucide="history" aria-hidden="true"></i>Historique</button>
-            ${m.telephone ? `<a href="https://wa.me/221${m.telephone}" target="_blank" class="btn btn-sm btn-outline-success"><i class="me-1" data-lucide="message-circle" aria-hidden="true"></i>WhatsApp</a>` : ''}
+            <button class="btn btn-sm btn-outline-info me-1" onclick="voirHistorique(${m.id}, '${m.prenom} ${m.nom}')"><i class="fas fa-history me-1"></i>Historique</button>
+            ${m.telephone ? `<a href="https://wa.me/221${m.telephone}" target="_blank" class="btn btn-sm btn-outline-success"><i class="fab fa-whatsapp me-1"></i>WhatsApp</a>` : ''}
           </td>
         </tr>`;
       }).join('')}</tbody></table></div>`;
@@ -150,7 +142,7 @@
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
-    a.innerHTML = `<i class="me-2" data-lucide="circle-alert" aria-hidden="true"></i>${msg}`;
+    a.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>${msg}`;
     a.classList.remove('d-none'); setTimeout(() => a.classList.add('d-none'), 4000);
   }
 

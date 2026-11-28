@@ -1,24 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    try {
-      var t = localStorage.getItem('dmwm-theme');
-      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    } catch (e) {}
-  </script>
 <title>Rapports — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/rapports.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6d28d9">
+  <meta name="theme-color" content="#2563eb">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
-  <script src="/js-libs/lucide.min.js" defer></script>
-  <script src="/js/icons.js" defer></script>
-  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -27,16 +19,16 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
-      <h5><i class="me-2" data-lucide="file-text" aria-hidden="true"></i>Rapports et statistiques</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-file-alt me-2"></i>Rapports et statistiques</h5>
     </div>
   </div>
 
-  <div class="page-contenu">
+  <div style="padding:25px;flex:1;">
   <div id="alerte" class="alert d-none mb-3"></div>
 
   <div class="card-custom">
-    <h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="filter" aria-hidden="true"></i>Filtres du rapport</h6>
+    <h6 class="fw-bold text-primary mb-3"><i class="fas fa-filter me-2"></i>Filtres du rapport</h6>
     <div class="row g-3 align-items-end">
       <div class="col-md-3"><label class="form-label small fw-bold" for="filtreMois">Mois</label><input type="month" class="form-control" id="filtreMois" aria-label="Mois"></div>
       <div class="col-md-3"><label class="form-label small fw-bold" for="filtreType">Type de programme</label>
@@ -45,23 +37,23 @@
         <select class="form-select" id="filtreSexe" aria-label="Sexe"><option value="">H + F</option><option value="H">Hommes</option><option value="F">Femmes</option></select></div>
       <div class="col-md-2"><label class="form-label small fw-bold" for="filtreCommission">Commission</label>
         <select class="form-select" id="filtreCommission" aria-label="Commission"><option value="">Toutes</option><option value="PF">PF</option><option value="CA">CA</option><option value="CIPS">CIPS</option><option value="CTC">CTC</option><option value="CL">CL</option><option value="Membre simple">Membres simples</option></select></div>
-      <div class="col-md-2"><button class="btn btn-outline-primary w-100" onclick="chargerStatistiques()"><i class="me-1" data-lucide="refresh-cw" aria-hidden="true"></i>Actualiser</button></div>
+      <div class="col-md-2"><button class="btn btn-outline-primary w-100" onclick="chargerStatistiques()"><i class="fas fa-sync me-1"></i>Actualiser</button></div>
     </div>
     <div class="d-flex gap-2 mt-3">
-      <button class="btn btn-export-pdf" onclick="exporterPDF()"><i class="me-2" data-lucide="file-text" aria-hidden="true"></i>Exporter en PDF</button>
-      <button class="btn btn-export-excel" onclick="exporterExcel()"><i class="me-2" data-lucide="file-spreadsheet" aria-hidden="true"></i>Exporter en Excel</button>
+      <button class="btn btn-export-pdf" onclick="exporterPDF()"><i class="fas fa-file-pdf me-2"></i>Exporter en PDF</button>
+      <button class="btn btn-export-excel" onclick="exporterExcel()"><i class="fas fa-file-excel me-2"></i>Exporter en Excel</button>
     </div>
   </div>
 
   <div class="row g-4">
-    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="chart-line" aria-hidden="true"></i>Taux de présence par programme</h6><div class="chart-container"><canvas id="chartTaux"></canvas></div></div></div>
-    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="chart-pie" aria-hidden="true"></i>Répartition présents / absents</h6><div class="chart-container"><canvas id="chartRepartition"></canvas></div></div></div>
-    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="venus-and-mars" aria-hidden="true"></i>Comparaison Hommes / Femmes</h6><div class="chart-container"><canvas id="chartHF"></canvas></div></div></div>
-    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="user-plus" aria-hidden="true"></i>Évolution nouveaux adhérents</h6><div class="chart-container"><canvas id="chartEvolution"></canvas></div></div></div>
+    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="fas fa-chart-line me-2"></i>Taux de présence par programme</h6><div class="chart-container"><canvas id="chartTaux"></canvas></div></div></div>
+    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="fas fa-chart-pie me-2"></i>Répartition présents / absents</h6><div class="chart-container"><canvas id="chartRepartition"></canvas></div></div></div>
+    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="fas fa-venus-mars me-2"></i>Comparaison Hommes / Femmes</h6><div class="chart-container"><canvas id="chartHF"></canvas></div></div></div>
+    <div class="col-md-6"><div class="card-custom"><h6 class="fw-bold text-primary mb-3"><i class="fas fa-user-plus me-2"></i>Évolution nouveaux adhérents</h6><div class="chart-container"><canvas id="chartEvolution"></canvas></div></div></div>
   </div>
 
   <div class="card-custom">
-    <h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="trophy" aria-hidden="true"></i>Classement des membres les plus assidus</h6>
+    <h6 class="fw-bold text-primary mb-3"><i class="fas fa-trophy me-2"></i>Classement des membres les plus assidus</h6>
     <div id="classementMembres"><div class="text-center text-muted py-3">Chargement...</div></div>
   </div>
   </div>
@@ -155,7 +147,7 @@
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
-    a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
     a.classList.remove('d-none'); setTimeout(() => a.classList.add('d-none'), 4000);
   }
   chargerStatistiques();

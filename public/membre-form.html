@@ -1,24 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    try {
-      var t = localStorage.getItem('dmwm-theme');
-      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    } catch (e) {}
-  </script>
 <title>Membre — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/membre-form.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6d28d9">
+  <meta name="theme-color" content="#2563eb">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
-  <script src="/js-libs/lucide.min.js" defer></script>
-  <script src="/js/icons.js" defer></script>
-  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -27,16 +19,16 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
-      <h5 id="titreFormulaire"><i class="me-2" data-lucide="user-plus" aria-hidden="true"></i>Nouveau membre</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5 id="titreFormulaire"><i class="fas fa-user-plus me-2"></i>Nouveau membre</h5>
     </div>
   </div>
 
-  <div class="page-contenu">
+  <div style="padding:25px;flex:1;">
   <div id="alerte" class="alert d-none mb-3"></div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="me-2" data-lucide="id-card" aria-hidden="true"></i>Informations personnelles</div>
+    <div class="section-title"><i class="fas fa-id-card me-2"></i>Informations personnelles</div>
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label required">Prénom</label><input type="text" class="form-control" id="prenom" aria-label="Prénom"></div>
       <div class="col-md-6"><label class="form-label required">Nom</label><input type="text" class="form-control" id="nom" aria-label="Nom"></div>
@@ -52,7 +44,7 @@
   </div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="me-2" data-lucide="shield-user" aria-hidden="true"></i>Tuteur / Contact d'urgence</div>
+    <div class="section-title"><i class="fas fa-user-shield me-2"></i>Tuteur / Contact d'urgence</div>
     <div class="row g-3">
       <div class="col-md-8"><label class="form-label">Prénom & Nom du tuteur</label><input type="text" class="form-control" id="tuteur_nom" aria-label="Prénom & Nom du tuteur"></div>
       <div class="col-md-4"><label class="form-label">Téléphone du tuteur</label><input type="text" class="form-control" id="tuteur_telephone" aria-label="Téléphone du tuteur"></div>
@@ -60,7 +52,7 @@
   </div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="me-2" data-lucide="graduation-cap" aria-hidden="true"></i>Informations universitaires</div>
+    <div class="section-title"><i class="fas fa-graduation-cap me-2"></i>Informations universitaires</div>
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label">Filière</label><input type="text" class="form-control" id="filiere" aria-label="Filière"></div>
       <div class="col-md-6"><label class="form-label">Niveau</label><input type="text" class="form-control" id="niveau" aria-label="Niveau"></div>
@@ -68,7 +60,7 @@
   </div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="me-2" data-lucide="map-pin" aria-hidden="true"></i>Origine géographique</div>
+    <div class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Origine géographique</div>
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label">Région d'origine</label><input type="text" class="form-control" id="region_origine" aria-label="Région d'origine"></div>
       <div class="col-md-6"><label class="form-label">Département</label><input type="text" class="form-control" id="departement" aria-label="Département"></div>
@@ -78,7 +70,7 @@
   </div>
 
   <div class="card-custom section-mouvement" id="sectionMouvement">
-    <div class="section-title"><i class="me-2" data-lucide="landmark" aria-hidden="true"></i>Origine dans le mouvement</div>
+    <div class="section-title"><i class="fas fa-mosque me-2"></i>Origine dans le mouvement</div>
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label">Comité / Axe d'origine</label><input type="text" class="form-control" id="comite_origine" aria-label="Comité / Axe d'origine"></div>
       <div class="col-md-6"><label class="form-label">Localité / Conseil d'origine</label><input type="text" class="form-control" id="conseil_origine" aria-label="Localité / Conseil d'origine"></div>
@@ -95,7 +87,7 @@
   </div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="me-2" data-lucide="tag" aria-hidden="true"></i>Statut au Conseil UASZ</div>
+    <div class="section-title"><i class="fas fa-user-tag me-2"></i>Statut au Conseil UASZ</div>
     <div class="row g-3">
       <div class="col-md-4"><label class="form-label required">Catégorie</label>
         <select class="form-select" id="categorie" onchange="gererCategorie()" aria-label="Catégorie">
@@ -119,7 +111,7 @@
   </div>
 
   <div class="card-custom">
-    <div class="section-title"><i class="me-2" data-lucide="file-image" aria-hidden="true"></i>Photo et documents</div>
+    <div class="section-title"><i class="fas fa-file-image me-2"></i>Photo et documents</div>
     <div class="row g-3">
       <div class="col-md-6"><label class="form-label">Photo de profil</label>
         <input type="file" class="form-control" id="photo_profil" accept="image/*" onchange="previewImage(this,'previewPhoto')" aria-label="Photo de profil">
@@ -134,8 +126,8 @@
   </div>
 
   <div class="d-flex gap-3 justify-content-end mb-4">
-    <a href="/membres.html" class="btn btn-outline-secondary btn-lg rounded-3"><i class="me-2" data-lucide="x" aria-hidden="true"></i>Annuler</a>
-    <button class="btn-save btn btn-lg rounded-3" onclick="sauvegarder()"><i class="me-2" data-lucide="save" aria-hidden="true"></i>Enregistrer</button>
+    <a href="/membres.html" class="btn btn-outline-secondary btn-lg rounded-3"><i class="fas fa-times me-2"></i>Annuler</a>
+    <button class="btn-save btn btn-lg rounded-3" onclick="sauvegarder()"><i class="fas fa-save me-2"></i>Enregistrer</button>
   </div>
   </div>
 </div>
@@ -154,11 +146,11 @@
       if (v && el) el.value = v;
     });
     gererCategorie();
-    document.getElementById('titreFormulaire').innerHTML = '<i class="me-2" data-lucide="user-check" aria-hidden="true"></i>Convertir un visiteur en membre';
+    document.getElementById('titreFormulaire').innerHTML = '<i class="fas fa-user-check me-2"></i>Convertir un visiteur en membre';
   }
 
   if (modeEdition) {
-    document.getElementById('titreFormulaire').innerHTML = '<i class="me-2" data-lucide="pencil" aria-hidden="true"></i>Modifier le membre';
+    document.getElementById('titreFormulaire').innerHTML = '<i class="fas fa-edit me-2"></i>Modifier le membre';
     chargerMembre();
   }
 
@@ -225,7 +217,7 @@
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
-    a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
     a.classList.remove('d-none');
     if (type === 'success') setTimeout(() => a.classList.add('d-none'), 3000);
     window.scrollTo(0, 0);

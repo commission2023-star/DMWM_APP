@@ -1,24 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    try {
-      var t = localStorage.getItem('dmwm-theme');
-      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    } catch (e) {}
-  </script>
 <title>Mon profil — DMWM UASZ</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/fontawesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/profil.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6d28d9">
+  <meta name="theme-color" content="#2563eb">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
-  <script src="/js-libs/lucide.min.js" defer></script>
-  <script src="/js/icons.js" defer></script>
-  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -27,12 +19,12 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
-      <h5><i class="me-2" data-lucide="circle-user-round" aria-hidden="true"></i>Mon profil</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-user-circle me-2"></i>Mon profil</h5>
     </div>
   </div>
 
-  <div class="page-contenu">
+  <div style="padding:25px;flex:1;">
   <div class="card-custom text-center">
     <div class="avatar-large" id="avatarInitiale">?</div>
     <h5 class="fw-bold" id="profilNom">Chargement...</h5>
@@ -41,12 +33,12 @@
   </div>
 
   <div class="card-custom">
-    <h6 class="fw-bold text-primary mb-4"><i class="me-2" data-lucide="lock" aria-hidden="true"></i>Changer le mot de passe</h6>
+    <h6 class="fw-bold text-primary mb-4"><i class="fas fa-lock me-2"></i>Changer le mot de passe</h6>
     <div id="alerte" class="alert d-none mb-3"></div>
     <div class="mb-3"><label class="form-label fw-bold">Ancien mot de passe</label><input type="password" class="form-control" id="ancienMdp" aria-label="Ancien mot de passe"></div>
     <div class="mb-3"><label class="form-label fw-bold">Nouveau mot de passe</label><input type="password" class="form-control" id="nouveauMdp" aria-label="Nouveau mot de passe"></div>
     <div class="mb-4"><label class="form-label fw-bold">Confirmer le nouveau mot de passe</label><input type="password" class="form-control" id="confirmerMdp" aria-label="Confirmer le nouveau mot de passe"></div>
-    <button class="btn btn-save" onclick="changerMotDePasse()"><i class="me-2" data-lucide="save" aria-hidden="true"></i>Enregistrer le nouveau mot de passe</button>
+    <button class="btn btn-save" onclick="changerMotDePasse()"><i class="fas fa-save me-2"></i>Enregistrer le nouveau mot de passe</button>
   </div>
   </div>
 </div>
@@ -83,7 +75,7 @@
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
     a.className = `alert alert-${type}`;
-    a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
+    a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
     a.classList.remove('d-none'); setTimeout(() => a.classList.add('d-none'), 4000);
   }
 </script>

@@ -3,22 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    try {
-      var t = localStorage.getItem('dmwm-theme');
-      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    } catch (e) {}
-  </script>
   <title>Tableau de bord — DMWM UASZ</title>
   <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/fontawesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/commun.css">
   <link rel="stylesheet" href="/css/dashboard.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6d28d9">
+  <meta name="theme-color" content="#2563eb">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
-  <script src="/js-libs/lucide.min.js" defer></script>
-  <script src="/js/icons.js" defer></script>
-  <script src="/js/theme.js" defer></script>
   <script src="/js/pwa.js" defer></script>
 </head>
 <body>
@@ -28,26 +20,23 @@
 <div class="page-wrapper">
 
   <div class="topbar-page">
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex align-items-center gap-3">
       <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu">
-        <i data-lucide="menu"></i>
+        <i class="fas fa-bars"></i>
       </button>
-      <h5><i data-lucide="layout-dashboard"></i>Tableau de bord</h5>
+      <h5><i class="fas fa-tachometer-alt me-2"></i>Tableau de bord</h5>
     </div>
-    <div class="topbar-actions">
-      <span id="badgeRole" class="badge"></span>
-    </div>
+    <span id="badgeRole" class="badge" style="padding:6px 14px;font-size:0.82rem;"></span>
   </div>
 
   <div style="padding:25px;flex:1;">
 
     <div class="bienvenue">
-      <p class="bienvenue-eyebrow">Espace de gestion</p>
-      <h4>Bienvenue, <span id="nomUser"></span></h4>
+      <h4>👋 Bienvenue, <span id="nomUser"></span> !</h4>
       <p id="messageRole"></p>
     </div>
 
-    <div class="row g-3 g-md-4 mb-4">
+    <div class="row g-4 mb-4">
       <div class="col-6 col-md-3">
         <div class="stat-card">
           <div class="d-flex justify-content-between align-items-start">
@@ -55,7 +44,9 @@
               <div class="stat-number" id="dTotal">—</div>
               <div class="stat-label">Total membres</div>
             </div>
-            <div class="stat-icon"><i data-lucide="users"></i></div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#1B5E8A,#2E75B6)">
+              <i class="fas fa-users"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -66,7 +57,9 @@
               <div class="stat-number" id="dNouveaux">—</div>
               <div class="stat-label">Nouveaux</div>
             </div>
-            <div class="stat-icon green"><i data-lucide="user-plus"></i></div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#28a745,#20c997)">
+              <i class="fas fa-user-plus"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -77,7 +70,9 @@
               <div class="stat-number" id="dInscriptions">—</div>
               <div class="stat-label">Inscriptions en attente</div>
             </div>
-            <div class="stat-icon amber"><i data-lucide="clock"></i></div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#fd7e14,#ffc107)">
+              <i class="fas fa-clock"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -85,45 +80,43 @@
         <div class="stat-card">
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <div class="stat-number"><span id="dHommes">—</span> / <span id="dFemmes">—</span></div>
-              <div class="stat-label">Hommes / Femmes</div>
+              <div class="stat-number" id="dHommes">—</div>
+              <div class="stat-label">Hommes / <span id="dFemmes">—</span> Femmes</div>
             </div>
-            <div class="stat-icon rose"><i data-lucide="venus-and-mars"></i></div>
+            <div class="stat-icon" style="background:linear-gradient(135deg,#6f42c1,#a855f7)">
+              <i class="fas fa-venus-mars"></i>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="row g-3 g-md-4">
+    <div class="row g-4">
       <div class="col-md-6">
         <div class="card-info">
-          <div class="section-head">
-            <h6><i data-lucide="calendar-check"></i>Prochains événements</h6>
-            <span class="compte">5 max.</span>
-          </div>
+          <h6 class="fw-bold text-primary mb-3">
+            <i class="fas fa-calendar-check me-2"></i>Prochains événements (5)
+          </h6>
           <div id="prochainProg">
-            <div class="empty-state">
-              <i data-lucide="loader-circle" class="icon-spin"></i>
-              <span>Chargement...</span>
+            <div class="text-center text-muted py-2">
+              <i class="fas fa-spinner fa-spin"></i> Chargement...
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="card-info">
-          <div class="section-head">
-            <h6><i data-lucide="triangle-alert"></i>Membres à contacter
-              <span class="badge bg-danger" id="badgeAbsents" style="display:none;"></span>
-            </h6>
-          </div>
+          <h6 class="fw-bold mb-3" style="color:#fd7e14;">
+            <i class="fas fa-exclamation-triangle me-2"></i>Membres à contacter
+            <span class="badge bg-danger ms-1" id="badgeAbsents" style="display:none;"></span>
+          </h6>
           <div id="membresAbsents">
-            <div class="empty-state">
-              <i data-lucide="loader-circle" class="icon-spin"></i>
-              <span>Chargement...</span>
+            <div class="text-center text-muted py-2">
+              <i class="fas fa-spinner fa-spin"></i> Chargement...
             </div>
           </div>
-          <a href="/absences.html" class="btn btn-outline-warning btn-sm mt-3 w-100" id="lienAbsents">
-            <i data-lucide="user-x"></i>Voir tous les absents
+          <a href="/absences.html" class="btn btn-outline-warning btn-sm mt-3 w-100">
+            <i class="fas fa-user-times me-1"></i>Voir tous les absents
           </a>
         </div>
       </div>
@@ -136,11 +129,6 @@
 <script>
   const token = window.authToken;
   const user = window.currentUser;
-
-  const ROLES_REUNIONS = ['Super Admin', 'Admin CA', 'PF', 'CIPS', 'CTC', 'CL'];
-  const ROLES_ABSENTS = ['Super Admin', 'Admin CA', 'PF'];
-  const peutVoirReunions = ROLES_REUNIONS.includes(user.role);
-  const peutVoirAbsents = ROLES_ABSENTS.includes(user.role);
 
   document.getElementById('nomUser').textContent = user.nom || '';
 
@@ -156,27 +144,28 @@
   };
   document.getElementById('messageRole').textContent = messages[user.role] || '';
 
+  const couleursRole = {
+    'Super Admin': 'danger', 'Admin CA': 'primary',
+    'Agent H': 'success', 'Agent F': 'success',
+    'PF': 'warning', 'CIPS': 'info', 'CTC': 'secondary', 'CL': 'dark'
+  };
   const badge = document.getElementById('badgeRole');
   badge.textContent = user.role;
-
-  async function api(url, secours) {
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) return secours;
-    try { return await res.json(); } catch (e) { return secours; }
-  }
-
-  function initiales(prenom, nom) {
-    return `${(prenom || '?')[0]}${(nom || '?')[0]}`.toUpperCase();
-  }
+  badge.classList.add('bg-' + (couleursRole[user.role] || 'secondary'));
 
   async function chargerStats() {
     try {
-      const [m, ins, programmes, reunions] = await Promise.all([
-        api('/api/membres/stats', {}),
-        api('/api/inscriptions/stats', {}),
-        api('/api/programmes?statut=Planifie', []),
-        peutVoirReunions ? api('/api/reunions', []) : Promise.resolve([])
+      const [rM, rI, rP, rR] = await Promise.all([
+        fetch('/api/membres/stats', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/inscriptions/stats', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/programmes?statut=Planifie', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/reunions', { headers: { Authorization: `Bearer ${token}` } })
       ]);
+
+      const m = await rM.json();
+      const ins = await rI.json();
+      const programmes = await rP.json();
+      const reunions = await rR.json();
 
       document.getElementById('dTotal').textContent = m.total || 0;
       document.getElementById('dNouveaux').textContent = m.nouveaux || 0;
@@ -187,7 +176,7 @@
       const aujourd_hui = new Date();
       aujourd_hui.setHours(0, 0, 0, 0);
 
-      const prochainsProg = (Array.isArray(programmes) ? programmes : [])
+      const prochainsProg = (programmes || [])
         .filter(p => new Date(p.date + 'T00:00:00') >= aujourd_hui)
         .map(p => ({
           type: 'programme', label: p.type, date: p.date,
@@ -195,7 +184,7 @@
           lieu: p.lieu, oustaze: p.oustaze
         }));
 
-      const prochainesReunions = (Array.isArray(reunions) ? reunions : [])
+      const prochainesReunions = (reunions || [])
         .filter(r => new Date(r.date + 'T00:00:00') >= aujourd_hui)
         .map(r => ({
           type: 'reunion', label: 'Réunion du Conseil', date: r.date,
@@ -211,9 +200,9 @@
 
       if (tousEvenements.length === 0) {
         divProg.innerHTML = `
-          <div class="empty-state">
-            <i data-lucide="calendar-x"></i>
-            <span>Aucun événement planifié prochainement</span>
+          <div class="text-center text-muted py-2">
+            <i class="fas fa-calendar-times fa-2x mb-2 d-block"></i>
+            Aucun événement planifié prochainement
           </div>`;
       } else {
         const couleursType = {
@@ -226,77 +215,70 @@
             weekday: 'short', day: 'numeric', month: 'short'
           });
           const couleur = e.type === 'reunion' ? 'danger' : (couleursType[e.label] || 'secondary');
-          const icone = e.type === 'reunion' ? 'handshake' : 'calendar-check';
+          const icone = e.type === 'reunion' ? 'fa-handshake' : 'fa-calendar-check';
 
           return `
-            <div class="event-row">
+            <div class="border rounded-3 p-2 mb-2">
               <div class="d-flex align-items-center justify-content-between gap-2">
-                <span class="badge bg-${couleur}">
-                  <i data-lucide="${icone}"></i>${e.label}
-                </span>
-                <span class="event-date">${date}</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-${couleur}">
+                    <i class="fas ${icone} me-1"></i>${e.label}
+                  </span>
+                </div>
+                <span class="fw-bold small text-capitalize">${date}</span>
               </div>
-              <div class="event-meta">
-                ${e.heure_debut ? `<span><i data-lucide="clock"></i>${e.heure_debut.substring(0,5)}${e.heure_fin ? ' – ' + e.heure_fin.substring(0,5) : ''}</span>` : ''}
-                ${e.lieu ? `<span><i data-lucide="map-pin"></i>${e.lieu}</span>` : ''}
-                ${e.oustaze ? `<span><i data-lucide="user"></i>${e.oustaze}</span>` : ''}
-                ${e.type === 'reunion' ? `<span class="badge bg-light text-dark">${e.nb_cr} CR</span>` : ''}
+              <div class="text-muted mt-1" style="font-size:0.78rem;">
+                ${e.heure_debut ? `<i class="fas fa-clock me-1"></i>${e.heure_debut.substring(0,5)}${e.heure_fin ? ' – ' + e.heure_fin.substring(0,5) : ''} ` : ''}
+                ${e.lieu ? `<i class="fas fa-map-marker-alt me-1"></i>${e.lieu}` : ''}
+                ${e.type === 'reunion' ? `<span class="badge bg-light text-dark ms-1">${e.nb_cr} CR</span>` : ''}
+                ${e.oustaze ? `<i class="fas fa-user me-1"></i>${e.oustaze}` : ''}
               </div>
             </div>`;
         }).join('');
       }
-    } catch (e) {
+    } catch(e) {
       console.log('Erreur stats:', e);
     }
 
-    if (window.rafraichirIcones) window.rafraichirIcones();
     chargerAbsents();
   }
 
   async function chargerAbsents() {
-    const div = document.getElementById('membresAbsents');
-    const lien = document.getElementById('lienAbsents');
-
-    if (!peutVoirAbsents) {
-      if (lien) lien.style.display = 'none';
-      div.innerHTML = `
-        <div class="empty-state">
-          <i data-lucide="lock"></i>
-          <span>Section réservée à la CA et aux PF.</span>
-        </div>`;
-      if (window.rafraichirIcones) window.rafraichirIcones();
-      return;
-    }
-
     try {
-      const absents = await api('/api/pointage/absents-recurrents', []);
-      const badgeAbsents = document.getElementById('badgeAbsents');
+      const res = await fetch('/api/pointage/absents-recurrents', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const absents = await res.json();
+      const div = document.getElementById('membresAbsents');
+      const badge = document.getElementById('badgeAbsents');
 
-      if (!Array.isArray(absents) || absents.length === 0) {
+      if (absents.length === 0) {
         div.innerHTML = `
-          <div class="empty-state success">
-            <i data-lucide="circle-check"></i>
-            <span>Aucun membre avec 2 absences consécutives ou plus</span>
+          <div class="text-center text-success py-2">
+            <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
+            <small>Aucun membre avec 2+ absences consécutives</small>
           </div>`;
-        if (window.rafraichirIcones) window.rafraichirIcones();
         return;
       }
 
-      badgeAbsents.textContent = absents.length;
-      badgeAbsents.style.display = 'inline-block';
+      badge.textContent = absents.length;
+      badge.style.display = 'inline';
 
       div.innerHTML = absents.slice(0, 4).map(m => {
         const couleur = m.absences_consecutives >= 4 ? 'danger' :
                         m.absences_consecutives >= 3 ? 'warning' : 'secondary';
         return `
-          <div class="absent-row">
+          <div class="d-flex align-items-center justify-content-between mb-2 p-2 rounded-3 bg-light">
             <div class="d-flex align-items-center gap-2">
-              <div class="avatar-sm" style="background:linear-gradient(135deg,#ef4444,#f97316)">
-                ${initiales(m.prenom, m.nom)}
+              <div style="width:32px;height:32px;border-radius:50%;
+                background:linear-gradient(135deg,#dc3545,#ff6b6b);
+                display:flex;align-items:center;justify-content:center;
+                color:white;font-weight:700;font-size:0.78rem;flex-shrink:0;">
+                ${m.prenom[0]}${m.nom[0]}
               </div>
               <div>
-                <div class="absent-name">${m.prenom} ${m.nom}</div>
-                <div class="absent-tel">${m.telephone || '—'}</div>
+                <div style="font-size:0.85rem;font-weight:600;">${m.prenom} ${m.nom}</div>
+                <div style="font-size:0.72rem;color:#888;">${m.telephone || '—'}</div>
               </div>
             </div>
             <span class="badge bg-${couleur}">${m.absences_consecutives}×</span>
@@ -306,9 +288,9 @@
       if (absents.length > 4) {
         div.innerHTML += `<div class="text-center text-muted small mt-1">+ ${absents.length - 4} autre(s)</div>`;
       }
-      if (window.rafraichirIcones) window.rafraichirIcones();
-    } catch (e) {
-      div.innerHTML = '<div class="empty-state"><span>Disponible après le premier pointage</span></div>';
+    } catch(e) {
+      document.getElementById('membresAbsents').innerHTML =
+        '<small class="text-muted">Disponible après le premier pointage</small>';
     }
   }
 

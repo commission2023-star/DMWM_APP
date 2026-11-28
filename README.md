@@ -17,7 +17,7 @@ réunions et comptes rendus, rapports PDF/Excel.
 | Base | MySQL / MariaDB via Sequelize 6 (Aiven en production) |
 | Authentification | JWT (8 h) + bcrypt |
 | Fichiers | Multer + Cloudinary (photos, pièces d'identité, messages, comptes rendus) |
-| Front | HTML + CSS + JavaScript natif, Bootstrap 5.3 et Lucide servis en local |
+| Front | HTML + CSS + JavaScript natif, Bootstrap 5.3 et Font Awesome 6 servis en local |
 | Graphiques | Chart.js (local) |
 | Exports | PDFKit (PDF), ExcelJS (Excel) |
 | Hors ligne | PWA : `manifest.webmanifest` + `service-worker.js` |
@@ -31,7 +31,7 @@ recommandé.
 1. Placer le dossier dans `C:\wamp64\www\...` puis s'y placer en ligne de commande.
 2. `npm install`
    Le script `postinstall` exécute `public/js/copier-libs.js`, qui copie Bootstrap,
-   Chart.js, Lucide et les polices dans `public/` (ces fichiers sont ignorés par Git).
+   Font Awesome et Chart.js dans `public/` (ces fichiers sont ignorés par Git).
 3. Copier `.env.example` en `.env` et adapter les valeurs.
 4. Créer la base `dmwm_uasz` dans phpMyAdmin (interclassement `utf8mb4`).
 5. `node sync.js`
@@ -99,9 +99,9 @@ DMWM_APP/
 ├─ public/
 │  ├─ *.html              19 pages
 │  ├─ css/                1 fichier par page + commun.css + libs copiées
-│  ├─ js/                 auth-guard, sidebar, theme, icons, labels, telephone-input, pwa
-│  ├─ js-libs/            Bootstrap JS, Chart.js et Lucide (générés par postinstall)
-│  ├─ fonts/              Inter, Space Grotesk, Instrument Serif (générées par postinstall)
+│  ├─ js/                 auth-guard, sidebar, labels, telephone-input, pwa, copier-libs
+│  ├─ js-libs/            Bootstrap JS et Chart.js (générés par postinstall)
+│  ├─ fonts/              polices Font Awesome (générées par postinstall)
 │  ├─ images/             icônes PWA (192 et 512)
 │  ├─ manifest.webmanifest
 │  └─ service-worker.js   cache hors ligne (versionné)

@@ -1,24 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script>
-    try {
-      var t = localStorage.getItem('dmwm-theme');
-      document.documentElement.dataset.theme = t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    } catch (e) {}
-  </script>
 <title>Réunions — DMWM UASZ</title>
 <link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/fontawesome.min.css">
 <link rel="stylesheet" href="/css/commun.css">
 <link rel="stylesheet" href="/css/reunions.css">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#6d28d9">
+  <meta name="theme-color" content="#2563eb">
   <link rel="icon" type="image/png" href="/images/icon-192.png">
   <script src="/js/pwa.js" defer></script>
-  <script src="/js-libs/lucide.min.js" defer></script>
-  <script src="/js/icons.js" defer></script>
-  <script src="/js/theme.js" defer></script>
 </head>
 <body>
 <script src="/js/auth-guard.js"></script>
@@ -27,13 +19,13 @@
 <div class="page-wrapper">
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
-      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i data-lucide="menu" aria-hidden="true"></i></button>
-      <h5><i class="me-2" data-lucide="handshake" aria-hidden="true"></i>Réunions du Conseil</h5>
+      <button class="btn-hamburger" onclick="toggleSidebar()" title="Ouvrir le menu" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
+      <h5><i class="fas fa-handshake me-2"></i>Réunions du Conseil</h5>
     </div>
-    <button class="btn btn-primary btn-sm" id="btnNouvelleReunion" onclick="ouvrirModalReunion()"><i class="me-1" data-lucide="plus" aria-hidden="true"></i>Nouvelle réunion</button>
+    <button class="btn btn-primary btn-sm" id="btnNouvelleReunion" onclick="ouvrirModalReunion()"><i class="fas fa-plus me-1"></i>Nouvelle réunion</button>
   </div>
 
-  <div class="page-contenu">
+  <div style="padding:25px;flex:1;">
   <div id="alerte" class="alert d-none mb-3"></div>
   <div id="listeReunions"><div class="text-center text-muted py-4">Chargement...</div></div>
   </div>
@@ -42,7 +34,7 @@
 <div class="modal fade" id="modalReunion" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="me-2" data-lucide="calendar-plus" aria-hidden="true"></i>Nouvelle réunion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-calendar-plus me-2"></i>Nouvelle réunion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body p-4">
         <input type="hidden" id="reunionId">
         <div id="alerteModal" class="alert d-none mb-3"></div>
@@ -54,7 +46,7 @@
           <div class="col-12"><label class="form-label">Ordre du jour</label><textarea class="form-control" id="rOrdreDuJour" rows="4" aria-label="Ordre du jour"></textarea></div>
         </div>
       </div>
-      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderReunion()"><i class="me-2" data-lucide="save" aria-hidden="true"></i>Enregistrer</button></div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-primary rounded-3" onclick="sauvegarderReunion()"><i class="fas fa-save me-2"></i>Enregistrer</button></div>
     </div>
   </div>
 </div>
@@ -62,7 +54,7 @@
 <div class="modal fade" id="modalDetail" tabindex="-1">
   <div class="modal-dialog modal-xl">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="me-2" data-lucide="handshake" aria-hidden="true"></i>Détail de la réunion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-handshake me-2"></i>Détail de la réunion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body p-4" id="contenuDetail"></div>
     </div>
   </div>
@@ -71,15 +63,15 @@
 <div class="modal fade" id="modalCR" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content border-0 rounded-4">
-      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="me-2" data-lucide="file-signature" aria-hidden="true"></i>Ajouter un compte rendu</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header rounded-top-4"><h5 class="modal-title"><i class="fas fa-file-signature me-2"></i>Ajouter un compte rendu</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body p-4">
         <input type="hidden" id="crReunionId">
         <div id="alerteCR" class="alert d-none mb-3"></div>
         <div class="mb-3"><label class="form-label">Compte rendu (texte)</label><textarea class="form-control" id="crContenu" rows="6" aria-label="Compte rendu (texte)"></textarea></div>
         <div class="mb-3"><label class="form-label">Ou uploadez un fichier (PDF ou Word)</label><input type="file" class="form-control" id="crFichier" accept=".pdf,.doc,.docx" aria-label="Ou uploadez un fichier (PDF ou Word)"></div>
-        <small class="text-muted"><i class="me-1" data-lucide="info" aria-hidden="true"></i>Vous pouvez saisir du texte, uploader un fichier, ou les deux.</small>
+        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Vous pouvez saisir du texte, uploader un fichier, ou les deux.</small>
       </div>
-      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-success rounded-3" onclick="soumettreCompteRendu()"><i class="me-2" data-lucide="save" aria-hidden="true"></i>Soumettre</button></div>
+      <div class="modal-footer"><button class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annuler</button><button class="btn btn-success rounded-3" onclick="soumettreCompteRendu()"><i class="fas fa-save me-2"></i>Soumettre</button></div>
     </div>
   </div>
 </div>
@@ -102,7 +94,7 @@
       const container = document.getElementById('listeReunions');
 
       if (reunions.length === 0) {
-        container.innerHTML = `<div class="text-center py-5"><i class="text-muted mb-3 icon-xl" data-lucide="calendar-x" aria-hidden="true"></i><p class="text-muted">Aucune réunion enregistrée</p>${isCA ? '<button class="btn btn-primary mt-2" onclick="ouvrirModalReunion()"><i class="me-2" data-lucide="plus" aria-hidden="true"></i>Créer la première réunion</button>' : ''}</div>`;
+        container.innerHTML = `<div class="text-center py-5"><i class="fas fa-calendar-times fa-3x text-muted mb-3"></i><p class="text-muted">Aucune réunion enregistrée</p>${isCA ? '<button class="btn btn-primary mt-2" onclick="ouvrirModalReunion()"><i class="fas fa-plus me-2"></i>Créer la première réunion</button>' : ''}</div>`;
         return;
       }
 
@@ -110,14 +102,14 @@
         <div class="reunion-card" onclick="voirReunion(${r.id})">
           <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
             <div><h6 class="fw-bold mb-1 text-capitalize">${formatDate(r.date)}</h6>
-              <div class="text-muted small"><i class="me-1" data-lucide="clock" aria-hidden="true"></i>${formatHeure(r.heure_debut)} – ${formatHeure(r.heure_fin)}${r.lieu ? ` · <i class="me-1" data-lucide="map-pin" aria-hidden="true"></i>${r.lieu}` : ''}</div>
+              <div class="text-muted small"><i class="fas fa-clock me-1"></i>${formatHeure(r.heure_debut)} – ${formatHeure(r.heure_fin)}${r.lieu ? ` · <i class="fas fa-map-marker-alt me-1"></i>${r.lieu}` : ''}</div>
             </div>
             <div class="d-flex gap-2 align-items-center">
-              <span class="badge bg-${r.CompteRendus?.length>0?'success':'warning'}"><i class="me-1" data-lucide="file-text" aria-hidden="true"></i>${r.CompteRendus?.length||0} CR</span>
-              ${isCA ? `<button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); ouvrirModalEditer(${r.id})" title="Modifier" aria-label="Modifier"><i data-lucide="pencil" aria-hidden="true"></i></button>` : ''}
+              <span class="badge bg-${r.CompteRendus?.length>0?'success':'warning'}"><i class="fas fa-file-alt me-1"></i>${r.CompteRendus?.length||0} CR</span>
+              ${isCA ? `<button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); ouvrirModalEditer(${r.id})" title="Modifier" aria-label="Modifier"><i class="fas fa-edit"></i></button>` : ''}
             </div>
           </div>
-          ${r.ordre_du_jour ? `<div class="mt-2" style="font-size:0.83rem;color:#555;"><i class="me-1" data-lucide="list" aria-hidden="true"></i>${r.ordre_du_jour.substring(0,120)}${r.ordre_du_jour.length>120?'...':''}</div>` : ''}
+          ${r.ordre_du_jour ? `<div class="mt-2" style="font-size:0.83rem;color:#555;"><i class="fas fa-list-ul me-1"></i>${r.ordre_du_jour.substring(0,120)}${r.ordre_du_jour.length>120?'...':''}</div>` : ''}
         </div>`).join('');
     } catch(e) { afficherAlerte('Erreur lors du chargement.', 'danger'); }
   }
@@ -133,17 +125,17 @@
           <div class="cr-item">
             <div class="d-flex justify-content-between align-items-start">
               <div><span class="badge bg-primary me-2">${cr.commission}</span><strong>${cr.Auteur?.nom||'Inconnu'}</strong><small class="text-muted ms-2">${formatDateTime(cr.created_at)}</small></div>
-              ${isCA ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerCR(${r.id}, ${cr.id})" title="Supprimer" aria-label="Supprimer"><i data-lucide="trash-2" aria-hidden="true"></i></button>` : ''}
+              ${isCA ? `<button class="btn btn-sm btn-outline-danger" onclick="supprimerCR(${r.id}, ${cr.id})" title="Supprimer" aria-label="Supprimer"><i class="fas fa-trash"></i></button>` : ''}
             </div>
             ${cr.contenu ? `<div class="mt-2" style="white-space:pre-wrap;font-size:0.85rem;">${cr.contenu}</div>` : ''}
-            ${cr.fichier ? `<div class="mt-2"><a href="${cr.fichier}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="me-1" data-lucide="download" aria-hidden="true"></i>Télécharger le fichier</a></div>` : ''}
+            ${cr.fichier ? `<div class="mt-2"><a href="${cr.fichier}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-1"></i>Télécharger le fichier</a></div>` : ''}
           </div>`).join('');
       } else { crHtml = '<p class="text-muted">Aucun compte rendu soumis pour cette réunion.</p>'; }
 
       document.getElementById('contenuDetail').innerHTML = `
         <div class="row g-4">
           <div class="col-md-5">
-            <h6 class="fw-bold text-primary mb-3"><i class="me-2" data-lucide="info" aria-hidden="true"></i>Informations</h6>
+            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informations</h6>
             <div class="mb-2"><strong>Date :</strong> <span class="text-capitalize">${formatDate(r.date)}</span></div>
             <div class="mb-2"><strong>Horaire :</strong> ${formatHeure(r.heure_debut)} – ${formatHeure(r.heure_fin)}</div>
             <div class="mb-2"><strong>Lieu :</strong> ${r.lieu||'—'}</div>
@@ -152,8 +144,8 @@
           </div>
           <div class="col-md-7">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-bold text-success mb-0"><i class="me-2" data-lucide="file-text" aria-hidden="true"></i>Comptes rendus <span class="badge bg-secondary ms-1">${r.CompteRendus?.length||0}</span></h6>
-              <button class="btn btn-success btn-sm" onclick="ouvrirModalCR(${r.id})"><i class="me-1" data-lucide="plus" aria-hidden="true"></i>Ajouter un CR</button>
+              <h6 class="fw-bold text-success mb-0"><i class="fas fa-file-alt me-2"></i>Comptes rendus <span class="badge bg-secondary ms-1">${r.CompteRendus?.length||0}</span></h6>
+              <button class="btn btn-success btn-sm" onclick="ouvrirModalCR(${r.id})"><i class="fas fa-plus me-1"></i>Ajouter un CR</button>
             </div>
             ${crHtml}
           </div>
@@ -250,7 +242,7 @@
 
   function afficherAlerte(msg, type) {
     const a = document.getElementById('alerte');
-    a.className = `alert alert-${type}`; a.innerHTML = `<i data-lucide="${type==='success'?'circle-check':'circle-alert'}"></i><span>${msg}</span>`;
+    a.className = `alert alert-${type}`; a.innerHTML = `<i class="fas fa-${type==='success'?'check':'exclamation'}-circle me-2"></i>${msg}`;
     a.classList.remove('d-none'); if (type==='success') setTimeout(() => a.classList.add('d-none'), 4000);
   }
 

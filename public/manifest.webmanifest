@@ -1,16 +1,15 @@
 {
   "name": "DMWM Conseil UASZ",
-  "short_name": "Conseil UASZ",
+  "short_name": "DMWM UASZ",
   "description": "Gestion administrative du Conseil UASZ",
   "start_url": "/dashboard.html",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f1fb",
-  "theme_color": "#6d28d9",
+  "background_color": "#f0f4f8",
+  "theme_color": "#2563eb",
   "lang": "fr",
   "icons": [
     { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }
