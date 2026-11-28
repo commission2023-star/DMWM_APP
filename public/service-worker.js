@@ -1,12 +1,12 @@
 // Changer la version (v1 -> v2...) quand les fichiers pré-cachés changent
-const VERSION = "v3";
+const VERSION = "v4";
 const CACHE_NAME = "dmwm-" + VERSION;
 
 const PRECACHE = [
   "/pointage.html",
   "/offline.html",
+  "/manifest.webmanifest",
   "/css/bootstrap.min.css",
-  "/css/fontawesome.min.css",
   "/css/commun.css",
   "/css/pointage.css",
   "/css/offline.css",
@@ -14,9 +14,16 @@ const PRECACHE = [
   "/js/sidebar.js",
   "/js/pwa.js",
   "/js/telephone-input.js",
+  "/js/theme.js",
+  "/js/icons.js",
   "/js-libs/bootstrap.bundle.min.js",
-  "/fonts/fa-solid-900.woff2",
-  "/fonts/fa-regular-400.woff2",
+  "/js-libs/lucide.min.js",
+  "/fonts/inter-latin-400-normal.woff2",
+  "/fonts/inter-latin-600-normal.woff2",
+  "/fonts/space-grotesk-latin-600-normal.woff2",
+  "/fonts/instrument-serif-latin-400-normal.woff2",
+  "/images/icon-192.png",
+  "/images/icon-512.png",
 ];
 
 self.addEventListener("install", (event) => {
