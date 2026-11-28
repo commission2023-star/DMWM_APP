@@ -4,68 +4,68 @@ const path = require('path');
 const pages = [
   {
     fichier: 'membres.html',
-    titre: '<i class="fas fa-users me-2"></i>Gestion des membres',
-    bouton: '<a href="/membre-form.html" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Nouveau membre</a>'
+    titre: '<i data-lucide="users" class="me-2"></i>Gestion des membres',
+    bouton: '<a href="/membre-form.html" class="btn btn-primary btn-sm"><i data-lucide="plus" class="me-1"></i>Nouveau membre</a>'
   },
   {
     fichier: 'nouveaux-adherents.html',
-    titre: '<i class="fas fa-user-plus me-2"></i>Nouveaux adherents',
+    titre: '<i data-lucide="user-plus" class="me-2"></i>Nouveaux adherents',
     bouton: ''
   },
   {
     fichier: 'membre-form.html',
-    titre: '<i class="fas fa-user-edit me-2"></i>Formulaire membre',
+    titre: '<i data-lucide="user-pen" class="me-2"></i>Formulaire membre',
     bouton: ''
   },
   {
     fichier: 'membre-detail.html',
-    titre: '<i class="fas fa-user me-2"></i>Detail du membre',
+    titre: '<i data-lucide="user" class="me-2"></i>Detail du membre',
     bouton: ''
   },
   {
     fichier: 'comptes.html',
-    titre: '<i class="fas fa-user-cog me-2"></i>Gestion des comptes',
-    bouton: '<button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()"><i class="fas fa-plus me-1"></i>Nouveau compte</button>'
+    titre: '<i data-lucide="user-cog" class="me-2"></i>Gestion des comptes',
+    bouton: '<button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()"><i data-lucide="plus" class="me-1"></i>Nouveau compte</button>'
   },
   {
     fichier: 'profil.html',
-    titre: '<i class="fas fa-user-circle me-2"></i>Mon profil',
+    titre: '<i data-lucide="circle-user-round" class="me-2"></i>Mon profil',
     bouton: ''
   },
   {
     fichier: 'validation-inscriptions.html',
-    titre: '<i class="fas fa-clipboard-check me-2"></i>Validation des inscriptions',
-    bouton: '<a href="/inscription.html" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-external-link-alt me-1"></i>Formulaire public</a>'
+    titre: '<i data-lucide="clipboard-check" class="me-2"></i>Validation des inscriptions',
+    bouton: '<a href="/inscription.html" target="_blank" class="btn btn-outline-primary btn-sm"><i data-lucide="external-link" class="me-1"></i>Formulaire public</a>'
   },
   {
     fichier: 'programmes.html',
-    titre: '<i class="fas fa-calendar-alt me-2"></i>Programmes',
-    bouton: '<button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()" id="btnNouveauProg"><i class="fas fa-plus me-1"></i>Nouveau programme</button>'
+    titre: '<i data-lucide="calendar-days" class="me-2"></i>Programmes',
+    bouton: '<button class="btn btn-primary btn-sm" onclick="ouvrirModalCreer()" id="btnNouveauProg"><i data-lucide="plus" class="me-1"></i>Nouveau programme</button>'
   },
   {
     fichier: 'pointage.html',
-    titre: '<i class="fas fa-check-square me-2"></i>Pointage',
+    titre: '<i data-lucide="square-check-big" class="me-2"></i>Pointage',
     bouton: ''
   },
   {
     fichier: 'absences.html',
-    titre: '<i class="fas fa-user-times me-2"></i>Suivi des absences',
+    titre: '<i data-lucide="user-x" class="me-2"></i>Suivi des absences',
     bouton: ''
   },
   {
     fichier: 'boite-reception.html',
-    titre: '<i class="fas fa-inbox me-2"></i>Boite de reception',
+    titre: '<i data-lucide="inbox" class="me-2"></i>Boite de reception',
     bouton: ''
   },
   {
     fichier: 'partager-ca.html',
-    titre: '<i class="fas fa-paper-plane me-2"></i>Envoyer a la CA',
+    titre: '<i data-lucide="send" class="me-2"></i>Envoyer a la CA',
     bouton: ''
   },
   {
     fichier: 'reunions.html',
-    titre: '<i class="fas fa-handshake me-2"></i>Reunions du Conseil',
-    bouton: '<button class="btn btn-primary btn-sm" id="btnNouvelleReunion" onclick="ouvrirModalReunion()"><i class="fas fa-plus me-1"></i>Nouvelle reunion</button>'
+    titre: '<i data-lucide="handshake" class="me-2"></i>Reunions du Conseil',
+    bouton: '<button class="btn btn-primary btn-sm" id="btnNouvelleReunion" onclick="ouvrirModalReunion()"><i data-lucide="plus" class="me-1"></i>Nouvelle reunion</button>'
   }
 ];
 
@@ -100,13 +100,13 @@ pages.forEach(page => {
   <div class="topbar-page">
     <div class="d-flex align-items-center gap-3">
       <button class="btn-hamburger" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
+        <i data-lucide="menu"></i>
       </button>
       <h5>${page.titre}</h5>
     </div>
     <div>${page.bouton}</div>
   </div>
-  <div style="padding:25px;flex:1;">`;
+  <div class="page-contenu">`;
 
   if (topbarRegex.test(contenu)) {
     contenu = contenu.replace(topbarRegex, nouvelleTopbar);

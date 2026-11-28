@@ -18,11 +18,6 @@ pages.forEach(fichier => {
   );
 
   contenu = contenu.replace(
-    /https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/font-awesome\/[^"]+\/css\/all\.min\.css/g,
-    '/css/fontawesome.min.css'
-  );
-
-  contenu = contenu.replace(
     /https:\/\/cdn\.jsdelivr\.net\/npm\/bootstrap@[^"]+\/dist\/js\/bootstrap\.bundle\.min\.js/g,
     '/js-libs/bootstrap.bundle.min.js'
   );

@@ -3,7 +3,7 @@
 But de ce fichier : savoir en un coup d'œil **ce qui est fait** et **ce qui reste à faire**.
 Il ne remplace pas les autres documents : il sert de liste de contrôle.
 
-Dernière mise à jour : **27/11/2026** — branche `develop`, commit `43921af`.
+Dernière mise à jour : **28/11/2026** — branche `develop`.
 
 ## 1. Comment utiliser cette feuille de route
 
@@ -43,9 +43,9 @@ Ne jamais cocher sans test. Ne rien commencer sans l'accord de Zo (règle du pro
 |---|---|
 | Application | V2 + tâche 6, en production |
 | URL | https://dmwm-uasz.onrender.com |
-| Documentation | à jour au 27/11/2026 |
+| Documentation | à jour au 28/11/2026 |
 | Sécurité | 2 corrections faites (F1, F2) ; 7 sessions à faire (S1–S7) |
-| Prochaine grande étape | tâche 7 — refonte design |
+| Prochaine grande étape | tâche 7 — vérification en production, puis PR vers `main` |
 | Lancement officiel | pas de date ; conditions en §6.1 |
 
 ## 4. Terminé
@@ -100,20 +100,19 @@ Ne jamais cocher sans test. Ne rien commencer sans l'accord de Zo (règle du pro
 
 ## 5. En cours
 
-### 5.1 Tâche 7 — refonte design (0 %)
+### 5.1 Tâche 7 — refonte design (en cours)
 
-Direction prévue, à valider avec Zo : dégradés violet/bleu avec grain, polices
-Inter + Space Grotesk + Instrument Serif, glassmorphism, mode sombre, icônes Lucide
-à la place de Font Awesome.
+Dégradés violet/bleu avec grain, polices Inter + Space Grotesk + Instrument Serif,
+glassmorphism, mode sombre, icônes Lucide à la place de Font Awesome.
 
-- [ ] Valider la direction artistique
-- [ ] Définir les tokens : couleurs, espacements, typographie
-- [ ] Reprendre `commun.css` et les 22 fichiers CSS
-- [ ] Remplacer Font Awesome par Lucide
-- [ ] Ajouter le mode sombre
-- [ ] Créer les icônes PWA définitives
-- [ ] Vérifier chaque page sur mobile et sur bureau
-- [ ] Incrémenter `VERSION` dans `public/service-worker.js`
+- [x] Valider la direction artistique
+- [x] Définir les tokens : couleurs, espacements, typographie
+- [x] Reprendre `commun.css` et les fichiers CSS de page
+- [x] Remplacer Font Awesome par Lucide
+- [x] Ajouter le mode sombre (bascule mémorisée)
+- [x] Créer les icônes PWA définitives
+- [x] Vérifier chaque page sur mobile et sur bureau (captures Edge)
+- [x] Incrémenter `VERSION` dans `public/service-worker.js` (`v4`)
 - [ ] Tester en production, puis PR vers `main`
 
 ## 6. À faire
@@ -194,6 +193,7 @@ Inter + Space Grotesk + Instrument Serif, glassmorphism, mode sombre, icônes Lu
 | 26/11/2026 | `410a892` | README réécrit et `.env.example` |
 | 27/11/2026 | `5027ed2` … `43921af` | cinq documents dans `docs/` |
 | 27/11/2026 | à venir | cette feuille de route et `.gitignore` |
+| 28/11/2026 | à venir | tâche 7 : design system, mode sombre, Lucide, icônes PWA |
 
 ## 9. Lexique pour débuter
 
